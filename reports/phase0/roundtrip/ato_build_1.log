@@ -1,0 +1,48 @@
+ok   kicad-cli        9.0.9
+ok   pcbnew           9.0.9
+20:56:59.455  I  …model.build_queue  BuildQueue: Started                                                                                                                                                                                        
+20:56:59.459  I  …model.build_queue  Build 9545fb530b5c93ba: starting worker - build=default, cwd=/Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj                                                                           
+20:56:59.459  I  …model.build_queue  BuildQueue: Started 9545fb530b5c93ba                                                                                                                                                                       
+
+20:57:00.075  I  …model.build_queue  BuildQueue: Build 9545fb530b5c93ba completed with status BuildStatus.SUCCESS                                                                                                                               
+
+╭─ Build Summary ───────────────────────────────────────────╮
+│ ✓ default  [9545fb530b5c93ba]                             │
+│                                                           │
+│ Stages:                                                   │
+│   ✓ Resolving dependencies [0.02s]                        │
+│   ✓ Initializing build context [0.05s]                    │
+│   ✓ Modify type graph [0.00s]                             │
+│   ✓ Instantiate app [0.00s]                               │
+│   ✓ Preparing build [0.00s]                               │
+│   ✓ Verify instance graph [0.00s]                         │
+│   ✓ Modify instance graph [0.00s]                         │
+│   ✓ Verify electrical design [0.01s]                      │
+│   ✓ Loading PCB [0.04s]                                   │
+│   ✓ Picking parts [0.01s]                                 │
+│   ✓ Preparing nets [0.01s]                                │
+│   ✓ Running post-solve checks [0.00s]                     │
+│   ✓ Updating PCB [0.02s]                                  │
+│   ✓ Running post-pcb checks [0.00s]                       │
+│   ✓ bom [0.01s]                                           │
+│   ✓ manifest [0.00s]                                      │
+│   ✓ variable-report [0.00s]                               │
+│   ✓ pinout [0.01s]                                        │
+│   ✓ power-tree [0.00s]                                    │
+│   ✓ stackup [0.00s]                                       │
+│   ✓ datasheets [0.00s]                                    │
+│   ✓ data-interface-layout [0.00s]                         │
+│                                                           │
+│ Warnings (2):                                             │
+│   • fp:MH_M2:MountingHole_2.2mm_M2|H1 has no silk outline │
+│   • No pickers for App.hole                               │
+│                                                           │
+│ Total: 0.31s                                              │
+╰───────────────────────────────────────────────────────────╯
+
+
+20:57:00.103  I  atopile.cli.build  Build successful! 🚀                                                                                                                                                                                        
+== /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb
+new board (no pre-build version); no net repair or diff
+ok   /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb
+ato_build: OK

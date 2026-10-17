@@ -1,0 +1,36 @@
+20:57:58.704  W  atopile.cli.motd  atopile 0.15.8 is the last CLI release and is in maintenance mode only. The CLI has been replaced by the app at app.atopile.io (atopile 0.16+). If you need the classic CLI a little longer, run ato auth log
+20:57:58.734  I  …model.build_queue  BuildQueue: Started                                                                                                                                                                                        
+20:57:58.739  I  …model.build_queue  Build 1006230e2d943350: starting worker - build=default, cwd=/private/var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.5aLGHW9FEp/proj                                                                  
+20:57:58.739  I  …model.build_queue  BuildQueue: Started 1006230e2d943350                                                                                                                                                                       
+
+20:57:59.149  E  …model.build_queue  BuildQueue: Build 1006230e2d943350 failed:                                                                                                                                                                 
+UnexpectedType in kicad.pcb.Layer field 'tenting' at 92:4: expected symbol, string, or number for enum                                                                                                                                          
+source:                         (front yes)                                                                                                                                                                                                     
+            ^^^^^^^^^^^                                                                                                                                                                                                                         
+
+╭─ Build Summary ────────────────────────────────────────────────────────────────────────────────────────────╮
+│ ✗ default  [1006230e2d943350]                                                                              │
+│                                                                                                            │
+│ Stages:                                                                                                    │
+│   ✓ Resolving dependencies [0.01s]                                                                         │
+│   ✓ Initializing build context [0.05s]                                                                     │
+│   ✓ Modify type graph [0.00s]                                                                              │
+│   ✓ Instantiate app [0.00s]                                                                                │
+│   ✓ Preparing build [0.00s]                                                                                │
+│   ✓ Verify instance graph [0.00s]                                                                          │
+│   ✓ Modify instance graph [0.00s]                                                                          │
+│   ✓ Verify electrical design [0.01s]                                                                       │
+│   ✗ Loading PCB [0.00s]                                                                                    │
+│                                                                                                            │
+│ Errors (1):                                                                                                │
+│   • UnexpectedType in kicad.pcb.Layer field 'tenting' at 92:4: expected symbol, string, or number for enum │
+│ source:                         (front yes)                                                                │
+│             ^^^^^^^^^^^                                                                                    │
+│                                                                                                            │
+│ Total: 0.18s                                                                                               │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+
+20:57:59.481  I  atopile.logging  Unfortunately errors ^^^ stopped the build. If you need a hand jump on Discord! https://discord.gg/CRe5xaDBr3 👋                                                                                              
+20:57:59.481  E  atopile.cli.build  Build failed! 1 of 1 targets failed                                                                                                                                                                         
+20:57:59.482  E  atopile.cli.build    - default                                                                                                                                                                                                 

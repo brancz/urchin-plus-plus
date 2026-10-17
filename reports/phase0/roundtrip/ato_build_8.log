@@ -1,0 +1,59 @@
+ok   kicad-cli        9.0.9
+ok   pcbnew           9.0.9
+20:57:34.325  I  …model.build_queue  BuildQueue: Started                                                                                                                                                                                        
+20:57:34.329  I  …model.build_queue  Build 223150d41d2971e0: starting worker - build=default, cwd=/Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj                                                                           
+20:57:34.330  I  …model.build_queue  BuildQueue: Started 223150d41d2971e0                                                                                                                                                                       
+
+20:57:34.944  I  …model.build_queue  BuildQueue: Build 223150d41d2971e0 completed with status BuildStatus.SUCCESS                                                                                                                               
+
+╭─ Build Summary ────────────────────────╮
+│ ✓ default  [223150d41d2971e0]          │
+│                                        │
+│ Stages:                                │
+│   ✓ Resolving dependencies [0.01s]     │
+│   ✓ Initializing build context [0.06s] │
+│   ✓ Modify type graph [0.00s]          │
+│   ✓ Instantiate app [0.01s]            │
+│   ✓ Preparing build [0.00s]            │
+│   ✓ Verify instance graph [0.00s]      │
+│   ✓ Modify instance graph [0.00s]      │
+│   ✓ Verify electrical design [0.01s]   │
+│   ✓ Loading PCB [0.03s]                │
+│   ✓ Picking parts [0.01s]              │
+│   ✓ Preparing nets [0.01s]             │
+│   ✓ Running post-solve checks [0.00s]  │
+│   ✓ Updating PCB [0.03s]               │
+│   ✓ Running post-pcb checks [0.00s]    │
+│   ✓ bom [0.01s]                        │
+│   ✓ manifest [0.00s]                   │
+│   ✓ variable-report [0.00s]            │
+│   ✓ pinout [0.01s]                     │
+│   ✓ power-tree [0.00s]                 │
+│   ✓ stackup [0.00s]                    │
+│   ✓ datasheets [0.00s]                 │
+│   ✓ data-interface-layout [0.00s]      │
+│                                        │
+│ Warnings (1):                          │
+│   • No pickers for App.hole            │
+│                                        │
+│ Total: 0.31s                           │
+╰────────────────────────────────────────╯
+
+
+20:57:34.976  I  atopile.cli.build  Build successful! 🚀                                                                                                                                                                                        
+== /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb
+renamed  via at line 1679: net 2 (MID) renamed to MIDPOINT, number kept
+renamed  segment at line 1703: net 2 (MID) renamed to MIDPOINT, number kept
+fix_stale_nets: 0 fixed, 2 renamed, 0 orphaned
+ok   /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb
+board_diff: /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb vs /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.YVhdaMYEeV//Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb (mode build)
+  before: {'footprint': 6, 'track': 2, 'arc': 0, 'via': 2, 'zone': 1, 'drawing': 1, 'field': 55}
+  after:  {'footprint': 6, 'track': 2, 'arc': 0, 'via': 2, 'zone': 1, 'drawing': 1, 'field': 55}
+  renamed net MID -> MIDPOINT
+  changed footprint c_mid pad_nets: {'1/0': 'MID', '2/1': 'GND'} -> {'1/0': 'MIDPOINT', '2/1': 'GND'}
+  changed footprint r_bot pad_nets: {'1/0': 'MID', '2/1': 'GND'} -> {'1/0': 'MIDPOINT', '2/1': 'GND'}
+  changed footprint r_top pad_nets: {'1/0': 'VCC', '2/1': 'MID'} -> {'1/0': 'VCC', '2/1': 'MIDPOINT'}
+  changed track     F.Cu (110.0, 105.43)->(110.0, 109.57) w=0.25 net: 'MID' -> 'MIDPOINT' (net rename)
+  changed via       via (103.0, 103.0) 3 d=0.3 w=0.6 F.Cu-B.Cu net: 'MID' -> 'MIDPOINT' (net rename)
+board_diff: OK
+ato_build: OK

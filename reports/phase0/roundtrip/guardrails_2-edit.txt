@@ -1,0 +1,8 @@
+limits: board/footprint format <= 20241229, symbol format <= 20241209
+ok   layouts/default/default.kicad_pcb
+ok   parts/C1525/C0402.kicad_mod
+ok   parts/C1525/CL05B104KO5NNNC.kicad_sym
+ok   parts/C25744/0402WGF1002TCE.kicad_sym
+ok   parts/C25744/R0402.kicad_mod
+ok   parts/MH_M2/MountingHole.kicad_sym
+ok   parts/MH_M2/MountingHole_2.2mm_M2.kicad_mod

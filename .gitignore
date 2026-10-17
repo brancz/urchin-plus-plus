@@ -1,1 +1,30 @@
+# Original Urchin checkout (read-only) and throwaway experiments
 reference/
+scratch/
+
+# Generated fabrication outputs; release builds are attached to git tags
+fab/
+
+# atopile build outputs (layouts/ is tracked, build/ is regenerated)
+build/
+.ato/
+
+# KiCad local state and temporary files
+*.kicad_prl
+*-backups/
+fp-info-cache
+*.lck
+_autosave-*
+*.kicad_pcb-bak
+\#auto_saved_files#
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# macOS
+.DS_Store
+
+# CI working directories
+ci-out/

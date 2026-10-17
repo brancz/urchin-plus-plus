@@ -1,0 +1,22 @@
+date_utc: 2026-10-17T18:58:00Z
+
+## atopile part/package servers (atopile 0.15.7 defaults)
+components.atopileapi.com: Host components.atopileapi.com not found: 3(NXDOMAIN)
+packages.atopileapi.com: Host packages.atopileapi.com not found: 3(NXDOMAIN)
+legacy.atopileapi.com: legacy.atopileapi.com has address 188.114.96.3
+
+## when the servers disappeared (upstream issue atopile/atopile#1829)
+components.atopileapi.com and packages.atopileapi.com are NXDOMAIN — all builds fail at part-picking
+created 2026-07-19T15:02:58Z, closed 2026-08-07T16:54:12Z
+Since ~2026-07-18 (between 23:00 UTC Jul 17 and 20:00 UTC Jul 18), the components API domain no longer resolves, which breaks part-picking in every ato build:
+
+## legacy endpoint used by 0.15.8+ (no login)
+GET https://legacy.atopileapi.com/v0/health -> HTTP 401
+GET https://legacy.atopileapi.com/v0/motd -> {"id":"soft-dep-2026-08","level":"warn","links":{"app":"https://app.atopile.io","docs_upgrade":"https://docs.atopile.io","pin_0158":"uv tool install 'atopile==0.15.8'  # or: pip install 'atopile==0.15.8'"},"message":"atopile 0.15.8 is the last CLI release and is in maintenance mode only. The CLI has been replaced by the app at app.atopile.io (atopile 0.16+). If you need the classic CLI a little longer, run ato auth login. See atopile.io/blog/atopile-v16 for details."}
+
+
+## atopile releases on PyPI (newest first)
+2026-09-12T00:11:14 0.15.9
+2026-08-07T16:44:52 0.15.8
+2026-08-07T16:21:55 0.12.6
+2026-04-23T19:26:55 0.15.7

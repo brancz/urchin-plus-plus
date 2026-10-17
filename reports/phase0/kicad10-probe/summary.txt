@@ -1,0 +1,7 @@
+date_utc: 2026-10-17T18:57:51Z
+kicad (edit/save): 10.0.7
+atopile: 0.15.7
+1 ato build (pinned atopile): exit 0, board format 20241229
+2 KiCad 10 pcbnew edit + save: exit 0, board format 20260206
+3 ato build (pinned atopile) on the KiCad 10 board: exit 1 -- UnexpectedType in kicad.pcb.Layer field 'tenting' at 92:4: expected symbol, string, or number for enum
+4 ato build (atopile 0.15.9) on the KiCad 10 board: exit 1 -- UnexpectedType in kicad.pcb.Layer field 'tenting' at 92:4: expected symbol, string, or number for enum

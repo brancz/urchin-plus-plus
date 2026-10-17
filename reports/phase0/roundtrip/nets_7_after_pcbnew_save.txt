@@ -1,0 +1,5 @@
+	(net 0 "")
+	(net 1 "VCC")
+	(net 2 "MID")
+	(net 3 "GND")
+	(net 4 "FOO")

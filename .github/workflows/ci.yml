@@ -1,0 +1,140 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hardware:
+    name: toolchain, round-trip, board checks
+    runs-on: ubuntu-24.04
+    container:
+      # Must equal KICAD_IMAGE in toolchain.env (scripts/checks/toolchain.sh checks it).
+      image: kicad/kicad:9.0.9@sha256:e638b79b0321f29395a5b783e94bb9f3c73303e8da15da27b8f5cb4b67a37729
+      options: --user root
+    env:
+      KICAD_PY: /usr/bin/python3
+      FREEROUTING_JAR: /opt/freerouting/freerouting.jar
+    steps:
+      - name: System packages
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends ca-certificates curl git unzip python3-pip
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # board history compares every pushed commit with its parent
+
+      - name: Load pinned versions
+        run: |
+          git config --global --add safe.directory '*'
+          grep -E '^[A-Z0-9_]+=' toolchain.env >> "$GITHUB_ENV"
+
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: ${{ env.UV_VERSION }}
+
+      - name: Install atopile (dependency tree from constraints/atopile.txt)
+        run: |
+          uv tool install "atopile==${ATOPILE_VERSION}" --python "${ATOPILE_PYTHON}" --constraints constraints/atopile.txt
+          uv tool dir --bin >> "$GITHUB_PATH"
+
+      - name: Install KiKit into KiCad's Python (dependency tree from constraints/kikit.txt)
+        run: |
+          "$KICAD_PY" -m pip install --break-system-packages -c constraints/kikit.txt "kikit==${KIKIT_VERSION}"
+
+      - name: Fetch Freerouting (checksum-verified)
+        run: |
+          mkdir -p "$(dirname "$FREEROUTING_JAR")"
+          curl -fsSL -o "$FREEROUTING_JAR" \
+            "https://github.com/freerouting/freerouting/releases/download/v${FREEROUTING_VERSION}/freerouting-${FREEROUTING_VERSION}.jar"
+          echo "${FREEROUTING_SHA256}  ${FREEROUTING_JAR}" | sha256sum -c -
+
+      - name: Toolchain versions
+        run: scripts/checks/toolchain.sh
+
+      - name: Round-trip (phase 0 toolchain proof)
+        run: scripts/roundtrip/run.sh ci-out/roundtrip ci-out/reports/roundtrip
+
+      - name: Guardrails on committed KiCad files
+        run: |
+          files="$(git ls-files '*.kicad_pcb' '*.kicad_mod' '*.kicad_sym')"
+          if [ -n "$files" ]; then
+            # shellcheck disable=SC2086
+            python3 scripts/checks/kicad_guardrails.py $files
+          else
+            echo "no KiCad files committed"
+          fi
+
+      - name: Board history (each pushed commit vs its parent)
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ "$EVENT" = pull_request ]; then
+            range="$PR_BASE..$GITHUB_SHA"
+          elif [ -n "$BEFORE" ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            range="$BEFORE..$GITHUB_SHA"
+          else
+            range="$(git rev-list --max-parents=0 "$GITHUB_SHA" | tail -1)..$GITHUB_SHA"
+          fi
+          scripts/checks/board_history.sh "$range"
+
+      - name: Hardware build
+        run: |
+          if [ -f hardware/ato.yaml ]; then
+            scripts/ato_build.sh hardware --frozen
+          else
+            echo "hardware/ has no atopile project yet (phase 2); nothing to build"
+          fi
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: reports
+          path: ci-out/reports
+          if-no-files-found: error
+
+  scripts-macos:
+    name: scripts parse with macOS bash 3.2 and Python 3.9
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Load pinned versions
+        run: grep -E '^[A-Z0-9_]+=' toolchain.env >> "$GITHUB_ENV"
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: ${{ env.UV_VERSION }}
+      - name: bash 3.2 syntax
+        run: |
+          /bin/bash --version | head -1
+          find scripts -name '*.sh' -print0 | xargs -0 -n1 /bin/bash -n
+      - name: Python 3.9 syntax (KiCad's Python on macOS)
+        run: uv run --no-project --python 3.9 python -m compileall -q scripts
+
+  dock:
+    name: dock CAD environment
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Load pinned versions
+        run: grep -E '^[A-Z0-9_]+=' toolchain.env >> "$GITHUB_ENV"
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: ${{ env.UV_VERSION }}
+      - name: Install locked dependencies
+        working-directory: dock
+        run: uv sync --locked
+      - name: Import build123d
+        working-directory: dock
+        run: uv run python -c "import build123d; print('build123d', build123d.__version__)"

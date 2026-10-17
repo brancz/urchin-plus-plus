@@ -1,0 +1,51 @@
+ok   kicad-cli        9.0.9
+ok   pcbnew           9.0.9
+20:57:30.277  I  …model.build_queue  BuildQueue: Started                                                                                                                                                                                        
+20:57:30.282  I  …model.build_queue  Build 2cf5ffc7888fd8ff: starting worker - build=default, cwd=/Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj                                                                           
+20:57:30.282  I  …model.build_queue  BuildQueue: Started 2cf5ffc7888fd8ff                                                                                                                                                                       
+
+20:57:30.895  I  …model.build_queue  BuildQueue: Build 2cf5ffc7888fd8ff completed with status BuildStatus.SUCCESS                                                                                                                               
+
+╭─ Build Summary ────────────────────────╮
+│ ✓ default  [2cf5ffc7888fd8ff]          │
+│                                        │
+│ Stages:                                │
+│   ✓ Resolving dependencies [0.01s]     │
+│   ✓ Initializing build context [0.06s] │
+│   ✓ Modify type graph [0.00s]          │
+│   ✓ Instantiate app [0.01s]            │
+│   ✓ Preparing build [0.00s]            │
+│   ✓ Verify instance graph [0.00s]      │
+│   ✓ Modify instance graph [0.00s]      │
+│   ✓ Verify electrical design [0.01s]   │
+│   ✓ Loading PCB [0.03s]                │
+│   ✓ Picking parts [0.01s]              │
+│   ✓ Preparing nets [0.01s]             │
+│   ✓ Running post-solve checks [0.00s]  │
+│   ✓ Updating PCB [0.03s]               │
+│   ✓ Running post-pcb checks [0.00s]    │
+│   ✓ bom [0.01s]                        │
+│   ✓ manifest [0.00s]                   │
+│   ✓ variable-report [0.00s]            │
+│   ✓ pinout [0.01s]                     │
+│   ✓ power-tree [0.00s]                 │
+│   ✓ stackup [0.00s]                    │
+│   ✓ datasheets [0.00s]                 │
+│   ✓ data-interface-layout [0.00s]      │
+│                                        │
+│ Warnings (1):                          │
+│   • No pickers for App.hole            │
+│                                        │
+│ Total: 0.32s                           │
+╰────────────────────────────────────────╯
+
+
+20:57:30.931  I  atopile.cli.build  Build successful! 🚀                                                                                                                                                                                        
+== /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb
+fix_stale_nets: 0 fixed, 0 renamed, 0 orphaned
+ok   /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb
+board_diff: /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb vs /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.6ZTzMNXMZL//Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb (mode build)
+  before: {'footprint': 6, 'track': 2, 'arc': 0, 'via': 2, 'zone': 1, 'drawing': 1, 'field': 55}
+  after:  {'footprint': 6, 'track': 2, 'arc': 0, 'via': 2, 'zone': 1, 'drawing': 1, 'field': 55}
+board_diff: OK
+ato_build: OK

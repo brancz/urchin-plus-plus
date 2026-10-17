@@ -1,0 +1,92 @@
+{
+  "board": "/Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb",
+  "baseline": "/var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.YVhdaMYEeV//Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb",
+  "mode": "build",
+  "strict": false,
+  "allow": [],
+  "counts_before": {
+    "footprint": 6,
+    "track": 2,
+    "arc": 0,
+    "via": 2,
+    "zone": 1,
+    "drawing": 1,
+    "field": 55
+  },
+  "counts_after": {
+    "footprint": 6,
+    "track": 2,
+    "arc": 0,
+    "via": 2,
+    "zone": 1,
+    "drawing": 1,
+    "field": 55
+  },
+  "diff": {
+    "removed": [],
+    "added": [],
+    "changed": [
+      {
+        "kind": "footprint",
+        "key": "c_mid",
+        "attr": "pad_nets",
+        "old": {
+          "1/0": "MID",
+          "2/1": "GND"
+        },
+        "new": {
+          "1/0": "MIDPOINT",
+          "2/1": "GND"
+        }
+      },
+      {
+        "kind": "footprint",
+        "key": "r_bot",
+        "attr": "pad_nets",
+        "old": {
+          "1/0": "MID",
+          "2/1": "GND"
+        },
+        "new": {
+          "1/0": "MIDPOINT",
+          "2/1": "GND"
+        }
+      },
+      {
+        "kind": "footprint",
+        "key": "r_top",
+        "attr": "pad_nets",
+        "old": {
+          "1/0": "VCC",
+          "2/1": "MID"
+        },
+        "new": {
+          "1/0": "VCC",
+          "2/1": "MIDPOINT"
+        }
+      },
+      {
+        "kind": "track",
+        "key": "F.Cu (110.0, 105.43)->(110.0, 109.57) w=0.25",
+        "attr": "net",
+        "old": "MID",
+        "new": "MIDPOINT",
+        "rename": true
+      },
+      {
+        "kind": "via",
+        "key": "via (103.0, 103.0) 3 d=0.3 w=0.6 F.Cu-B.Cu",
+        "attr": "net",
+        "old": "MID",
+        "new": "MIDPOINT",
+        "rename": true
+      }
+    ],
+    "renamed_nets": {
+      "MID": "MIDPOINT"
+    }
+  },
+  "failures": [],
+  "normalized_text_diff": [],
+  "ok": true
+}

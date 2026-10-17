@@ -1,0 +1,34 @@
+{
+  "board": "/Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb",
+  "baseline": "/var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.6ZTzMNXMZL//Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb",
+  "mode": "build",
+  "strict": false,
+  "allow": [],
+  "counts_before": {
+    "footprint": 6,
+    "track": 2,
+    "arc": 0,
+    "via": 2,
+    "zone": 1,
+    "drawing": 1,
+    "field": 55
+  },
+  "counts_after": {
+    "footprint": 6,
+    "track": 2,
+    "arc": 0,
+    "via": 2,
+    "zone": 1,
+    "drawing": 1,
+    "field": 55
+  },
+  "diff": {
+    "removed": [],
+    "added": [],
+    "changed": [],
+    "renamed_nets": {}
+  },
+  "failures": [],
+  "normalized_text_diff": [],
+  "ok": true
+}

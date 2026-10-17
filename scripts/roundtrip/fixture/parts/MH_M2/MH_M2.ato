@@ -1,0 +1,8 @@
+#pragma experiment("TRAITS")
+import is_atomic_part
+import has_designator_prefix
+
+component MH_M2_package:
+    """Non-plated M2 mounting hole (mechanical, not assembled)."""
+    trait is_atomic_part<manufacturer="none", partnumber="MountingHole_2.2mm_M2", footprint="MountingHole_2.2mm_M2.kicad_mod", symbol="MountingHole.kicad_sym">
+    trait has_designator_prefix<prefix="H">

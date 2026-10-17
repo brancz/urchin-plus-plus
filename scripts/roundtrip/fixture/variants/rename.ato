@@ -1,0 +1,45 @@
+#pragma experiment("TRAITS")
+#pragma experiment("INSTANCE_TRAITS")
+# Phase 0 round-trip fixture (scripts/roundtrip/run.sh): step 8, net MID renamed to MIDPOINT.
+
+import has_net_name_suggestion
+import has_designator
+from "parts/C25744/C25744.ato" import C25744_package
+from "parts/C1525/C1525.ato" import C1525_package
+from "parts/MH_M2/MH_M2.ato" import MH_M2_package
+
+module App:
+    signal vcc
+    signal gnd
+    signal mid
+    trait vcc has_net_name_suggestion<name="VCC", level="EXPECTED">
+    trait gnd has_net_name_suggestion<name="GND", level="EXPECTED">
+    trait mid has_net_name_suggestion<name="MIDPOINT", level="EXPECTED">
+
+    r_top = new C25744_package
+    r_bot = new C25744_package
+    c_dec = new C1525_package
+
+    # Mechanical parts are atopile components too: atopile deletes every footprint it doesn't own.
+    hole = new MH_M2_package
+    trait hole has_designator<designator="H1">
+
+    vcc ~ r_top.1
+    r_top.2 ~ mid
+    mid ~ r_bot.1
+    r_bot.2 ~ gnd
+
+    vcc ~ c_dec.1
+    c_dec.2 ~ gnd
+
+    # step 5: a third pad on MID and on GND (atopile re-creates both nets)
+    c_mid = new C1525_package
+    mid ~ c_mid.1
+    c_mid.2 ~ gnd
+
+    # step 7: GND grows again and a new net appears (net numbers shift)
+    c_foo = new C1525_package
+    signal foo
+    trait foo has_net_name_suggestion<name="FOO", level="EXPECTED">
+    foo ~ c_foo.1
+    c_foo.2 ~ gnd

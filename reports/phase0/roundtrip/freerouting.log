@@ -1,0 +1,23 @@
+2026-10-17 20:57:41.728 INFO   Freerouting v2.5.0 (build-date: 2026-10-05)
+WARNING: Final field userProfileSettings in class app.freerouting.settings.GlobalSettings has been mutated reflectively by class com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$2 in unnamed module @78186a70 (file:/Users/brancz/tools/freerouting.jar)
+WARNING: Use --enable-final-field-mutation=ALL-UNNAMED to avoid a warning
+WARNING: Mutating final fields will be blocked in a future release unless final field mutation is enabled
+2026-10-17 20:57:41.983 INFO   Hardware: 18 CPU cores, 544 CPU score, 16384 MB RAM
+2026-10-17 20:57:43.035 INFO   Opening '/Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/freerouting/board.dsn'...
+2026-10-17 20:57:43.365 INFO   [910FA4\341A58] Loading board file 'board.dsn'...
+2026-10-17 20:57:43.376 INFO   Layer 'F.Cu' contains a power plane / large copper pour covering >=30% of the board; associated net(s) configured for plane routing.
+2026-10-17 20:57:43.376 INFO   Layer 'B.Cu' contains a power plane / large copper pour covering >=30% of the board; associated net(s) configured for plane routing.
+2026-10-17 20:57:48.530 INFO   [910FA4\341A58] Starting routing of 'board' on 17 threads...
+2026-10-17 20:57:48.547 INFO   [910FA4\341A58] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=17.
+2026-10-17 20:57:48.561 INFO   [910FA4\341A58] Fanout stage started on board 'b7cb3f32990a89aad20ddeaaa1ce4e20' with 9 of 10 SMD pins needing fanout (1 already connected, 0 netless).
+2026-10-17 20:57:48.649 INFO   [910FA4\341A58] Fanout pass #1 on board '8df9569b612de7fe383bf50f526a2860' completed in 0.08 seconds with 5 SMD pins fanouted, 0 not routed, 0 insert errors, +2 extra vias (0 SMD pins still to check in pass, ripup costs=100).
+2026-10-17 20:57:48.653 INFO   [910FA4\341A58] Fanout pass #2 on board '8df9569b612de7fe383bf50f526a2860' completed in 0.00 seconds with 0 SMD pins fanouted, 0 not routed, 0 insert errors, +0 extra vias (0 SMD pins still to check in pass, ripup costs=200).
+2026-10-17 20:57:48.654 INFO   [910FA4\341A58] Fanout stage completed: started with 10 total SMD pins, completed in 0.09 seconds, escaped pins: 9/10 (90.0%), using 0.09 total CPU seconds, 0.02 GB total allocated, and 58.4 MB peak heap usage.
+2026-10-17 20:57:48.658 INFO   [910FA4\341A58] Auto-routing stage started on board '8df9569b612de7fe383bf50f526a2860' with baseline score 1000.00 for 0 unrouted items.
+2026-10-17 20:57:48.667 INFO   [910FA4\341A58] Auto-routing pass #1 on board '8df9569b612de7fe383bf50f526a2860' was completed in 0.00 seconds with score 1000.00 (0 unrouted and 0 violations).
+2026-10-17 20:57:48.674 INFO   [910FA4\341A58] Auto-routing stage completed: started with 4 unrouted nets, completed in 0.14 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 0.00 total CPU seconds, 0.00 GB total allocated, and 0.0 MB peak heap usage.
+2026-10-17 20:57:48.780 INFO   [910FA4\341A58] Starting optimization on 17 threads...
+2026-10-17 20:57:48.784 INFO   [910FA4\341A58] Skipping optimization stage: the initial optimizer score (1000.00) is already at or near theoretical maximum (995.00).
+2026-10-17 20:57:48.786 INFO   [910FA4\341A58] Optimization was completed in 0.01 seconds with the score of 1000.00 (0 unrouted and 0 violations).
+2026-10-17 20:57:48.792 INFO   Saving '/Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/freerouting/board.ses'...
+2026-10-17 20:57:48.795 INFO   Saved 1976 bytes to '/Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/freerouting/board.ses'.

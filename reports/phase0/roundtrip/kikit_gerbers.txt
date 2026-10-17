@@ -1,0 +1,16 @@
+gerber/default-SilkBottom.gbo
+gerber/default.gbrjob
+gerber/default-CuBottom.gbl
+gerber/default-MaskBottom.gbs
+gerber/default-EdgeCuts.gm1
+gerber/default-NPTH-drl_map.gbr
+gerber/default-SilkTop.gto
+gerber/default-PasteTop.gtp
+gerber/default-PasteBottom.gbp
+gerber/default-PTH.drl
+gerber/drill_report.rpt
+gerber/default-MaskTop.gts
+gerber/default-CmtUser.gbr
+gerber/default-PTH-drl_map.gbr
+gerber/default-CuTop.gtl
+gerber/default-NPTH.drl
