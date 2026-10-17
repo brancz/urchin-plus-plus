@@ -12,7 +12,8 @@
 #     Board-Diff-Allow: track:*
 #     Board-Diff-Allow: footprint:led_old
 #
-# A deleted board needs "Board-Diff-Allow: board:PATH".
+# A deleted board needs "Board-Diff-Allow: board:PATH". Boards under reports/ are
+# evidence (e.g. a KiCad 10-saved board) and are skipped.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -61,7 +62,7 @@ while IFS= read -r c; do
       status=1
     fi
     grep -vE "$NOISE" "$err" >&2 || true
-  done < <(git diff --name-status -M "$parent" "$c" -- '*.kicad_pcb')
+  done < <(git diff --name-status -M "$parent" "$c" -- '*.kicad_pcb' ':!reports/')
 done <<<"$commits"
 
 echo "board_history: $checked board version(s) checked in $RANGE"

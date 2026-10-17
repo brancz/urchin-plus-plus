@@ -65,9 +65,9 @@ jobs:
       - name: Round-trip (phase 0 toolchain proof)
         run: scripts/roundtrip/run.sh ci-out/roundtrip ci-out/reports/roundtrip
 
-      - name: Guardrails on committed KiCad files
+      - name: Guardrails on committed KiCad files (reports/ holds evidence, e.g. a KiCad 10 board)
         run: |
-          files="$(git ls-files '*.kicad_pcb' '*.kicad_mod' '*.kicad_sym')"
+          files="$(git ls-files -- '*.kicad_pcb' '*.kicad_mod' '*.kicad_sym' ':!reports/')"
           if [ -n "$files" ]; then
             # shellcheck disable=SC2086
             python3 scripts/checks/kicad_guardrails.py $files
