@@ -1,21 +1,24 @@
 #!/usr/bin/env python3
-"""Re-point tracks, arcs, vias and zones at the right net after `ato build`.
+"""Put tracks, arcs, vias and zones back on their nets after `ato build`.
 
     python3 scripts/fix_stale_nets.py BOARD --against BOARD_BEFORE_BUILD
     python3 scripts/fix_stale_nets.py BOARD --rev HEAD          # only if nothing changed since HEAD
 
-atopile 0.15.7 re-creates a net under a new number when fewer than 80% of its
-pads already carry the net's name (e.g. a third pad added to a two-pad net),
-but leaves copper on the old number (reports/phase0/). Net numbers only mean
-something relative to the file they came from, so the baseline must be the
-board exactly as it was before this build; scripts/ato_build.sh snapshots it.
+When atopile 0.15.7 re-creates a net under a new number (fewer than 80% of its
+pads already carried the name, e.g. a third pad on a two-pad net), it leaves the
+copper on that net behind: on macOS on the old, now meaningless number, on Linux
+on net 0 (reports/phase0/). KiCad recomputes the net of copper touching a pad on
+load, but not of free copper (stitching vias, stubs) or zones.
 
-For every segment, arc, via and zone whose number names a different net now:
-  - its old net still exists under another number -> renumber to that
-  - its old net is gone and its number now carries a name that didn't exist
-    before -> atopile renamed the net in place; keep the number
+Copper keeps its UUID through a build, so each segment, arc, via and zone is
+matched to itself in the board as it was before this build (the baseline;
+scripts/ato_build.sh snapshots it), and put back on the net it had there:
+  - that net still exists (maybe renumbered)  -> its current number
+  - that net is gone, and the item's number now carries a name that didn't
+    exist before -> atopile renamed the net in place; keep the number
   - otherwise -> net 0, listed as orphaned (board_diff then fails on it)
-Zones also get their (net_name ...) rewritten, since KiCad resolves zones by name.
+Copper not in the baseline is left alone. Zones also get (net_name ...)
+rewritten, since KiCad resolves zones by name.
 
 Edits the file in place, touching only the lines it reports. Plain python3, 3.9+.
 """
@@ -34,11 +37,35 @@ ROUTED = ("segment", "arc", "via", "zone")
 BLOCK_START = re.compile(r"^\t\((%s)\s*$" % "|".join(ROUTED))
 NET_LINE = re.compile(r"^(\t\t\(net )(\d+)(\)\s*)$")
 NET_NAME_LINE = re.compile(r'^(\t\t\(net_name )"((?:[^"\\]|\\.)*)"(\)\s*)$')
+UUID_LINE = re.compile(r'^\t\t\(uuid "([^"]+)"\)\s*$')
 
 
 def net_table(text):
     root = sexp.parse(text)[0]
     return {int(n[1]): n[2] for n in sexp.children(root, "net")}
+
+
+def blocks(lines):
+    """Top-level copper blocks: kind, line of the (net N), its number, (net_name) line, uuid."""
+    out, cur = [], None
+    for i, line in enumerate(lines):
+        m = BLOCK_START.match(line)
+        if m:
+            cur = {"kind": m.group(1), "start": i + 1, "net_line": None, "net": None, "name_line": None, "uuid": None}
+            continue
+        if cur is None:
+            continue
+        if line == "\t)":
+            out.append(cur)
+            cur = None
+            continue
+        if (m := NET_LINE.match(line)) and cur["net_line"] is None:
+            cur["net_line"], cur["net"] = i, int(m.group(2))
+        elif (m := NET_NAME_LINE.match(line)) and cur["name_line"] is None:
+            cur["name_line"] = i
+        elif (m := UUID_LINE.match(line)) and cur["uuid"] is None:
+            cur["uuid"] = m.group(1)
+    return out
 
 
 def git_show(board, rev):
@@ -81,46 +108,42 @@ def main():
     old, new = net_table(old_text), net_table(text)
     new_by_name = {name: num for num, name in new.items()}
     old_names = set(old.values())
+    old_lines = old_text.split("\n")
+    was = {}  # uuid -> net name before the build
+    for b in blocks(old_lines):
+        if b["uuid"] and b["net"] is not None:
+            name = old.get(b["net"], "")
+            if not name and b["name_line"] is not None:
+                name = NET_NAME_LINE.match(old_lines[b["name_line"]]).group(2)
+            was[b["uuid"]] = name
 
     lines = text.split("\n")
-    block, block_target = None, None
     fixed, renamed, orphaned = [], [], []
-    for i, line in enumerate(lines):
-        m = BLOCK_START.match(line)
-        if m:
-            block, block_target = (m.group(1), i + 1), None
-            continue
-        if line == "\t)":
-            block = None
-            continue
-        if not block:
-            continue
-        m = NET_LINE.match(line)
-        if m:
-            num = int(m.group(2))
-            old_name = old.get(num)
-            if num == 0 or old_name is None or new.get(num) == old_name:
-                block_target = num if block[0] == "zone" else None
-                continue
-            entry = "%s at line %d: net %d (%s)" % (block[0], block[1], num, old_name)
-            if old_name in new_by_name:
-                target = new_by_name[old_name]
-                fixed.append("%s -> %d" % (entry, target))
-            elif num in new and new[num] not in old_names:
-                target = num
-                renamed.append("%s renamed to %s, number kept" % (entry, new[num]))
-            else:
-                target = 0
-                orphaned.append("%s -> 0 (net no longer exists)" % entry)
-            lines[i] = "%s%d%s" % (m.group(1), target, m.group(3))
-            block_target = target
-            continue
-        m = NET_NAME_LINE.match(line)
-        if m and block[0] == "zone" and block_target is not None:
-            want = new.get(block_target, "") if block_target else ""
-            if m.group(2) != quote(want):
-                lines[i] = '%s"%s"%s' % (m.group(1), quote(want), m.group(3))
-                fixed.append("zone at line %d: net_name %s -> %s" % (block[1], m.group(2), want))
+    for b in blocks(lines):
+        if b["net_line"] is None or b["uuid"] not in was:
+            continue  # no net (graphic-only) or copper that didn't exist before the build
+        name, num = was[b["uuid"]], b["net"]
+        where = "%s at line %d (%s)" % (b["kind"], b["start"], b["uuid"][:8])
+        if not name:
+            continue  # had no net before; nothing to restore
+        if name in new_by_name:
+            target = new_by_name[name]
+            if target != num:
+                fixed.append("%s: net %d -> %d (%s)" % (where, num, target, name))
+        elif num and new.get(num) and new[num] not in old_names:
+            target = num
+            renamed.append("%s: net %s renamed to %s, number %d kept" % (where, name, new[num], num))
+        else:
+            target = 0
+            orphaned.append("%s: net %s no longer exists -> 0" % (where, name))
+        m = NET_LINE.match(lines[b["net_line"]])
+        lines[b["net_line"]] = "%s%d%s" % (m.group(1), target, m.group(3))
+        if b["kind"] == "zone" and b["name_line"] is not None:
+            m = NET_NAME_LINE.match(lines[b["name_line"]])
+            want = quote(new.get(target, "") if target else "")
+            if m.group(2) != want:
+                lines[b["name_line"]] = '%s"%s"%s' % (m.group(1), want, m.group(3))
+                fixed.append("%s: net_name %s -> %s" % (where, m.group(2), want))
 
     if fixed or renamed or orphaned:
         Path(args.board).write_text("\n".join(lines), encoding="utf-8")
