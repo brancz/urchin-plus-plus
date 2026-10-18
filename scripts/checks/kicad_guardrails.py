@@ -91,7 +91,7 @@ def footprint_problems(fp, where):
         h = sexp.head(c)
         if h == "pad":
             problems += schema_problems(c, "pad", "%s pad %s" % (where, c[1]))
-        elif h in ("property", "fp_text"):
+        elif h == "property" or (h == "fp_text" and not (len(c) > 2 and c[2] in DUPLICATE_REF_TEXTS)):
             problems += schema_problems(c, h, "%s %s %s" % (where, h, c[1]))
     return problems + atopile_collisions(fp, where)
 

@@ -1,0 +1,11 @@
+{
+  "board": "scratch/preview/left.kicad_pcb",
+  "half": "left",
+  "checked": {
+    "footprints": 27,
+    "holes_and_pads": 131,
+    "edges": 29
+  },
+  "problems": [],
+  "max_deviation_nm": 0
+}
