@@ -9,7 +9,7 @@ component C431540_package:
     trait has_part_picked::by_supplier<supplier_id="lcsc", supplier_partno="C431540", manufacturer="SHOU HAN", partno="MSK12C02">
     trait has_designator_prefix<prefix="SW">
 
-    pin 1
-    pin 2
-    pin 3
-    pin 4
+    signal COM ~ pin 2
+    signal SHELL ~ pin 4
+    signal T1 ~ pin 1
+    signal T3 ~ pin 3

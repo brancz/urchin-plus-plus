@@ -10,40 +10,48 @@
     "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
   ],
   "fixups_source": null,
+  "pin_names": {
+    "1": "IO1",
+    "6": "IO1",
+    "2": "GND",
+    "3": "IO2",
+    "4": "IO2",
+    "5": "VBUS"
+  },
   "model": "SOT-23-6_L2.9-W1.6-H1.5-LS2.8-P0.95.step",
   "pins": [
     {
-      "pin": "1",
-      "name": "1",
-      "signal": null
-    },
-    {
       "pin": "2",
-      "name": "2",
-      "signal": null
+      "name": "GND",
+      "signal": "GND"
     },
     {
-      "pin": "3",
-      "name": "3",
-      "signal": null
-    },
-    {
-      "pin": "4",
-      "name": "4",
-      "signal": null
-    },
-    {
-      "pin": "5",
-      "name": "5",
-      "signal": null
+      "pin": "1",
+      "name": "IO1",
+      "signal": "IO1"
     },
     {
       "pin": "6",
-      "name": "6",
-      "signal": null
+      "name": "IO1",
+      "signal": "IO1"
+    },
+    {
+      "pin": "3",
+      "name": "IO2",
+      "signal": "IO2"
+    },
+    {
+      "pin": "4",
+      "name": "IO2",
+      "signal": "IO2"
+    },
+    {
+      "pin": "5",
+      "name": "VBUS",
+      "signal": "VBUS"
     }
   ],
-  "fetched_utc": "2026-10-18T11:15:53Z",
+  "fetched_utc": "2026-10-18T11:25:58Z",
   "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
   "kicad_cli": "9.0.9"
 }

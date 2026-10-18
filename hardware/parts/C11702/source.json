@@ -10,6 +10,7 @@
     "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
   ],
   "fixups_source": null,
+  "pin_names": null,
   "model": "R0402_L1.0-W0.5-H0.4.step",
   "pins": [
     {
@@ -23,7 +24,7 @@
       "signal": null
     }
   ],
-  "fetched_utc": "2026-10-18T11:16:08Z",
+  "fetched_utc": "2026-10-18T11:26:13Z",
   "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
   "kicad_cli": "9.0.9"
 }

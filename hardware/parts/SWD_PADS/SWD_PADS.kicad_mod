@@ -1,0 +1,169 @@
+(footprint "SWD_PADS"
+  (version 20241229)
+  (generator "urchin++ footprint_to_bottom")
+  (layer "B.Cu")
+  (property "Reference" "TP**"
+    (at 0 0 0)
+    (layer "B.SilkS")
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15)
+      )
+      (justify mirror)
+    )
+  )
+  (property "Value" "SWD_PADS"
+    (at 0 0 0)
+    (layer "B.Fab")
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15)
+      )
+      (justify mirror)
+    )
+  )
+  (property "Datasheet" ""
+    (at 0 0 0)
+    (layer "B.Fab")
+    (hide yes)
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15)
+      )
+      (justify mirror)
+    )
+  )
+  (property "Description" ""
+    (at 0 0 0)
+    (layer "B.Fab")
+    (hide yes)
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15)
+      )
+      (justify mirror)
+    )
+  )
+  (attr smd exclude_from_pos_files exclude_from_bom)
+  (fp_line
+    (start 6.33 1.25)
+    (end 6.33 -1.25)
+    (stroke
+      (width 0.05)
+      (type default)
+    )
+    (layer "B.CrtYd")
+  )
+  (fp_line
+    (start 6.33 -1.25)
+    (end -6.33 -1.25)
+    (stroke
+      (width 0.05)
+      (type default)
+    )
+    (layer "B.CrtYd")
+  )
+  (fp_line
+    (start -6.33 1.25)
+    (end 6.33 1.25)
+    (stroke
+      (width 0.05)
+      (type default)
+    )
+    (layer "B.CrtYd")
+  )
+  (fp_line
+    (start -6.33 -1.25)
+    (end -6.33 1.25)
+    (stroke
+      (width 0.05)
+      (type default)
+    )
+    (layer "B.CrtYd")
+  )
+  (fp_text user "IO"
+    (at -2.54 -1.6 0)
+    (layer "B.SilkS")
+    (effects
+      (font
+        (size 0.8 0.8)
+        (thickness 0.12)
+      )
+      (justify mirror)
+    )
+  )
+  (fp_text user "RS"
+    (at 2.54 -1.6 0)
+    (layer "B.SilkS")
+    (effects
+      (font
+        (size 0.8 0.8)
+        (thickness 0.12)
+      )
+      (justify mirror)
+    )
+  )
+  (fp_text user "CK"
+    (at 0 -1.6 0)
+    (layer "B.SilkS")
+    (effects
+      (font
+        (size 0.8 0.8)
+        (thickness 0.12)
+      )
+      (justify mirror)
+    )
+  )
+  (fp_text user "V"
+    (at -5.08 -1.6 0)
+    (layer "B.SilkS")
+    (effects
+      (font
+        (size 0.8 0.8)
+        (thickness 0.12)
+      )
+      (justify mirror)
+    )
+  )
+  (fp_text user "G"
+    (at 5.08 -1.6 0)
+    (layer "B.SilkS")
+    (effects
+      (font
+        (size 0.8 0.8)
+        (thickness 0.12)
+      )
+      (justify mirror)
+    )
+  )
+  (pad "1" smd circle
+    (at -5.08 0 180)
+    (size 1.5 1.5)
+    (layers "B.Cu" "B.Mask")
+  )
+  (pad "2" smd circle
+    (at -2.54 0 180)
+    (size 1.5 1.5)
+    (layers "B.Cu" "B.Mask")
+  )
+  (pad "3" smd circle
+    (at 0 0 180)
+    (size 1.5 1.5)
+    (layers "B.Cu" "B.Mask")
+  )
+  (pad "4" smd circle
+    (at 2.54 0 180)
+    (size 1.5 1.5)
+    (layers "B.Cu" "B.Mask")
+  )
+  (pad "5" smd circle
+    (at 5.08 0 180)
+    (size 1.5 1.5)
+    (layers "B.Cu" "B.Mask")
+  )
+  (embedded_fonts no)
+)

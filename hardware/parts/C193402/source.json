@@ -10,6 +10,10 @@
     "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
   ],
   "fixups_source": null,
+  "pin_names": {
+    "1": "K",
+    "2": "A"
+  },
   "model": "SOD-123FL_L2.8-W1.8-H1.1-LS3.6.step",
   "pins": [
     {
@@ -19,11 +23,11 @@
     },
     {
       "pin": "1",
-      "name": "C",
-      "signal": "C"
+      "name": "K",
+      "signal": "K"
     }
   ],
-  "fetched_utc": "2026-10-18T11:15:57Z",
+  "fetched_utc": "2026-10-18T11:26:01Z",
   "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
   "kicad_cli": "9.0.9"
 }

@@ -10,4 +10,4 @@ component C193402_package:
     trait has_designator_prefix<prefix="D">
 
     signal A ~ pin 2
-    signal C ~ pin 1
+    signal K ~ pin 1

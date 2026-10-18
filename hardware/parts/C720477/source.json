@@ -10,20 +10,24 @@
     "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
   ],
   "fixups_source": null,
+  "pin_names": {
+    "1": "A",
+    "2": "B"
+  },
   "model": "SW-SMD_L3.9-W2.9-H2.0-LS4.8.step",
   "pins": [
     {
       "pin": "1",
-      "name": "1",
-      "signal": null
+      "name": "A",
+      "signal": "A"
     },
     {
       "pin": "2",
-      "name": "2",
-      "signal": null
+      "name": "B",
+      "signal": "B"
     }
   ],
-  "fetched_utc": "2026-10-18T11:16:00Z",
+  "fetched_utc": "2026-10-18T11:26:04Z",
   "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
   "kicad_cli": "9.0.9"
 }

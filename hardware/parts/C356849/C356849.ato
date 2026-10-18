@@ -9,30 +9,36 @@ component C356849_package:
     trait has_part_picked::by_supplier<supplier_id="lcsc", supplier_partno="C356849", manufacturer="EBYTE", partno="E73-2G4M08S1C">
     trait has_designator_prefix<prefix="U">
 
-    signal AI0 ~ pin 7
-    signal AI2 ~ pin 18
-    signal AI3 ~ pin 15
-    signal AI4 ~ pin 4
-    signal AI5 ~ pin 8
-    signal AI6 ~ pin 10
-    signal AI7 ~ pin 9
-    signal Dpos ~ pin 31
-    signal Dneg ~ pin 29
-    signal DCH ~ pin 25
+    signal DCCH ~ pin 25
+    signal DN ~ pin 29
+    signal DP ~ pin 31
     signal GND ~ pin 5
     GND ~ pin 21
     GND ~ pin 24
-    signal NF1 ~ pin 41
-    signal NF2 ~ pin 43
+    signal P0_00 ~ pin 11
+    signal P0_01 ~ pin 13
+    signal P0_02 ~ pin 7
     signal P0_03 ~ pin 3
+    signal P0_04 ~ pin 18
+    signal P0_05 ~ pin 15
     signal P0_06 ~ pin 14
     signal P0_07 ~ pin 22
     signal P0_08 ~ pin 16
+    signal P0_09 ~ pin 41
+    signal P0_10 ~ pin 43
+    signal P0_12 ~ pin 20
     signal P0_13 ~ pin 33
+    signal P0_15 ~ pin 28
+    signal P0_17 ~ pin 30
+    signal P0_18 ~ pin 26
     signal P0_20 ~ pin 32
     signal P0_22 ~ pin 34
     signal P0_24 ~ pin 35
     signal P0_26 ~ pin 12
+    signal P0_28 ~ pin 4
+    signal P0_29 ~ pin 8
+    signal P0_30 ~ pin 10
+    signal P0_31 ~ pin 9
     signal P1_00 ~ pin 36
     signal P1_02 ~ pin 38
     signal P1_04 ~ pin 40
@@ -41,14 +47,8 @@ component C356849_package:
     signal P1_10 ~ pin 2
     signal P1_11 ~ pin 1
     signal P1_13 ~ pin 6
-    signal P12 ~ pin 20
-    signal P15 ~ pin 28
-    signal P17 ~ pin 30
-    signal RST ~ pin 26
-    signal SWC ~ pin 39
-    signal SWD ~ pin 37
-    signal VBS ~ pin 27
-    signal VCC ~ pin 19
-    signal VDH ~ pin 23
-    signal XL1 ~ pin 11
-    signal XL2 ~ pin 13
+    signal SWDCLK ~ pin 39
+    signal SWDIO ~ pin 37
+    signal VBUS ~ pin 27
+    signal VDD ~ pin 19
+    signal VDDH ~ pin 23

@@ -10,57 +10,67 @@
     "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
   ],
   "fixups_source": null,
+  "pin_names": {
+    "1": "P1_11",
+    "2": "P1_10",
+    "3": "P0_03",
+    "4": "P0_28",
+    "5": "GND",
+    "6": "P1_13",
+    "7": "P0_02",
+    "8": "P0_29",
+    "9": "P0_31",
+    "10": "P0_30",
+    "11": "P0_00",
+    "12": "P0_26",
+    "13": "P0_01",
+    "14": "P0_06",
+    "15": "P0_05",
+    "16": "P0_08",
+    "17": "P1_09",
+    "18": "P0_04",
+    "19": "VDD",
+    "20": "P0_12",
+    "21": "GND",
+    "22": "P0_07",
+    "23": "VDDH",
+    "24": "GND",
+    "25": "DCCH",
+    "26": "P0_18",
+    "27": "VBUS",
+    "28": "P0_15",
+    "29": "DN",
+    "30": "P0_17",
+    "31": "DP",
+    "32": "P0_20",
+    "33": "P0_13",
+    "34": "P0_22",
+    "35": "P0_24",
+    "36": "P1_00",
+    "37": "SWDIO",
+    "38": "P1_02",
+    "39": "SWDCLK",
+    "40": "P1_04",
+    "41": "P0_09",
+    "42": "P1_06",
+    "43": "P0_10"
+  },
   "model": "WIRELM-SMD_L18.0-W13.0-H3.0-E73-2G4M08S1C.step",
   "pins": [
     {
-      "pin": "7",
-      "name": "AI0",
-      "signal": "AI0"
-    },
-    {
-      "pin": "18",
-      "name": "AI2",
-      "signal": "AI2"
-    },
-    {
-      "pin": "15",
-      "name": "AI3",
-      "signal": "AI3"
-    },
-    {
-      "pin": "4",
-      "name": "AI4",
-      "signal": "AI4"
-    },
-    {
-      "pin": "8",
-      "name": "AI5",
-      "signal": "AI5"
-    },
-    {
-      "pin": "10",
-      "name": "AI6",
-      "signal": "AI6"
-    },
-    {
-      "pin": "9",
-      "name": "AI7",
-      "signal": "AI7"
-    },
-    {
-      "pin": "31",
-      "name": "D+",
-      "signal": "Dpos"
+      "pin": "25",
+      "name": "DCCH",
+      "signal": "DCCH"
     },
     {
       "pin": "29",
-      "name": "D-",
-      "signal": "Dneg"
+      "name": "DN",
+      "signal": "DN"
     },
     {
-      "pin": "25",
-      "name": "DCH",
-      "signal": "DCH"
+      "pin": "31",
+      "name": "DP",
+      "signal": "DP"
     },
     {
       "pin": "5",
@@ -78,157 +88,192 @@
       "signal": "GND"
     },
     {
-      "pin": "41",
-      "name": "NF1",
-      "signal": "NF1"
+      "pin": "11",
+      "name": "P0_00",
+      "signal": "P0_00"
     },
     {
-      "pin": "43",
-      "name": "NF2",
-      "signal": "NF2"
+      "pin": "13",
+      "name": "P0_01",
+      "signal": "P0_01"
+    },
+    {
+      "pin": "7",
+      "name": "P0_02",
+      "signal": "P0_02"
     },
     {
       "pin": "3",
-      "name": "P0.03",
+      "name": "P0_03",
       "signal": "P0_03"
     },
     {
+      "pin": "18",
+      "name": "P0_04",
+      "signal": "P0_04"
+    },
+    {
+      "pin": "15",
+      "name": "P0_05",
+      "signal": "P0_05"
+    },
+    {
       "pin": "14",
-      "name": "P0.06",
+      "name": "P0_06",
       "signal": "P0_06"
     },
     {
       "pin": "22",
-      "name": "P0.07",
+      "name": "P0_07",
       "signal": "P0_07"
     },
     {
       "pin": "16",
-      "name": "P0.08",
+      "name": "P0_08",
       "signal": "P0_08"
     },
     {
+      "pin": "41",
+      "name": "P0_09",
+      "signal": "P0_09"
+    },
+    {
+      "pin": "43",
+      "name": "P0_10",
+      "signal": "P0_10"
+    },
+    {
+      "pin": "20",
+      "name": "P0_12",
+      "signal": "P0_12"
+    },
+    {
       "pin": "33",
-      "name": "P0.13",
+      "name": "P0_13",
       "signal": "P0_13"
     },
     {
+      "pin": "28",
+      "name": "P0_15",
+      "signal": "P0_15"
+    },
+    {
+      "pin": "30",
+      "name": "P0_17",
+      "signal": "P0_17"
+    },
+    {
+      "pin": "26",
+      "name": "P0_18",
+      "signal": "P0_18"
+    },
+    {
       "pin": "32",
-      "name": "P0.20",
+      "name": "P0_20",
       "signal": "P0_20"
     },
     {
       "pin": "34",
-      "name": "P0.22",
+      "name": "P0_22",
       "signal": "P0_22"
     },
     {
       "pin": "35",
-      "name": "P0.24",
+      "name": "P0_24",
       "signal": "P0_24"
     },
     {
       "pin": "12",
-      "name": "P0.26",
+      "name": "P0_26",
       "signal": "P0_26"
     },
     {
+      "pin": "4",
+      "name": "P0_28",
+      "signal": "P0_28"
+    },
+    {
+      "pin": "8",
+      "name": "P0_29",
+      "signal": "P0_29"
+    },
+    {
+      "pin": "10",
+      "name": "P0_30",
+      "signal": "P0_30"
+    },
+    {
+      "pin": "9",
+      "name": "P0_31",
+      "signal": "P0_31"
+    },
+    {
       "pin": "36",
-      "name": "P1.00",
+      "name": "P1_00",
       "signal": "P1_00"
     },
     {
       "pin": "38",
-      "name": "P1.02",
+      "name": "P1_02",
       "signal": "P1_02"
     },
     {
       "pin": "40",
-      "name": "P1.04",
+      "name": "P1_04",
       "signal": "P1_04"
     },
     {
       "pin": "42",
-      "name": "P1.06",
+      "name": "P1_06",
       "signal": "P1_06"
     },
     {
       "pin": "17",
-      "name": "P1.09",
+      "name": "P1_09",
       "signal": "P1_09"
     },
     {
       "pin": "2",
-      "name": "P1.10",
+      "name": "P1_10",
       "signal": "P1_10"
     },
     {
       "pin": "1",
-      "name": "P1.11",
+      "name": "P1_11",
       "signal": "P1_11"
     },
     {
       "pin": "6",
-      "name": "P1.13",
+      "name": "P1_13",
       "signal": "P1_13"
     },
     {
-      "pin": "20",
-      "name": "P12",
-      "signal": "P12"
-    },
-    {
-      "pin": "28",
-      "name": "P15",
-      "signal": "P15"
-    },
-    {
-      "pin": "30",
-      "name": "P17",
-      "signal": "P17"
-    },
-    {
-      "pin": "26",
-      "name": "RST",
-      "signal": "RST"
-    },
-    {
       "pin": "39",
-      "name": "SWC",
-      "signal": "SWC"
+      "name": "SWDCLK",
+      "signal": "SWDCLK"
     },
     {
       "pin": "37",
-      "name": "SWD",
-      "signal": "SWD"
+      "name": "SWDIO",
+      "signal": "SWDIO"
     },
     {
       "pin": "27",
-      "name": "VBS",
-      "signal": "VBS"
+      "name": "VBUS",
+      "signal": "VBUS"
     },
     {
       "pin": "19",
-      "name": "VCC",
-      "signal": "VCC"
+      "name": "VDD",
+      "signal": "VDD"
     },
     {
       "pin": "23",
-      "name": "VDH",
-      "signal": "VDH"
-    },
-    {
-      "pin": "11",
-      "name": "XL1",
-      "signal": "XL1"
-    },
-    {
-      "pin": "13",
-      "name": "XL2",
-      "signal": "XL2"
+      "name": "VDDH",
+      "signal": "VDDH"
     }
   ],
-  "fetched_utc": "2026-10-18T11:15:48Z",
+  "fetched_utc": "2026-10-18T11:30:35Z",
   "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
   "kicad_cli": "9.0.9"
 }

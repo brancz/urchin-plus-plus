@@ -32,6 +32,7 @@ def strip(node):
 
 def main():
     lib, name = sys.argv[1].rstrip("/"), sys.argv[2]
+    pcbnew.KIID.SeedGenerator(0)  # new UUIDs decide the order KiCad writes items in; keep reruns identical
     fp = pcbnew.FootprintLoad(lib, name)
     if fp is None:
         sys.exit("no footprint %s in %s" % (name, lib))

@@ -9,5 +9,5 @@ component C720477_package:
     trait has_part_picked::by_supplier<supplier_id="lcsc", supplier_partno="C720477", manufacturer="XUNPU", partno="TS-1088-AR02016">
     trait has_designator_prefix<prefix="SW">
 
-    pin 1
-    pin 2
+    signal A ~ pin 1
+    signal B ~ pin 2

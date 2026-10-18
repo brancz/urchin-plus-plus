@@ -1,0 +1,128 @@
+(footprint "BAT_PADS"
+  (version 20241229)
+  (generator "pcbnew")
+  (generator_version "9.0")
+  (layer "F.Cu")
+  (property "Reference" "BT**"
+    (at 0 0 0)
+    (layer "F.SilkS")
+    (uuid "cb8c4021-7f02-5dda-91fc-520deea8bada")
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15)
+      )
+    )
+  )
+  (property "Value" "BAT_PADS"
+    (at 0 0 0)
+    (layer "F.Fab")
+    (uuid "0a108ea6-a995-53c4-b13c-d1685d1c5f1d")
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15)
+      )
+    )
+  )
+  (property "Datasheet" ""
+    (at 0 0 0)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "056fe9e3-2628-5fc8-9f96-c14f41f87ef0")
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15)
+      )
+    )
+  )
+  (property "Description" ""
+    (at 0 0 0)
+    (layer "F.Fab")
+    (hide yes)
+    (uuid "b494a931-fcd4-548c-acce-ae1dc4875e32")
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15)
+      )
+    )
+  )
+  (attr smd exclude_from_pos_files exclude_from_bom)
+  (fp_line
+    (start -3.5 -2)
+    (end 3.5 -2)
+    (stroke
+      (width 0.05)
+      (type default)
+    )
+    (layer "F.CrtYd")
+    (uuid "232969e1-8333-54bf-bc3e-6343dba73072")
+  )
+  (fp_line
+    (start -3.5 2)
+    (end -3.5 -2)
+    (stroke
+      (width 0.05)
+      (type default)
+    )
+    (layer "F.CrtYd")
+    (uuid "b63cff22-3aeb-55c4-94a3-f39e2134a672")
+  )
+  (fp_line
+    (start 3.5 -2)
+    (end 3.5 2)
+    (stroke
+      (width 0.05)
+      (type default)
+    )
+    (layer "F.CrtYd")
+    (uuid "92bffe3a-3ec2-597a-a6c2-56f1cbd39d0b")
+  )
+  (fp_line
+    (start 3.5 2)
+    (end -3.5 2)
+    (stroke
+      (width 0.05)
+      (type default)
+    )
+    (layer "F.CrtYd")
+    (uuid "3f540684-eea9-572a-a390-0da40519c8fd")
+  )
+  (fp_text user "-"
+    (at 2 -2.6 0)
+    (layer "F.SilkS")
+    (uuid "cdcdc206-f9d3-5ade-b219-e18ab31ba662")
+    (effects
+      (font
+        (size 0.8 0.8)
+        (thickness 0.12)
+      )
+    )
+  )
+  (fp_text user "+"
+    (at -2 -2.6 0)
+    (layer "F.SilkS")
+    (uuid "7aee4102-8787-5ee2-9875-bcc38f18015c")
+    (effects
+      (font
+        (size 0.8 0.8)
+        (thickness 0.12)
+      )
+    )
+  )
+  (pad "1" smd rect
+    (at -2 0)
+    (size 2 3)
+    (layers "F.Cu" "F.Mask")
+    (uuid "2823cc5a-1288-5014-b34d-d31e58001818")
+  )
+  (pad "2" smd rect
+    (at 2 0)
+    (size 2 3)
+    (layers "F.Cu" "F.Mask")
+    (uuid "54278e73-fd30-5166-ac73-c9dfb0458605")
+  )
+  (embedded_fonts no)
+)

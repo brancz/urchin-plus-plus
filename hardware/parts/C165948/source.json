@@ -15,6 +15,7 @@
     "dropped fp_line on B.SilkS duplicating one on B.CrtYd at ((4.47, -5.09), (-4.47, -5.09))"
   ],
   "fixups_source": null,
+  "pin_names": null,
   "model": "USB-C_SMD-TYPE-C-31-M-12_1.step",
   "pins": [
     {
@@ -98,7 +99,7 @@
       "signal": "VBUS"
     }
   ],
-  "fetched_utc": "2026-10-18T11:15:51Z",
+  "fetched_utc": "2026-10-18T11:25:56Z",
   "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
   "kicad_cli": "9.0.9"
 }

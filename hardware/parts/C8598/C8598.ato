@@ -9,5 +9,5 @@ component C8598_package:
     trait has_part_picked::by_supplier<supplier_id="lcsc", supplier_partno="C8598", manufacturer="CJ", partno="B5819W SL">
     trait has_designator_prefix<prefix="D">
 
-    signal pos ~ pin 2
-    signal neg ~ pin 1
+    signal A ~ pin 2
+    signal K ~ pin 1

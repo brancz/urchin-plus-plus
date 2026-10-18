@@ -9,7 +9,7 @@ component C409782_package:
     trait has_part_picked::by_supplier<supplier_id="lcsc", supplier_partno="C409782", manufacturer="MEIHUA", partno="MHT151RGBCT">
     trait has_designator_prefix<prefix="LED">
 
-    signal pos ~ pin 1
-    signal neg ~ pin 2
-    neg ~ pin 3
-    neg ~ pin 4
+    signal ANODE ~ pin 1
+    signal B ~ pin 2
+    signal G ~ pin 3
+    signal R ~ pin 4

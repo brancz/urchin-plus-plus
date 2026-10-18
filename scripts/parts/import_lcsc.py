@@ -86,7 +86,7 @@ def clean_manufacturer(m):
     return re.sub(r"\s*[(（][^)）]*[)）]\s*$", "", m or "").strip() or "unknown"
 
 
-def import_part(lcsc, parts_dir, model_base, side, fixups=None):
+def import_part(lcsc, parts_dir, model_base, side, fixups=None, pin_names=None):
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
         run(["easyeda2kicad", "--full", "--lcsc_id", lcsc, "--output", str(tmp / "lib")])
@@ -147,6 +147,11 @@ def import_part(lcsc, parts_dir, model_base, side, fixups=None):
             name = sexp.child(node, "name")[1]
             number = sexp.child(node, "number")[1]
             pins.append((name, number))
+    if pin_names:  # datasheet names from hardware/parts.json override EasyEDA's symbol
+        symbol_numbers = {n for _, n in pins}
+        if set(pin_names) != symbol_numbers:
+            raise SystemExit(f"{lcsc}: pin_names cover {sorted(pin_names)}, symbol has {sorted(symbol_numbers)}")
+        pins = [(pin_names[n], n) for _, n in pins]
     numbers = {n for _, n in pins}
 
     lines = [
@@ -196,6 +201,7 @@ def import_part(lcsc, parts_dir, model_base, side, fixups=None):
         "side": side,
         "footprint_changes": changes,
         "fixups_source": (fixups or {}).get("source"),
+        "pin_names": pin_names,
         "model": steps[0].name if steps else None,
         "pins": pin_map,
         "fetched_utc": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -220,18 +226,18 @@ def main():
     kicad = tool_version(["kicad-cli", "version"])
     if kicad != pinned("KICAD_VERSION"):
         raise SystemExit("kicad-cli is %s, pinned is %s (see docs/SETUP.md)" % (kicad, pinned("KICAD_VERSION")))
-    todo = [(c, args.side, None) for c in args.lcsc]
+    todo = [(c, args.side, None, None) for c in args.lcsc]
     if args.manifest:
         for part in json.loads(args.manifest.read_text())["parts"]:
-            todo.append((part["lcsc"], part.get("side", "bottom"), part.get("fixups")))
+            todo.append((part["lcsc"], part.get("side", "bottom"), part.get("fixups"), part.get("pin_names")))
     if not todo:
         raise SystemExit("nothing to import: give LCSC numbers or --manifest")
-    for lcsc, side, fixups in todo:
+    for lcsc, side, fixups, pin_names in todo:
         if not re.fullmatch(r"C[0-9]+", lcsc):
             raise SystemExit(f"not an LCSC number: {lcsc}")
         if side == "bottom" and not os.environ.get("KICAD_PY"):
             raise SystemExit("--side bottom needs KICAD_PY (KiCad's Python) to flip the footprint")
-        s = import_part(lcsc, args.parts_dir, args.model_base, side, fixups)
+        s = import_part(lcsc, args.parts_dir, args.model_base, side, fixups, pin_names)
         print(f"{lcsc}: {s['manufacturer']} {s['mpn']} ({side}) -> {args.parts_dir / lcsc}"
               + "".join(f"\n    {c}" for c in s["footprint_changes"]))
 

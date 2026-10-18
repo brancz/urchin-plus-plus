@@ -15,30 +15,36 @@
     "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
   ],
   "fixups_source": "docs/datasheets/C409782_MHT151RGBCT.pdf p.2, 'Recommended Solder Pad (Reverse Type)': 0.8 x 0.7 mm pads, 2.3 mm between pad rows, 2.1 mm hole. EasyEDA's footprint has the pads 0.2 mm closer together and no hole.",
+  "pin_names": {
+    "1": "ANODE",
+    "2": "B",
+    "3": "G",
+    "4": "R"
+  },
   "model": "LED-SMD-1206-4P_L3.2-W1.3-H1.1.step",
   "pins": [
     {
       "pin": "1",
-      "name": "+",
-      "signal": "pos"
+      "name": "ANODE",
+      "signal": "ANODE"
     },
     {
       "pin": "2",
-      "name": "-",
-      "signal": "neg"
+      "name": "B",
+      "signal": "B"
     },
     {
       "pin": "3",
-      "name": "-",
-      "signal": "neg"
+      "name": "G",
+      "signal": "G"
     },
     {
       "pin": "4",
-      "name": "-",
-      "signal": "neg"
+      "name": "R",
+      "signal": "R"
     }
   ],
-  "fetched_utc": "2026-10-18T11:16:02Z",
+  "fetched_utc": "2026-10-18T11:26:06Z",
   "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
   "kicad_cli": "9.0.9"
 }
