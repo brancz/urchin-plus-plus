@@ -1,0 +1,28 @@
+{
+  "_doc": "Every LCSC part of one half. scripts/parts/import_lcsc.py --manifest hardware/parts.json builds hardware/parts/<LCSC>/; scripts/parts/bom_check.py checks stock. Quantities are per half. Fixups are in the footprint's own front-side coordinates (before the bottom-side flip) and cite their datasheet.",
+  "parts": [
+    {"lcsc": "C356849", "qty": 1, "role": "nRF52840 module (Ebyte E73-2G4M08S1C)"},
+    {"lcsc": "C15220", "qty": 1, "role": "Li-ion charger with power path (TI BQ24073RGTR)"},
+    {"lcsc": "C165948", "qty": 1, "role": "USB-C receptacle, USB 2.0 (HRO TYPE-C-31-M-12)"},
+    {"lcsc": "C7519", "qty": 1, "role": "USB D+/D- and VBUS ESD protection (ST USBLC6-2SC6)"},
+    {"lcsc": "C8598", "qty": 2, "role": "Schottky diodes: USB VBUS and dock 5V into the charger input (B5819W)"},
+    {"lcsc": "C193402", "qty": 1, "role": "TVS on the exposed dock 5V pad (SMF5.0A)"},
+    {"lcsc": "C431540", "qty": 1, "role": "power slide switch between charger OUT and VDDH (MSK12C02)"},
+    {"lcsc": "C720477", "qty": 1, "role": "reset button on P0.18 (TS-1088-AR02016)"},
+    {"lcsc": "C409782", "qty": 2, "role": "reverse-mount RGB LEDs, common anode: status (GPIO) and charge (CHG/PGOOD) (MHT151RGBCT)",
+     "fixups": {
+       "source": "docs/datasheets/C409782_MHT151RGBCT.pdf p.2, 'Recommended Solder Pad (Reverse Type)': 0.8 x 0.7 mm pads, 2.3 mm between pad rows, 2.1 mm hole. EasyEDA's footprint has the pads 0.2 mm closer together and no hole.",
+       "move_pads": {"1": [1.55, 0.55], "2": [1.55, -0.55], "3": [-1.55, -0.55], "4": [-1.55, 0.55]},
+       "add_npth": [[0, 0, 2.1]]
+     }},
+    {"lcsc": "C81598", "qty": 2, "role": "isolate the CHG and PGOOD GPIO reads from the charge LED's input-side supply (1N4148W)"},
+    {"lcsc": "C25744", "qty": 1, "role": "10k: charger TS (no thermistor)"},
+    {"lcsc": "C25905", "qty": 4, "role": "5.1k: USB-C CC1, CC2; charger ILIM, ISET"},
+    {"lcsc": "C11702", "qty": 2, "role": "1k: charge LED red and green"},
+    {"lcsc": "C25117", "qty": 3, "role": "470R: status LED red, green, blue"},
+    {"lcsc": "C1525", "qty": 1, "role": "100nF 0402: VDD"},
+    {"lcsc": "C15849", "qty": 1, "role": "1uF 50V 0603: charger IN (sees up to 26 V on overvoltage)"},
+    {"lcsc": "C19666", "qty": 3, "role": "4.7uF 16V 0603: charger OUT, charger BAT, nRF VBUS"},
+    {"lcsc": "C19702", "qty": 1, "role": "10uF 10V 0603: VDDH bulk"}
+  ]
+}

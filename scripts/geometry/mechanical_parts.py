@@ -8,11 +8,16 @@ tenting puck and the case holes are atopile parts too. Their footprints are the
 original's, unchanged except for the format upgrade KiCad's writer applies:
   KEY_CHOC     SW_Hotswap_Kailh_Choc_V1_tweaked (reference/urchin/lib): switch holes
                plus the Kailh Choc hotswap socket pads 1/2 on B.Cu. The socket isn't
-               stocked at JLC/LCSC (reports/phase2/), so it is hand-soldered and the
-               footprint is excluded from the BOM and position files.
-  PUCK         Tenting_Puck2_no_pads (reference/urchin/lib)
+               stocked at JLC or LCSC (ARCHITECTURE.md decision log), so it is
+               hand-soldered: the footprint is excluded from the BOM and position
+               files and its socket pads carry no paste (no stencil aperture).
+  PUCK         Tenting_Puck2_no_pads (reference/urchin/lib), unchanged
   HOLE_M2_4_2  swoop:M2_hole_4.2mm   (embedded in reference/urchin/main.kicad_pcb)
   HOLE_M2_3_5  swoop:M2_hole_3.5mm / chocolad:M2_hole_3.5mm (identical pads)
+               Case holes are made non-plated, same drill: several sit 0.25 mm from
+               the board edge, and plating them serves no purpose (no net).
+UUIDs are derived from the part name and item index, so reruns reproduce the
+committed files byte for byte (CI checks that against a fresh copy of the original).
 Two cosmetic changes keep atopile from mangling them (it matches footprint items
 by geometry only and drops what it doesn't model, reports/phase0/): of two items
 with identical geometry on different layers only one is kept (courtyard over fab;
@@ -24,6 +29,8 @@ Runs under KiCad's Python (pcbnew); Python 3.9.
 
 import argparse
 import os
+import re
+import uuid
 import shutil
 import subprocess
 import sys
@@ -142,7 +149,11 @@ def write_part(parts_dir, name, fp, prefix, doc, pins=None, exclude=True, prefer
     lib = os.path.join(tmp, "lib.pretty")
     os.mkdir(lib)
     pcbnew.PCB_IO_KICAD_SEXPR().FootprintSave(lib, fp)
-    shutil.copy(os.path.join(lib, fp_name + ".kicad_mod"), out / (fp_name + ".kicad_mod"))
+    text = open(os.path.join(lib, fp_name + ".kicad_mod"), encoding="utf-8").read()
+    counter = iter(range(10 ** 6))
+    text = re.sub(r'\(uuid "[0-9a-f-]+"\)',
+                  lambda m: '(uuid "%s")' % uuid.uuid5(uuid.NAMESPACE_URL, "urchin++/%s/%d" % (name, next(counter))), text)
+    (out / (fp_name + ".kicad_mod")).write_text(text, encoding="utf-8")
     pin_sym = PIN.format(name=name, a=pins[0], b=pins[1]) if pins else ""
     (out / (name + ".kicad_sym")).write_text(SYMBOL.format(name=name, prefix=prefix, pins=pin_sym))
     pin_ato = "\n" + "".join("    pin %s\n" % p for p in pins) if pins else ""
@@ -151,13 +162,14 @@ def write_part(parts_dir, name, fp, prefix, doc, pins=None, exclude=True, prefer
 
 
 PARTS = {
-    "KEY_CHOC": dict(src=("lib", "SW_Hotswap_Kailh_Choc_V1_tweaked"), prefix="SW", pins=("1", "2"),
+    "KEY_CHOC": dict(src=("lib", "SW_Hotswap_Kailh_Choc_V1_tweaked"), prefix="SW", pins=("1", "2"), no_paste=True,
                      doc="Kailh Choc v1 switch position with a hand-soldered Kailh hotswap socket (CPG135001S30)."),
     "PUCK": dict(src=("lib", "Tenting_Puck2_no_pads"), prefix="H", prefer=("B.Silkscreen",),
                  doc="Tenting-puck mount of the original Urchin."),
-    "HOLE_M2_4_2": dict(src=("board", "swoop:M2_hole_4.2mm"), prefix="H", doc="Case mounting hole, 4.2 mm pad."),
-    "HOLE_M2_3_5": dict(src=("board", "swoop:M2_hole_3.5mm"), same_as="chocolad:M2_hole_3.5mm", prefix="H",
-                        doc="Case mounting hole, 3.5 mm pad."),
+    "HOLE_M2_4_2": dict(src=("board", "swoop:M2_hole_4.2mm"), prefix="H", npth=True,
+                        doc="Case mounting hole, 3.8 mm drill (non-plated; the original has a 4.2 mm pad)."),
+    "HOLE_M2_3_5": dict(src=("board", "swoop:M2_hole_3.5mm"), same_as="chocolad:M2_hole_3.5mm", prefix="H", npth=True,
+                        doc="Case mounting hole, 2.2 mm drill (non-plated; the original has a 3.5 mm pad)."),
 }
 
 
@@ -175,6 +187,13 @@ def one(parts, name):
                                    for p in f.Pads())
             if sig(fp) != sig(other):
                 sys.exit("%s and %s pads differ; they need separate parts" % (ident, spec["same_as"]))
+    for p in fp.Pads():
+        if spec.get("npth") and p.GetDrillSize().x > 0:
+            p.SetAttribute(pcbnew.PAD_ATTRIB_NPTH)
+            p.SetSize(pcbnew.F_Cu, p.GetDrillSize())
+            p.SetLayerSet(pcbnew.LSET.AllCuMask().AddLayer(pcbnew.F_Mask).AddLayer(pcbnew.B_Mask))
+        if spec.get("no_paste") and p.GetAttribute() == pcbnew.PAD_ATTRIB_SMD:
+            p.SetLayerSet(p.GetLayerSet().RemoveLayer(pcbnew.F_Paste).RemoveLayer(pcbnew.B_Paste))
     write_part(parts, name, fp, spec["prefix"], spec["doc"], pins=spec.get("pins"), prefer=spec.get("prefer", ()))
 
 

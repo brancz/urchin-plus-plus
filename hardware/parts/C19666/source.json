@@ -1,0 +1,29 @@
+{
+  "lcsc": "C19666",
+  "manufacturer": "SAMSUNG",
+  "mpn": "CL10A475KO8NNNC",
+  "datasheet_url": "https://lcsc.com/product-detail/Multilayer-Ceramic-Capacitors-MLCC-SMD-SMT_SAMSUNG_CL10A475KO8NNNC_4-7uF-475-10-16V_C19666.html",
+  "symbol": "CL10A475KO8NNNC.kicad_sym",
+  "footprint": "C0603.kicad_mod",
+  "side": "bottom",
+  "footprint_changes": [
+    "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
+  ],
+  "fixups_source": null,
+  "model": "C0603_L1.6-W0.8-H0.8.step",
+  "pins": [
+    {
+      "pin": "1",
+      "name": "1",
+      "signal": null
+    },
+    {
+      "pin": "2",
+      "name": "2",
+      "signal": null
+    }
+  ],
+  "fetched_utc": "2026-10-18T11:16:15Z",
+  "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
+  "kicad_cli": "9.0.9"
+}

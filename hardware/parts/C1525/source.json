@@ -1,0 +1,29 @@
+{
+  "lcsc": "C1525",
+  "manufacturer": "SAMSUNG",
+  "mpn": "CL05B104KO5NNNC",
+  "datasheet_url": "https://lcsc.com/product-detail/Multilayer-Ceramic-Capacitors-MLCC-SMD-SMT_SAMSUNG_CL05B104KO5NNNC_100nF-104-10-16V_C1525.html",
+  "symbol": "CL05B104KO5NNNC.kicad_sym",
+  "footprint": "C0402.kicad_mod",
+  "side": "bottom",
+  "footprint_changes": [
+    "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
+  ],
+  "fixups_source": null,
+  "model": "C0402_L1.0-W0.5-H0.5.step",
+  "pins": [
+    {
+      "pin": "1",
+      "name": "1",
+      "signal": null
+    },
+    {
+      "pin": "2",
+      "name": "2",
+      "signal": null
+    }
+  ],
+  "fetched_utc": "2026-10-18T11:16:12Z",
+  "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
+  "kicad_cli": "9.0.9"
+}

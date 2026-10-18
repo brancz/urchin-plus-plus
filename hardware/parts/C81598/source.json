@@ -1,0 +1,29 @@
+{
+  "lcsc": "C81598",
+  "manufacturer": "ST",
+  "mpn": "1N4148W",
+  "datasheet_url": "https://lcsc.com/product-detail/Switching-Diode_1N4148W_C81598.html",
+  "symbol": "1N4148W_C81598.kicad_sym",
+  "footprint": "SOD-123F_L2.7-W1.6-LS3.8-RD.kicad_mod",
+  "side": "bottom",
+  "footprint_changes": [
+    "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
+  ],
+  "fixups_source": null,
+  "model": "SOD-123F_L2.7-W1.6-LS3.8-RD.step",
+  "pins": [
+    {
+      "pin": "2",
+      "name": "A",
+      "signal": "A"
+    },
+    {
+      "pin": "1",
+      "name": "K",
+      "signal": "K"
+    }
+  ],
+  "fetched_utc": "2026-10-18T11:16:03Z",
+  "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
+  "kicad_cli": "9.0.9"
+}

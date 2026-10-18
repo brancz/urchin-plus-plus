@@ -1,11 +1,12 @@
 {
-  "board": "scratch/preview/left.kicad_pcb",
+  "board": "reports/phase1/preview/left.kicad_pcb",
   "half": "left",
   "checked": {
-    "footprints": 27,
-    "holes_and_pads": 131,
+    "switch": 17,
+    "pads": 129,
+    "case hole": 7,
+    "puck": 1,
     "edges": 29
   },
-  "problems": [],
-  "max_deviation_nm": 0
+  "problems": []
 }

@@ -1,0 +1,49 @@
+{
+  "lcsc": "C7519",
+  "manufacturer": "ST",
+  "mpn": "USBLC6-2SC6",
+  "datasheet_url": "https://lcsc.com/product-detail/Diodes-ESD_STMicroelectronics_USBLC6-2SC6_USBLC6-2SC6_C7519.html",
+  "symbol": "USBLC6-2SC6.kicad_sym",
+  "footprint": "SOT-23-6_L2.9-W1.6-P0.95-LS2.8-BL.kicad_mod",
+  "side": "bottom",
+  "footprint_changes": [
+    "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
+  ],
+  "fixups_source": null,
+  "model": "SOT-23-6_L2.9-W1.6-H1.5-LS2.8-P0.95.step",
+  "pins": [
+    {
+      "pin": "1",
+      "name": "1",
+      "signal": null
+    },
+    {
+      "pin": "2",
+      "name": "2",
+      "signal": null
+    },
+    {
+      "pin": "3",
+      "name": "3",
+      "signal": null
+    },
+    {
+      "pin": "4",
+      "name": "4",
+      "signal": null
+    },
+    {
+      "pin": "5",
+      "name": "5",
+      "signal": null
+    },
+    {
+      "pin": "6",
+      "name": "6",
+      "signal": null
+    }
+  ],
+  "fetched_utc": "2026-10-18T11:15:53Z",
+  "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
+  "kicad_cli": "9.0.9"
+}

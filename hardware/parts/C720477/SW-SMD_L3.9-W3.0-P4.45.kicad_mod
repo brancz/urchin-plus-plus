@@ -1,0 +1,196 @@
+(footprint "SW-SMD_L3.9-W3.0-P4.45"
+  (version 20241229)
+  (generator "urchin++ footprint_to_bottom")
+  (layer "B.Cu")
+  (property "Reference" "REF**"
+    (at 0 4 0)
+    (layer "B.SilkS")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15)
+      )
+      (justify mirror)
+    )
+  )
+  (property "Value" "SW-SMD_L3.9-W3.0-P4.45"
+    (at 0 -4 0)
+    (layer "B.Fab")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15)
+      )
+      (justify mirror)
+    )
+  )
+  (property "Datasheet" ""
+    (at 0 0 0)
+    (layer "B.Fab")
+    (hide yes)
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15)
+      )
+      (justify mirror)
+    )
+  )
+  (property "Description" ""
+    (at 0 0 0)
+    (layer "B.Fab")
+    (hide yes)
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15)
+      )
+      (justify mirror)
+    )
+  )
+  (property "LCSC Part" "C720477"
+    (at 0 0 0)
+    (layer "B.Fab")
+    (hide yes)
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15)
+      )
+      (justify mirror)
+    )
+  )
+  (attr smd)
+  (fp_line
+    (start 2.03 1.54)
+    (end 2.03 1.11)
+    (stroke
+      (width 0.15)
+      (type solid)
+    )
+    (layer "B.SilkS")
+  )
+  (fp_line
+    (start 2.03 1.54)
+    (end -2.03 1.54)
+    (stroke
+      (width 0.15)
+      (type solid)
+    )
+    (layer "B.SilkS")
+  )
+  (fp_line
+    (start 2.03 -1.11)
+    (end 2.03 -1.54)
+    (stroke
+      (width 0.15)
+      (type solid)
+    )
+    (layer "B.SilkS")
+  )
+  (fp_line
+    (start 2.03 -1.54)
+    (end -2.03 -1.54)
+    (stroke
+      (width 0.15)
+      (type solid)
+    )
+    (layer "B.SilkS")
+  )
+  (fp_line
+    (start -2.03 1.54)
+    (end -2.03 1.11)
+    (stroke
+      (width 0.15)
+      (type solid)
+    )
+    (layer "B.SilkS")
+  )
+  (fp_line
+    (start -2.03 -1.54)
+    (end -2.03 -1.11)
+    (stroke
+      (width 0.15)
+      (type solid)
+    )
+    (layer "B.SilkS")
+  )
+  (fp_circle
+    (center 2.5 1.47)
+    (end 2.53 1.47)
+    (stroke
+      (width 0.06)
+      (type solid)
+    )
+    (fill no)
+    (layer "B.SilkS")
+  )
+  (fp_circle
+    (center 0 0)
+    (end 0.9 0)
+    (stroke
+      (width 0.25)
+      (type solid)
+    )
+    (fill no)
+    (layer "B.SilkS")
+  )
+  (fp_line
+    (start 1.95 1.46)
+    (end 1.95 -1.46)
+    (stroke
+      (width 0.05)
+      (type solid)
+    )
+    (layer "B.CrtYd")
+  )
+  (fp_line
+    (start 1.95 -1.46)
+    (end -1.95 -1.46)
+    (stroke
+      (width 0.05)
+      (type solid)
+    )
+    (layer "B.CrtYd")
+  )
+  (fp_line
+    (start -1.95 1.46)
+    (end 1.95 1.46)
+    (stroke
+      (width 0.05)
+      (type solid)
+    )
+    (layer "B.CrtYd")
+  )
+  (fp_line
+    (start -1.95 -1.46)
+    (end -1.95 1.46)
+    (stroke
+      (width 0.05)
+      (type solid)
+    )
+    (layer "B.CrtYd")
+  )
+  (pad "1" smd rect
+    (at -2.18 0 180)
+    (size 1.23 1.86)
+    (layers "B.Cu" "B.Mask" "B.Paste")
+  )
+  (pad "2" smd rect
+    (at 2.18 0 180)
+    (size 1.23 1.86)
+    (layers "B.Cu" "B.Mask" "B.Paste")
+  )
+  (embedded_fonts no)
+  (model "${KIPRJMOD}/../../parts/C720477/SW-SMD_L3.9-W2.9-H2.0-LS4.8.step"
+    (offset
+      (xyz 0 0 0)
+    )
+    (scale
+      (xyz 1 1 1)
+    )
+    (rotate
+      (xyz 0 0 0)
+    )
+  )
+)

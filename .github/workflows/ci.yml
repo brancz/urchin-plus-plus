@@ -68,6 +68,9 @@ jobs:
       - name: Round-trip (phase 0 toolchain proof)
         run: scripts/roundtrip/run.sh ci-out/roundtrip ci-out/reports/roundtrip
 
+      - name: Rule 1 geometry (original Urchin fetched at the recorded commit)
+        run: scripts/checks/geometry_all.sh
+
       - name: Guardrails on committed KiCad files (reports/ holds evidence, e.g. a KiCad 10 board)
         run: |
           if [ -n "$(git ls-files -- '*.kicad_pcb' '*.kicad_mod' '*.kicad_sym' ':!reports/')" ]; then

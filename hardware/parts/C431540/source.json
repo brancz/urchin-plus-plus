@@ -1,0 +1,39 @@
+{
+  "lcsc": "C431540",
+  "manufacturer": "SHOU HAN",
+  "mpn": "MSK12C02",
+  "datasheet_url": "https://lcsc.com/product-detail/Toggle-Switches_SHOU-HAN-MSK12C02_C431540.html",
+  "symbol": "MSK12C02.kicad_sym",
+  "footprint": "SW-TH_MSK12C02.kicad_mod",
+  "side": "bottom",
+  "footprint_changes": [
+    "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
+  ],
+  "fixups_source": null,
+  "model": "SW-SMD_3P-L6.6-W2.7-LS7.8-P1.50.step",
+  "pins": [
+    {
+      "pin": "1",
+      "name": "1",
+      "signal": null
+    },
+    {
+      "pin": "2",
+      "name": "2",
+      "signal": null
+    },
+    {
+      "pin": "3",
+      "name": "3",
+      "signal": null
+    },
+    {
+      "pin": "4",
+      "name": "4",
+      "signal": null
+    }
+  ],
+  "fetched_utc": "2026-10-18T11:15:58Z",
+  "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
+  "kicad_cli": "9.0.9"
+}

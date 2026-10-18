@@ -1,0 +1,105 @@
+{
+  "lcsc": "C15220",
+  "manufacturer": "TI",
+  "mpn": "BQ24073RGTR",
+  "datasheet_url": "https://lcsc.com/product-detail/PMIC-Battery-Management_TI_BQ24073RGTR_BQ24073RGTR_C15220.html",
+  "symbol": "BQ24073RGTR.kicad_sym",
+  "footprint": "QFN-16_L3.0-W3.0-P0.50-TL-EP1.7.kicad_mod",
+  "side": "bottom",
+  "footprint_changes": [
+    "pad 17: dropped (thermal_bridge_angle 90), which atopile doesn't keep",
+    "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
+  ],
+  "fixups_source": null,
+  "model": "QFN-16_L3.0-W3.0-P0.50-EP1.7.step",
+  "pins": [
+    {
+      "pin": "2",
+      "name": "BAT",
+      "signal": "BAT"
+    },
+    {
+      "pin": "3",
+      "name": "BAT",
+      "signal": "BAT"
+    },
+    {
+      "pin": "6",
+      "name": "EN1",
+      "signal": "EN1"
+    },
+    {
+      "pin": "5",
+      "name": "EN2",
+      "signal": "EN2"
+    },
+    {
+      "pin": "17",
+      "name": "EP",
+      "signal": "EP"
+    },
+    {
+      "pin": "12",
+      "name": "ILIM",
+      "signal": "ILIM"
+    },
+    {
+      "pin": "13",
+      "name": "IN",
+      "signal": "IN"
+    },
+    {
+      "pin": "16",
+      "name": "ISET",
+      "signal": "ISET"
+    },
+    {
+      "pin": "10",
+      "name": "OUT",
+      "signal": "OUT"
+    },
+    {
+      "pin": "11",
+      "name": "OUT",
+      "signal": "OUT"
+    },
+    {
+      "pin": "15",
+      "name": "TD",
+      "signal": "TD"
+    },
+    {
+      "pin": "14",
+      "name": "TMR",
+      "signal": "TMR"
+    },
+    {
+      "pin": "1",
+      "name": "TS",
+      "signal": "TS"
+    },
+    {
+      "pin": "8",
+      "name": "VSS",
+      "signal": "VSS"
+    },
+    {
+      "pin": "4",
+      "name": "~{CE}",
+      "signal": "n_CE_"
+    },
+    {
+      "pin": "9",
+      "name": "~{CHG}",
+      "signal": "n_CHG_"
+    },
+    {
+      "pin": "7",
+      "name": "~{PGOOD}",
+      "signal": "n_PGOOD_"
+    }
+  ],
+  "fetched_utc": "2026-10-18T11:15:49Z",
+  "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
+  "kicad_cli": "9.0.9"
+}

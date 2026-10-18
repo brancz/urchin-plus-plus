@@ -95,15 +95,31 @@ def cmd_check(args):
     return 1 if bad else 0
 
 
+JLC_FILE = "https://jlcpcb.com/api/file/downloadByFileSystemAccessId/%s"
+
+
+def datasheet_url(lcsc):
+    c = jlc_part(lcsc)
+    # JLC's file store serves the PDF; the lcsc.com datasheet links answer bots with a JS page.
+    if c and c.get("dataManualFileAccessId"):
+        return JLC_FILE % c["dataManualFileAccessId"], c.get("componentModelEn")
+    if c and c.get("dataManualUrl"):
+        return c["dataManualUrl"], c.get("componentModelEn")
+    p = lcsc_part(lcsc)
+    if p and p.get("pdfUrl"):
+        return p["pdfUrl"], p.get("productModel")
+    return None, None
+
+
 def cmd_datasheet(args):
-    p = lcsc_part(args.lcsc)
-    if not p or not p.get("pdfUrl"):
-        sys.exit("%s: no datasheet URL from LCSC" % args.lcsc)
-    name = re.sub(r"[^A-Za-z0-9._-]+", "_", args.name or p.get("productModel") or "part")
+    url, model = datasheet_url(args.lcsc)
+    if not url:
+        sys.exit("%s: no datasheet URL from JLC or LCSC" % args.lcsc)
+    name = re.sub(r"[^A-Za-z0-9._-]+", "_", args.name or model or "part")
     out = ROOT / "docs" / "datasheets" / ("%s_%s.pdf" % (args.lcsc, name))
-    pdf = _get(p["pdfUrl"], timeout=120)
+    pdf = _get(url, timeout=120)
     if not pdf.startswith(b"%PDF"):
-        sys.exit("%s: %s did not return a PDF" % (args.lcsc, p["pdfUrl"]))
+        sys.exit("%s: %s did not return a PDF" % (args.lcsc, url))
     out.write_bytes(pdf)
     print("%s -> %s (%d kB)" % (args.lcsc, out.relative_to(ROOT), len(pdf) // 1024))
     return 0

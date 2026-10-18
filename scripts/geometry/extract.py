@@ -12,7 +12,9 @@ x = 128.397. Per half this records, in the reference board's own coordinates
     stubs and slot ends, plus the two "closures" that close each half's edge
     across the tab openings (collinear with that edge)
   - the tenting-puck mount and the case mounting holes (position, rotation,
-    footprint, hole positions)
+    footprint, hole positions). A case hole whose drill overlaps a puck hole, or
+    the smaller of two overlapping case holes, is moved to case_holes_dropped:
+    overlapping drills are a fabrication risk, and the puck is rule-1 geometry.
   - the old controller area (nice!nano, nice!view, power switch, reset, battery
     pads) as placement hints
 Hand-placed copies of footprints carry over unchanged: library footprints are
@@ -130,6 +132,27 @@ def name_switches(switches, half):
     return sorted(switches, key=lambda s: s["key"])
 
 
+def overlaps(a, b):
+    return math.hypot(a["x"] - b["x"], a["y"] - b["y"]) < (a["drill"] + b["drill"]) / 2
+
+
+def drop_overlapping(case_holes, puck):
+    kept, dropped = [], []
+    for rec in case_holes:
+        hole = rec["holes"][0]
+        hit = next((p for p in puck["holes"] if overlaps(hole, p)), None)
+        if hit:
+            dropped.append(dict(rec, reason="drill overlaps tenting-puck hole at (%.3f, %.3f)" % (hit["x"], hit["y"])))
+            continue
+        bigger = next((o for o in case_holes if o is not rec and overlaps(hole, o["holes"][0])
+                       and o["holes"][0]["drill"] > hole["drill"]), None)
+        if bigger:
+            dropped.append(dict(rec, reason="drill overlaps the larger case hole at (%.3f, %.3f)" % (bigger["x"], bigger["y"])))
+            continue
+        kept.append(rec)
+    return kept, dropped
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--reference", default=str(ROOT / "reference/urchin/main.kicad_pcb"))
@@ -185,14 +208,17 @@ def main():
     for half, h in out["halves"].items():
         h["switches"] = name_switches(h["switches"], half)
         h["case_holes"].sort(key=lambda r: (r["x"], r["y"]))
+        h["case_holes"], h["case_holes_dropped"] = drop_overlapping(h["case_holes"], h["tenting_puck"])
 
     out["dropped_panel_features"] = dropped
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.out).write_text(json.dumps(out, indent=1) + "\n")
     for half, h in out["halves"].items():
-        print("%s: %d switches, %d outline primitives + %d closures, puck at (%.3f, %.3f) rot %.1f, %d case holes"
+        print("%s: %d switches, %d outline primitives + %d closures, puck at (%.3f, %.3f) rot %.1f, %d case holes (%d dropped)"
               % (half, len(h["switches"]), len(h["outline"]), len(h["closures"]), h["tenting_puck"]["x"],
-                 h["tenting_puck"]["y"], h["tenting_puck"]["rot"], len(h["case_holes"])))
+                 h["tenting_puck"]["y"], h["tenting_puck"]["rot"], len(h["case_holes"]), len(h["case_holes_dropped"])))
+        for d in h["case_holes_dropped"]:
+            print("  dropped case hole at (%.3f, %.3f): %s" % (d["x"], d["y"], d["reason"]))
     print("dropped %d panel-only edge primitives (tab stubs, slot ends)" % len(dropped))
 
 

@@ -56,7 +56,7 @@ def main():
             s.SetLayer(pcbnew.Edge_Cuts)
             s.SetWidth(pcbnew.FromMM(0.1))
             board.Add(s)
-        for rec in h["switches"] + [h["tenting_puck"]] + h["case_holes"]:
+        for rec in h["switches"] + [h["tenting_puck"]] + h["case_holes"]:  # case_holes_dropped stay out
             place(board, rec)
         pcbnew.SaveBoard(str(out / (half + ".kicad_pcb")), board)
         print("%s: %s" % (half, out / (half + ".kicad_pcb")))

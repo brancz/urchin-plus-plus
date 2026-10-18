@@ -1,0 +1,104 @@
+{
+  "lcsc": "C165948",
+  "manufacturer": "韩国韩荣",
+  "mpn": "TYPE-C-31-M-12",
+  "datasheet_url": "https://lcsc.com/product-detail/USB-Type-C_Korean-Hroparts-Elec-TYPE-C-31-M-12_C165948.html",
+  "symbol": "TYPE-C-31-M-12.kicad_sym",
+  "footprint": "USB-C_SMD-TYPE-C-31-M-12_1.kicad_mod",
+  "side": "bottom",
+  "footprint_changes": [
+    "pad A1B12: dropped (thermal_bridge_angle 90), which atopile doesn't keep",
+    "pad A4B9: dropped (thermal_bridge_angle 90), which atopile doesn't keep",
+    "pad B1A12: dropped (thermal_bridge_angle 90), which atopile doesn't keep",
+    "pad B4A9: dropped (thermal_bridge_angle 90), which atopile doesn't keep",
+    "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)",
+    "dropped fp_line on B.SilkS duplicating one on B.CrtYd at ((4.47, -5.09), (-4.47, -5.09))"
+  ],
+  "fixups_source": null,
+  "model": "USB-C_SMD-TYPE-C-31-M-12_1.step",
+  "pins": [
+    {
+      "pin": "A5",
+      "name": "CC1",
+      "signal": "CC1"
+    },
+    {
+      "pin": "B5",
+      "name": "CC2",
+      "signal": "CC2"
+    },
+    {
+      "pin": "A7",
+      "name": "DN1",
+      "signal": "DN1"
+    },
+    {
+      "pin": "B7",
+      "name": "DN2",
+      "signal": "DN2"
+    },
+    {
+      "pin": "A6",
+      "name": "DP1",
+      "signal": "DP1"
+    },
+    {
+      "pin": "B6",
+      "name": "DP2",
+      "signal": "DP2"
+    },
+    {
+      "pin": "1",
+      "name": "EH",
+      "signal": "EH"
+    },
+    {
+      "pin": "2",
+      "name": "EH",
+      "signal": "EH"
+    },
+    {
+      "pin": "3",
+      "name": "EH",
+      "signal": "EH"
+    },
+    {
+      "pin": "4",
+      "name": "EH",
+      "signal": "EH"
+    },
+    {
+      "pin": "A1B12",
+      "name": "GND",
+      "signal": "GND"
+    },
+    {
+      "pin": "B1A12",
+      "name": "GND",
+      "signal": "GND"
+    },
+    {
+      "pin": "A8",
+      "name": "SBU1",
+      "signal": "SBU1"
+    },
+    {
+      "pin": "B8",
+      "name": "SBU2",
+      "signal": "SBU2"
+    },
+    {
+      "pin": "A4B9",
+      "name": "VBUS",
+      "signal": "VBUS"
+    },
+    {
+      "pin": "B4A9",
+      "name": "VBUS",
+      "signal": "VBUS"
+    }
+  ],
+  "fetched_utc": "2026-10-18T11:15:51Z",
+  "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
+  "kicad_cli": "9.0.9"
+}

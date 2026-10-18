@@ -1227,23 +1227,6 @@
      ]
     },
     {
-     "ref": "Ref**",
-     "footprint": "swoop:M2_hole_3.5mm",
-     "x": 148.041963,
-     "y": 66.346065,
-     "rot": 180.0,
-     "layer": "B.Cu",
-     "holes": [
-      {
-       "x": 148.041963,
-       "y": 66.346065,
-       "drill": 2.2,
-       "pad": 3.5,
-       "plated": true
-      }
-     ]
-    },
-    {
      "ref": "H2",
      "footprint": "swoop:M2_hole_4.2mm",
      "x": 148.041963,
@@ -1254,23 +1237,6 @@
       {
        "x": 148.041963,
        "y": 68.846065,
-       "drill": 3.8,
-       "pad": 4.2,
-       "plated": true
-      }
-     ]
-    },
-    {
-     "ref": "H4",
-     "footprint": "swoop:M2_hole_4.2mm",
-     "x": 184.041963,
-     "y": 68.845564,
-     "rot": 0.0,
-     "layer": "F.Cu",
-     "holes": [
-      {
-       "x": 184.041963,
-       "y": 68.845564,
        "drill": 3.8,
        "pad": 4.2,
        "plated": true
@@ -1690,7 +1656,45 @@
       73.389732
      ]
     }
-   }
+   },
+   "case_holes_dropped": [
+    {
+     "ref": "Ref**",
+     "footprint": "swoop:M2_hole_3.5mm",
+     "x": 148.041963,
+     "y": 66.346065,
+     "rot": 180.0,
+     "layer": "B.Cu",
+     "holes": [
+      {
+       "x": 148.041963,
+       "y": 66.346065,
+       "drill": 2.2,
+       "pad": 3.5,
+       "plated": true
+      }
+     ],
+     "reason": "drill overlaps the larger case hole at (148.042, 68.846)"
+    },
+    {
+     "ref": "H4",
+     "footprint": "swoop:M2_hole_4.2mm",
+     "x": 184.041963,
+     "y": 68.845564,
+     "rot": 0.0,
+     "layer": "F.Cu",
+     "holes": [
+      {
+       "x": 184.041963,
+       "y": 68.845564,
+       "drill": 3.8,
+       "pad": 4.2,
+       "plated": true
+      }
+     ],
+     "reason": "drill overlaps tenting-puck hole at (182.264, 70.586)"
+    }
+   ]
   },
   "right": {
    "outline": [
@@ -2980,40 +2984,6 @@
      ]
     },
     {
-     "ref": "H4",
-     "footprint": "swoop:M2_hole_4.2mm",
-     "x": 72.75625,
-     "y": 68.813718,
-     "rot": 180.0,
-     "layer": "B.Cu",
-     "holes": [
-      {
-       "x": 72.75625,
-       "y": 68.813718,
-       "drill": 3.8,
-       "pad": 4.2,
-       "plated": true
-      }
-     ]
-    },
-    {
-     "ref": "Ref**",
-     "footprint": "swoop:M2_hole_3.5mm",
-     "x": 108.75625,
-     "y": 66.314219,
-     "rot": 180.0,
-     "layer": "B.Cu",
-     "holes": [
-      {
-       "x": 108.75625,
-       "y": 66.314219,
-       "drill": 2.2,
-       "pad": 3.5,
-       "plated": true
-      }
-     ]
-    },
-    {
      "ref": "H2",
      "footprint": "swoop:M2_hole_4.2mm",
      "x": 108.75625,
@@ -3375,7 +3345,45 @@
       73.357886
      ]
     }
-   }
+   },
+   "case_holes_dropped": [
+    {
+     "ref": "H4",
+     "footprint": "swoop:M2_hole_4.2mm",
+     "x": 72.75625,
+     "y": 68.813718,
+     "rot": 180.0,
+     "layer": "B.Cu",
+     "holes": [
+      {
+       "x": 72.75625,
+       "y": 68.813718,
+       "drill": 3.8,
+       "pad": 4.2,
+       "plated": true
+      }
+     ],
+     "reason": "drill overlaps tenting-puck hole at (74.784, 70.586)"
+    },
+    {
+     "ref": "Ref**",
+     "footprint": "swoop:M2_hole_3.5mm",
+     "x": 108.75625,
+     "y": 66.314219,
+     "rot": 180.0,
+     "layer": "B.Cu",
+     "holes": [
+      {
+       "x": 108.75625,
+       "y": 66.314219,
+       "drill": 2.2,
+       "pad": 3.5,
+       "plated": true
+      }
+     ],
+     "reason": "drill overlaps the larger case hole at (108.756, 68.814)"
+    }
+   ]
   }
  },
  "dropped_panel_features": [

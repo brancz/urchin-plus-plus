@@ -1,0 +1,44 @@
+{
+  "lcsc": "C409782",
+  "manufacturer": "MEIHUA",
+  "mpn": "MHT151RGBCT",
+  "datasheet_url": "https://lcsc.com/product-detail/Light-Emitting-Diodes-LED_MEIHUA-MHT150RGBCT_C409782.html",
+  "symbol": "MHT150RGBCT.kicad_sym",
+  "footprint": "LED-ARRAY-SMD_1206-4P-L3.2-W1.3-BR-EH.kicad_mod",
+  "side": "bottom",
+  "footprint_changes": [
+    "pad 1 moved from (1.45, 0.55) to (1.55, 0.55)",
+    "pad 2 moved from (1.45, -0.55) to (1.55, -0.55)",
+    "pad 3 moved from (-1.45, -0.55) to (-1.55, -0.55)",
+    "pad 4 moved from (-1.45, 0.55) to (-1.55, 0.55)",
+    "non-plated hole 2.10 mm added at (0, 0)",
+    "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
+  ],
+  "fixups_source": "docs/datasheets/C409782_MHT151RGBCT.pdf p.2, 'Recommended Solder Pad (Reverse Type)': 0.8 x 0.7 mm pads, 2.3 mm between pad rows, 2.1 mm hole. EasyEDA's footprint has the pads 0.2 mm closer together and no hole.",
+  "model": "LED-SMD-1206-4P_L3.2-W1.3-H1.1.step",
+  "pins": [
+    {
+      "pin": "1",
+      "name": "+",
+      "signal": "pos"
+    },
+    {
+      "pin": "2",
+      "name": "-",
+      "signal": "neg"
+    },
+    {
+      "pin": "3",
+      "name": "-",
+      "signal": "neg"
+    },
+    {
+      "pin": "4",
+      "name": "-",
+      "signal": "neg"
+    }
+  ],
+  "fetched_utc": "2026-10-18T11:16:02Z",
+  "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
+  "kicad_cli": "9.0.9"
+}

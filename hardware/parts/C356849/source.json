@@ -1,0 +1,234 @@
+{
+  "lcsc": "C356849",
+  "manufacturer": "EBYTE",
+  "mpn": "E73-2G4M08S1C",
+  "datasheet_url": "https://lcsc.com/product-detail/_Chengdu-Ebyte-Elec-Tech-E73-2G4M08S1C_C356849.html",
+  "symbol": "E73-2G4M08S1C.kicad_sym",
+  "footprint": "WIRELM-SMD_E73-2G4M08S1C.kicad_mod",
+  "side": "bottom",
+  "footprint_changes": [
+    "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
+  ],
+  "fixups_source": null,
+  "model": "WIRELM-SMD_L18.0-W13.0-H3.0-E73-2G4M08S1C.step",
+  "pins": [
+    {
+      "pin": "7",
+      "name": "AI0",
+      "signal": "AI0"
+    },
+    {
+      "pin": "18",
+      "name": "AI2",
+      "signal": "AI2"
+    },
+    {
+      "pin": "15",
+      "name": "AI3",
+      "signal": "AI3"
+    },
+    {
+      "pin": "4",
+      "name": "AI4",
+      "signal": "AI4"
+    },
+    {
+      "pin": "8",
+      "name": "AI5",
+      "signal": "AI5"
+    },
+    {
+      "pin": "10",
+      "name": "AI6",
+      "signal": "AI6"
+    },
+    {
+      "pin": "9",
+      "name": "AI7",
+      "signal": "AI7"
+    },
+    {
+      "pin": "31",
+      "name": "D+",
+      "signal": "Dpos"
+    },
+    {
+      "pin": "29",
+      "name": "D-",
+      "signal": "Dneg"
+    },
+    {
+      "pin": "25",
+      "name": "DCH",
+      "signal": "DCH"
+    },
+    {
+      "pin": "5",
+      "name": "GND",
+      "signal": "GND"
+    },
+    {
+      "pin": "21",
+      "name": "GND",
+      "signal": "GND"
+    },
+    {
+      "pin": "24",
+      "name": "GND",
+      "signal": "GND"
+    },
+    {
+      "pin": "41",
+      "name": "NF1",
+      "signal": "NF1"
+    },
+    {
+      "pin": "43",
+      "name": "NF2",
+      "signal": "NF2"
+    },
+    {
+      "pin": "3",
+      "name": "P0.03",
+      "signal": "P0_03"
+    },
+    {
+      "pin": "14",
+      "name": "P0.06",
+      "signal": "P0_06"
+    },
+    {
+      "pin": "22",
+      "name": "P0.07",
+      "signal": "P0_07"
+    },
+    {
+      "pin": "16",
+      "name": "P0.08",
+      "signal": "P0_08"
+    },
+    {
+      "pin": "33",
+      "name": "P0.13",
+      "signal": "P0_13"
+    },
+    {
+      "pin": "32",
+      "name": "P0.20",
+      "signal": "P0_20"
+    },
+    {
+      "pin": "34",
+      "name": "P0.22",
+      "signal": "P0_22"
+    },
+    {
+      "pin": "35",
+      "name": "P0.24",
+      "signal": "P0_24"
+    },
+    {
+      "pin": "12",
+      "name": "P0.26",
+      "signal": "P0_26"
+    },
+    {
+      "pin": "36",
+      "name": "P1.00",
+      "signal": "P1_00"
+    },
+    {
+      "pin": "38",
+      "name": "P1.02",
+      "signal": "P1_02"
+    },
+    {
+      "pin": "40",
+      "name": "P1.04",
+      "signal": "P1_04"
+    },
+    {
+      "pin": "42",
+      "name": "P1.06",
+      "signal": "P1_06"
+    },
+    {
+      "pin": "17",
+      "name": "P1.09",
+      "signal": "P1_09"
+    },
+    {
+      "pin": "2",
+      "name": "P1.10",
+      "signal": "P1_10"
+    },
+    {
+      "pin": "1",
+      "name": "P1.11",
+      "signal": "P1_11"
+    },
+    {
+      "pin": "6",
+      "name": "P1.13",
+      "signal": "P1_13"
+    },
+    {
+      "pin": "20",
+      "name": "P12",
+      "signal": "P12"
+    },
+    {
+      "pin": "28",
+      "name": "P15",
+      "signal": "P15"
+    },
+    {
+      "pin": "30",
+      "name": "P17",
+      "signal": "P17"
+    },
+    {
+      "pin": "26",
+      "name": "RST",
+      "signal": "RST"
+    },
+    {
+      "pin": "39",
+      "name": "SWC",
+      "signal": "SWC"
+    },
+    {
+      "pin": "37",
+      "name": "SWD",
+      "signal": "SWD"
+    },
+    {
+      "pin": "27",
+      "name": "VBS",
+      "signal": "VBS"
+    },
+    {
+      "pin": "19",
+      "name": "VCC",
+      "signal": "VCC"
+    },
+    {
+      "pin": "23",
+      "name": "VDH",
+      "signal": "VDH"
+    },
+    {
+      "pin": "11",
+      "name": "XL1",
+      "signal": "XL1"
+    },
+    {
+      "pin": "13",
+      "name": "XL2",
+      "signal": "XL2"
+    }
+  ],
+  "fetched_utc": "2026-10-18T11:15:48Z",
+  "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
+  "kicad_cli": "9.0.9"
+}

@@ -30,6 +30,7 @@ import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from lib import footprint as fplib  # noqa: E402
 from lib import sexp  # noqa: E402
 from lib.toolchain import pinned  # noqa: E402
 
@@ -85,7 +86,7 @@ def clean_manufacturer(m):
     return re.sub(r"\s*[(（][^)）]*[)）]\s*$", "", m or "").strip() or "unknown"
 
 
-def import_part(lcsc, parts_dir, model_base, side):
+def import_part(lcsc, parts_dir, model_base, side, fixups=None):
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
         run(["easyeda2kicad", "--full", "--lcsc_id", lcsc, "--output", str(tmp / "lib")])
@@ -115,10 +116,21 @@ def import_part(lcsc, parts_dir, model_base, side):
             fp_text, n = re.subn(r'\(model\s+"[^"]*"', f'(model "{model_path}"', fp_text, count=1)
             if n != 1:
                 raise SystemExit(f"{lcsc}: footprint has no model entry to rewrite")
+        changes = []
+        if fixups:  # in the datasheet's (front-side) coordinates, so before any flip
+            node = sexp.parse(fp_text)[0]
+            changes += fplib.fixups(node, fixups)
+            fp_text = "\n".join(sexp.dump_lines(node)) + "\n"
         (out / fps[0].name).write_text(fp_text, encoding="utf-8")
         if side == "bottom":
             run([os.environ["KICAD_PY"], str(Path(__file__).resolve().parent / "footprint_to_bottom.py"),
                  str(out), fps[0].stem])
+        node = sexp.load(out / fps[0].name)
+        try:
+            changes += fplib.sanitize(node)
+        except ValueError as e:
+            raise SystemExit("%s: %s" % (lcsc, e))
+        (out / fps[0].name).write_text("\n".join(sexp.dump_lines(node)) + "\n", encoding="utf-8")
         sym_file = f"{sym_name}.kicad_sym"
         shutil.copy(tmp / "up.kicad_sym", out / sym_file)
 
@@ -182,6 +194,8 @@ def import_part(lcsc, parts_dir, model_base, side):
         "symbol": sym_file,
         "footprint": fps[0].name,
         "side": side,
+        "footprint_changes": changes,
+        "fixups_source": (fixups or {}).get("source"),
         "model": steps[0].name if steps else None,
         "pins": pin_map,
         "fetched_utc": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -199,19 +213,27 @@ def main():
                     help="3D model path prefix written into footprints (default: %(default)s)")
     ap.add_argument("--side", choices=("bottom", "top"), default="bottom",
                     help="side of the library footprint (default: bottom, CLAUDE.md rule 2)")
-    ap.add_argument("lcsc", nargs="+")
+    ap.add_argument("--manifest", type=Path, help="import every part listed in this JSON (hardware/parts.json)")
+    ap.add_argument("lcsc", nargs="*")
     args = ap.parse_args()
     # kicad-cli upgrade writes its own format; a newer KiCad makes files the pinned one can't load.
-    if args.side == "bottom" and not os.environ.get("KICAD_PY"):
-        raise SystemExit("--side bottom needs KICAD_PY (KiCad's Python) to flip the footprint")
     kicad = tool_version(["kicad-cli", "version"])
     if kicad != pinned("KICAD_VERSION"):
         raise SystemExit("kicad-cli is %s, pinned is %s (see docs/SETUP.md)" % (kicad, pinned("KICAD_VERSION")))
-    for lcsc in args.lcsc:
+    todo = [(c, args.side, None) for c in args.lcsc]
+    if args.manifest:
+        for part in json.loads(args.manifest.read_text())["parts"]:
+            todo.append((part["lcsc"], part.get("side", "bottom"), part.get("fixups")))
+    if not todo:
+        raise SystemExit("nothing to import: give LCSC numbers or --manifest")
+    for lcsc, side, fixups in todo:
         if not re.fullmatch(r"C[0-9]+", lcsc):
             raise SystemExit(f"not an LCSC number: {lcsc}")
-        s = import_part(lcsc, args.parts_dir, args.model_base, args.side)
-        print(f"{lcsc}: {s['manufacturer']} {s['mpn']} ({args.side}) -> {args.parts_dir / lcsc}")
+        if side == "bottom" and not os.environ.get("KICAD_PY"):
+            raise SystemExit("--side bottom needs KICAD_PY (KiCad's Python) to flip the footprint")
+        s = import_part(lcsc, args.parts_dir, args.model_base, side, fixups)
+        print(f"{lcsc}: {s['manufacturer']} {s['mpn']} ({side}) -> {args.parts_dir / lcsc}"
+              + "".join(f"\n    {c}" for c in s["footprint_changes"]))
 
 
 if __name__ == "__main__":

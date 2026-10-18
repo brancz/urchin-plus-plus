@@ -1,0 +1,29 @@
+{
+  "lcsc": "C25905",
+  "manufacturer": "UNI-ROYAL",
+  "mpn": "0402WGF5101TCE",
+  "datasheet_url": "https://lcsc.com/product-detail/Chip-Resistor-Surface-Mount-UniOhm_5-1KR-5101-1_C25905.html",
+  "symbol": "0402WGF5101TCE.kicad_sym",
+  "footprint": "R0402.kicad_mod",
+  "side": "bottom",
+  "footprint_changes": [
+    "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
+  ],
+  "fixups_source": null,
+  "model": "R0402_L1.0-W0.5-H0.4.step",
+  "pins": [
+    {
+      "pin": "1",
+      "name": "1",
+      "signal": null
+    },
+    {
+      "pin": "2",
+      "name": "2",
+      "signal": null
+    }
+  ],
+  "fetched_utc": "2026-10-18T11:16:07Z",
+  "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
+  "kicad_cli": "9.0.9"
+}

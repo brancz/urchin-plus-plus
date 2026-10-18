@@ -1,0 +1,29 @@
+{
+  "lcsc": "C720477",
+  "manufacturer": "XUNPU",
+  "mpn": "TS-1088-AR02016",
+  "datasheet_url": "https://lcsc.com/product-detail/Tactile-Switches_XUNPU-TS-1088-AR02016_C720477.html",
+  "symbol": "TS-1088-AR02016.kicad_sym",
+  "footprint": "SW-SMD_L3.9-W3.0-P4.45.kicad_mod",
+  "side": "bottom",
+  "footprint_changes": [
+    "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
+  ],
+  "fixups_source": null,
+  "model": "SW-SMD_L3.9-W2.9-H2.0-LS4.8.step",
+  "pins": [
+    {
+      "pin": "1",
+      "name": "1",
+      "signal": null
+    },
+    {
+      "pin": "2",
+      "name": "2",
+      "signal": null
+    }
+  ],
+  "fetched_utc": "2026-10-18T11:16:00Z",
+  "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
+  "kicad_cli": "9.0.9"
+}
