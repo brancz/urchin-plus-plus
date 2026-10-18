@@ -27,6 +27,9 @@ from "parts/C19702/C19702.ato" import C19702_package
 from "parts/BAT_PADS/BAT_PADS.ato" import BAT_PADS_package
 from "parts/DOCK_PADS/DOCK_PADS.ato" import DOCK_PADS_package
 from "parts/SWD_PADS/SWD_PADS.ato" import SWD_PADS_package
+from "parts/BATTERY_401730/BATTERY_401730.ato" import BATTERY_401730_package
+from "parts/STEEL_DISC/STEEL_DISC.ato" import STEEL_DISC_package
+from "parts/RUBBER_FOOT/RUBBER_FOOT.ato" import RUBBER_FOOT_package
 
 module Core:
     # ---- nets -------------------------------------------------------------------
@@ -291,3 +294,19 @@ module Core:
     swd.SWDCLK ~ swdclk
     swd.RESET ~ reset_n
     swd.GND ~ gnd
+
+    # ---- Mechanical outlines (no pads; placement and courtyard checks only) ------------
+    cell = new BATTERY_401730_package   # the LiPo cell on top, wired to BT1
+    trait cell has_designator<designator="BT2">
+    disc1 = new STEEL_DISC_package      # steel discs for the dock magnets
+    trait disc1 has_designator<designator="MK1">
+    disc2 = new STEEL_DISC_package
+    trait disc2 has_designator<designator="MK2">
+    foot1 = new RUBBER_FOOT_package
+    trait foot1 has_designator<designator="MK3">
+    foot2 = new RUBBER_FOOT_package
+    trait foot2 has_designator<designator="MK4">
+    foot3 = new RUBBER_FOOT_package
+    trait foot3 has_designator<designator="MK5">
+    foot4 = new RUBBER_FOOT_package
+    trait foot4 has_designator<designator="MK6">

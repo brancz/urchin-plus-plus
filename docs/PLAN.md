@@ -83,8 +83,8 @@ Update this section whenever a phase moves.
 |---|---|---|
 | 0 Toolchain proof | done (2026-10-18) | KiCad 10 failed the atopile round-trip, so KiCad 9.0.9 per the fallback. The 12-step round-trip passes locally and in CI (run 39119942514). Two reviewer rounds dispositioned in `reports/phase0/review.md`. Decisions in ARCHITECTURE.md (local atomic parts, bottom-side library footprints, all-or-nothing `ato_build.sh`). |
 | 1 Geometry | done (2026-10-18) | Zero deviation against the original, checked in CI from a fetched copy. Evidence in `reports/phase1/`. |
-| 2 Circuit and parts | in progress | Parts chosen with live JLC stock and datasheets saved; circuit next. |
-| 3 Placement | not started | |
+| 2 Circuit and parts | done (2026-10-18) | Both halves build; connectivity checked against a datasheet netlist; BOM in stock (`reports/phase2/`). Gate 1 passed under the owner's standing instruction to continue to a JLC-ready bundle; review in `reports/phase2/review.md`. |
+| 3 Placement | done (2026-10-18) | Placement, antenna keep-out, clearance and DRC checks pass on both halves (`reports/phase3/`). Gate 2 under the same instruction; review in `reports/phase3/review.md`. |
 | 4 Routing | not started | |
 | 5 Validation | not started | |
 | 6 Fab outputs | not started | |

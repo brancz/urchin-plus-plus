@@ -1,0 +1,15 @@
+(kicad_symbol_lib
+	(version 20241209)
+	(generator "urchin++")
+	(symbol "RUBBER_FOOT"
+		(in_bom no)
+		(on_board yes)
+		(property "Reference" "MK" (at 0 2.54 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "RUBBER_FOOT" (at 0 -2.54 0) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Description" "" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(symbol "RUBBER_FOOT_1_1"
+		)
+	)
+)

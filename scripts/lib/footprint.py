@@ -3,7 +3,8 @@
 fixups(node, spec)   apply corrections taken from a part's datasheet (hardware/parts.json):
                        move_pads  {"1": [x, y], ...}   pad centre in footprint coordinates
                        add_npth   [[x, y, drill], ...] non-plated holes (e.g. reverse-mount LEDs)
-sanitize(node)       remove what atopile would drop or merge anyway, where that is cosmetic:
+sanitize(node)       make unnumbered plated holes without copper (locating pegs) non-plated;
+                     remove what atopile would drop or merge anyway, where that is cosmetic:
                        pad sub-items atopile doesn't model (e.g. thermal_bridge_angle),
                        ${REFERENCE}/%R texts (atopile strips them),
                        graphics that duplicate another item's geometry on another layer
@@ -68,6 +69,13 @@ def sanitize(node):
                         changes.append("pad %s: dropped (%s %s), which atopile doesn't keep" % (c[1], sh, sub[1]))
                     else:
                         raise ValueError("pad %s has (%s ...), which atopile drops" % (c[1], sh))
+    for c in sexp.children(node, "pad"):
+        # An unnumbered plated hole without copper around it is a locating peg: make it non-plated.
+        size, drill = sexp.child(c, "size"), sexp.child(c, "drill")
+        if not c[1] and c[2] == "thru_hole" and drill and len(drill) == 2 and \
+                max(float(size[1]), float(size[2])) <= float(drill[1]):
+            c[2] = A("np_thru_hole")
+            changes.append("unnumbered %s mm plated hole without annular ring made non-plated" % drill[1])
     for t in [c for c in node[1:] if sexp.head(c) == "fp_text" and len(c) > 2 and c[2] in DUPLICATE_REF_TEXTS]:
         node.remove(t)
         changes.append("dropped fp_text %s (atopile strips duplicate designators)" % t[2])

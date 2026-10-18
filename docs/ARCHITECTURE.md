@@ -28,7 +28,7 @@ dock pads 5V ─TVS─Schottky┘           └── BAT ── protected LiPo
 - **No external regulator.** The battery drives the nRF52840's high-voltage input (VDDH) directly, following the module datasheet's reference circuit.
 - **No battery divider.** ZMK's `zmk,battery-nrf-vddh` driver measures the voltage internally, so there's no leakage path.
 
-**Battery.** A protected LiPo, the largest cell that fits the old nice!nano area on top at 4 mm thickness or less (expect roughly 150–250 mAh). Wires are soldered to pads, no JST connector, to save height. The exact cell is chosen in phase 2 from the real free area.
+**Battery.** A protected 401730 LiPo (4.0 × 17 × 30 mm, about 180 mAh), the largest cell that fits the old nice!nano area on top below the antenna keep-out. Wires are soldered to pads (BT1), no JST connector, to save height. It sits on 1 mm foam tape.
 
 **USB-C.** On the bottom at the inner board edge, below the power switch (the old nice!nano port position now holds the antenna; see the decision log). 5.1 kΩ CC pull-down resistors, a USBLC6-2 for ESD on D+/D- and VBUS. Used for flashing; it also charges. Only USB VBUS reaches the nRF52840's VBUS pin, so a docked half doesn't look USB-connected to the firmware.
 
@@ -90,8 +90,6 @@ dock pads 5V ─TVS─Schottky┘           └── BAT ── protected LiPo
 Resolved in phase 2 (2026-10-18): E73 stock, assemblability, VDDH wiring and crystal (decision log); Kailh socket (hand-soldered); stock of every keyboard part (`reports/phase2/bom.md`); `ElectricPower` net names (the circuit names plain signals). Still open:
 
 - SMD pogo pins for the dock: stock (phase 7)
-- Battery cell dimensions vs free area (phase 3)
-- Charging pads vs tenting puck vs sockets: space on the bottom (phase 3)
 - easyeda2kicad footprints: silkscreen overlaps their own pads (DRC warnings in phase 0); every footprint's pads are reviewed against its datasheet land pattern at gate 1 (`reports/phase2/footprints.md`)
 - KiKit's `fab jlcpcb --assembly` needs a schematic, which atopile doesn't produce: build BOM/CPL from atopile's BOM and `kicad-cli pcb export pos` (phase 6)
 - Bottom-side parts use bottom-side library footprints (decision below): check that `kicad-cli pcb export pos` and JLC's rotation corrections give the right orientation for them (phase 6)
@@ -132,3 +130,10 @@ Append entries as `YYYY-MM-DD: decision — reason`.
 - 2026-10-18: nRF52840 VBUS is fed from USB VBUS only (before its Schottky), not from the charger input, so a docked half isn't seen as USB-powered by ZMK; the dock state is read from PGOOD.
 - 2026-10-18: The tenting-puck footprint gets a 2 mm silkscreen cross at its centre — atopile 0.15.7 crashes ("min() iterable argument is empty") placing designators on a footprint whose silkscreen is only circles and arcs. Pads, holes and outline are unchanged (rule 1).
 - 2026-10-18: `scripts/checks/connectivity.py` checks every numbered pad of each half against a netlist written from the datasheets' pin numbers (not from the .ato sources), plus the generated pin map cross-checked with the E73 pin table; nothing unlisted may be connected.
+- 2026-10-18: Placement source: `hardware/placement.json` for the left half's electronics and mechanical outlines, mirrored for the right half (x' = 2 × 128.397 − x, rotation' = −rotation); keys, puck and case holes from the geometry file. `scripts/placement/place.py --check` runs in CI.
+- 2026-10-18: Antenna keep-out = the module's antenna end (module-local y −10.98 to −7.58, 0.06 mm short of the first pad row; the datasheet gives no dimension, so the antenna section itself is the minimum) widened to ±9.4 mm to cover the notch's ears, extended past the edge; a rule area on both copper layers forbids tracks, vias and pour, and `scripts/checks/clearance.py` rejects copper pads, parts and the battery in it. The two 2.2 mm case holes in the ears stay (case compatibility) as non-plated holes with no copper; use nylon screws there.
+- 2026-10-18: Battery: 401730 cell (4.0 × 17 × 30 mm, ~180 mAh) on top, y 46.75–77.25 (3.5 mm clear of the keep-out), over J1's and SW35's through-hole joints, which are shorter than the board (1.01 mm and 0.55 mm), on 1 mm foam tape. Its outline is a mechanical part (BT2) so courtyard checks cover it.
+- 2026-10-18: Dock contacts (TP1) at the bottom centre, (178, 85) on the left half and mirrored on the right, outside the tenting puck, with 10 mm steel-disc positions on either side (MK1/MK2); D2/D3 next to them. Rubber feet: four 6 mm positions near the corners (MK3–MK6), at least 3.5 mm tall; the free-space search found no room for wider ones.
+- 2026-10-18: JLCPCB design rules live in each half's `.kicad_pro`, written by `scripts/placement/board_setup.py` (0.15 mm min track/space, 0.3/0.6 mm vias, 0.3 mm copper-to-edge); DRC errors are excused only through `hardware/drc_allow.json` (the two inherited ones).
+- 2026-10-18: Unnumbered plated holes without an annular ring (the USB-C and slide-switch locating pegs) become non-plated in `scripts/lib/footprint.py` sanitize; KiCad flagged them as zero-width annular rings.
+- 2026-10-18: atopile moves the reference field of a new mechanical footprint to its library footprint's layer on the second build only; that one-time change was accepted with `BOARD_DIFF_ARGS="--allow field-placement:*/Reference"`, and later builds are stable (`--frozen` passes).

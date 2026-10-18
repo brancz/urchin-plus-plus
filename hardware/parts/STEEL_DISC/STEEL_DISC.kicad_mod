@@ -1,0 +1,91 @@
+(footprint "STEEL_DISC"
+  (version 20241229)
+  (generator "urchin++ footprint_to_bottom")
+  (layer "B.Cu")
+  (property "Reference" "MK**"
+    (at 0 0 0)
+    (layer "B.SilkS")
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15)
+      )
+      (justify mirror)
+    )
+  )
+  (property "Value" "STEEL_DISC"
+    (at 0 0 0)
+    (layer "B.Fab")
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15)
+      )
+      (justify mirror)
+    )
+  )
+  (property "Datasheet" ""
+    (at 0 0 0)
+    (layer "B.Fab")
+    (hide yes)
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15)
+      )
+      (justify mirror)
+    )
+  )
+  (property "Description" ""
+    (at 0 0 0)
+    (layer "B.Fab")
+    (hide yes)
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15)
+      )
+      (justify mirror)
+    )
+  )
+  (attr board_only exclude_from_pos_files exclude_from_bom)
+  (fp_line
+    (start 0 1)
+    (end 0 -1)
+    (stroke
+      (width 0.12)
+      (type default)
+    )
+    (layer "B.SilkS")
+  )
+  (fp_line
+    (start -1 0)
+    (end 1 0)
+    (stroke
+      (width 0.12)
+      (type default)
+    )
+    (layer "B.SilkS")
+  )
+  (fp_circle
+    (center 0 0)
+    (end 5 0)
+    (stroke
+      (width 0.12)
+      (type default)
+    )
+    (fill no)
+    (layer "B.SilkS")
+  )
+  (fp_circle
+    (center 0 0)
+    (end 5.25 0)
+    (stroke
+      (width 0.05)
+      (type default)
+    )
+    (fill no)
+    (layer "B.CrtYd")
+  )
+  (embedded_fonts no)
+)

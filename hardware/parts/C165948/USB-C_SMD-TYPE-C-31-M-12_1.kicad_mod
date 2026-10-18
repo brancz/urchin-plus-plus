@@ -163,14 +163,14 @@
     )
     (layer "B.CrtYd")
   )
-  (pad "" thru_hole circle
+  (pad "" np_thru_hole circle
     (at -2.9 1.21 180)
     (size 0.6 0.6)
     (drill 0.6)
     (layers "*.Cu" "*.Mask")
     (remove_unused_layers no)
   )
-  (pad "" thru_hole circle
+  (pad "" np_thru_hole circle
     (at 2.9 1.21 180)
     (size 0.6 0.6)
     (drill 0.6)

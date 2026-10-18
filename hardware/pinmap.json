@@ -125,9 +125,9 @@
    {
     "signal": "r2c0",
     "kind": "key",
-    "gpio": "P1_09",
-    "module_pin": 17,
-    "distance_mm": 85.19,
+    "gpio": "P0_08",
+    "module_pin": 16,
+    "distance_mm": 87.91,
     "ref": "SW11",
     "gpio_pad": "2",
     "gnd_pad": "1",
@@ -173,9 +173,9 @@
    {
     "signal": "r2c4",
     "kind": "key",
-    "gpio": "P0_08",
-    "module_pin": 16,
-    "distance_mm": 15.97,
+    "gpio": "P0_06",
+    "module_pin": 14,
+    "distance_mm": 17.12,
     "ref": "SW15",
     "gpio_pad": "2",
     "gnd_pad": "1",
@@ -185,9 +185,9 @@
    {
     "signal": "t0",
     "kind": "key",
-    "gpio": "P0_05",
-    "module_pin": 15,
-    "distance_mm": 33.34,
+    "gpio": "P0_01",
+    "module_pin": 13,
+    "distance_mm": 34.12,
     "ref": "SW16",
     "gpio_pad": "2",
     "gnd_pad": "1",
@@ -209,9 +209,9 @@
    {
     "signal": "chg_sense",
     "kind": "function",
-    "gpio": "P0_06",
-    "module_pin": 14,
-    "distance_mm": 19.69,
+    "gpio": "P1_09",
+    "module_pin": 17,
+    "distance_mm": 8.04,
     "near": "D4"
    },
    {
@@ -227,23 +227,23 @@
     "kind": "function",
     "gpio": "P0_00",
     "module_pin": 11,
-    "distance_mm": 22.56,
+    "distance_mm": 22.65,
     "near": "R9"
    },
    {
     "signal": "led_r",
     "kind": "function",
-    "gpio": "P0_01",
-    "module_pin": 13,
-    "distance_mm": 22.72,
+    "gpio": "P0_26",
+    "module_pin": 12,
+    "distance_mm": 25.34,
     "near": "R8"
    },
    {
     "signal": "pgood_sense",
     "kind": "function",
-    "gpio": "P0_26",
-    "module_pin": 12,
-    "distance_mm": 22.23,
+    "gpio": "P0_05",
+    "module_pin": 15,
+    "distance_mm": 9.76,
     "near": "D5"
    }
   ],
@@ -419,9 +419,9 @@
    {
     "signal": "r2c4",
     "kind": "key",
-    "gpio": "P0_08",
-    "module_pin": 16,
-    "distance_mm": 17.52,
+    "gpio": "P1_09",
+    "module_pin": 17,
+    "distance_mm": 16.03,
     "ref": "SW28",
     "gpio_pad": "1",
     "gnd_pad": "2",
@@ -431,9 +431,9 @@
    {
     "signal": "t0",
     "kind": "key",
-    "gpio": "P1_09",
-    "module_pin": 17,
-    "distance_mm": 31.82,
+    "gpio": "P0_12",
+    "module_pin": 20,
+    "distance_mm": 35.27,
     "ref": "SW34",
     "gpio_pad": "1",
     "gnd_pad": "2",
@@ -443,9 +443,9 @@
    {
     "signal": "t1",
     "kind": "key",
-    "gpio": "P0_04",
-    "module_pin": 18,
-    "distance_mm": 33.7,
+    "gpio": "P0_07",
+    "module_pin": 22,
+    "distance_mm": 34.92,
     "ref": "SW33",
     "gpio_pad": "2",
     "gnd_pad": "1",
@@ -455,41 +455,41 @@
    {
     "signal": "chg_sense",
     "kind": "function",
-    "gpio": "P0_12",
-    "module_pin": 20,
-    "distance_mm": 19.12,
+    "gpio": "P0_08",
+    "module_pin": 16,
+    "distance_mm": 8.26,
     "near": "D4"
    },
    {
     "signal": "led_b",
     "kind": "function",
-    "gpio": "P0_24",
-    "module_pin": 35,
-    "distance_mm": 33.22,
+    "gpio": "P0_15",
+    "module_pin": 28,
+    "distance_mm": 30.87,
     "near": "R10"
    },
    {
     "signal": "led_g",
     "kind": "function",
-    "gpio": "P0_15",
-    "module_pin": 28,
-    "distance_mm": 31.75,
+    "gpio": "P0_24",
+    "module_pin": 35,
+    "distance_mm": 34.22,
     "near": "R9"
    },
    {
     "signal": "led_r",
     "kind": "function",
-    "gpio": "P0_07",
-    "module_pin": 22,
-    "distance_mm": 24.51,
+    "gpio": "P0_13",
+    "module_pin": 33,
+    "distance_mm": 34.04,
     "near": "R8"
    },
    {
     "signal": "pgood_sense",
     "kind": "function",
-    "gpio": "P0_13",
-    "module_pin": 33,
-    "distance_mm": 30.82,
+    "gpio": "P0_04",
+    "module_pin": 18,
+    "distance_mm": 10.11,
     "near": "D5"
    }
   ]

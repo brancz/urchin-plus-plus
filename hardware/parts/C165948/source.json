@@ -11,6 +11,8 @@
     "pad A4B9: dropped (thermal_bridge_angle 90), which atopile doesn't keep",
     "pad B1A12: dropped (thermal_bridge_angle 90), which atopile doesn't keep",
     "pad B4A9: dropped (thermal_bridge_angle 90), which atopile doesn't keep",
+    "unnumbered 0.6 mm plated hole without annular ring made non-plated",
+    "unnumbered 0.6 mm plated hole without annular ring made non-plated",
     "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)",
     "dropped fp_line on B.SilkS duplicating one on B.CrtYd at ((4.47, -5.09), (-4.47, -5.09))"
   ],
@@ -99,7 +101,7 @@
       "signal": "VBUS"
     }
   ],
-  "fetched_utc": "2026-10-18T11:25:56Z",
+  "fetched_utc": "2026-10-18T11:57:19Z",
   "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
   "kicad_cli": "9.0.9"
 }
