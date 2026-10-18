@@ -3,10 +3,10 @@
 
     "$KICAD_PY" scripts/roundtrip/edit_board.py BOARD
 
-Adds a 30 x 20 mm outline, moves and rotates every footprint, routes VCC and
-MID with tracks, adds a GND via and a filled two-layer GND zone, then saves
-with KiCad's own writer (so the file comes out in whatever format the running
-KiCad writes). Prints the edit as JSON.
+Sets JLC-like design rules, adds a 30 x 20 mm outline, moves and rotates every
+footprint (one at 15 degrees), routes VCC and MID on B.Cu (the parts are
+bottom-side, CLAUDE.md rule 2), adds a GND via and a filled two-layer GND zone,
+then saves with KiCad's own writer. Prints the edit as JSON.
 """
 
 import json
@@ -17,7 +17,7 @@ import pcbnew
 X0, Y0 = 100.0, 100.0
 PLACEMENT = {  # atopile_address -> (x, y, rotation) in mm / degrees, relative to X0, Y0
     "r_top": (10.0, 5.0, 270.0),
-    "r_bot": (10.0, 10.0, 270.0),
+    "r_bot": (10.0, 10.0, 15.0),
     "c_dec": (16.0, 5.0, 270.0),
     "hole": (25.0, 5.0, 0.0),
 }
@@ -39,7 +39,7 @@ def track(board, start, end, net, width=0.25):
     t.SetStart(start)
     t.SetEnd(end)
     t.SetWidth(pcbnew.FromMM(width))
-    t.SetLayer(pcbnew.F_Cu)
+    t.SetLayer(pcbnew.B_Cu)
     t.SetNet(board.FindNet(net))
     board.Add(t)
     return t
@@ -48,6 +48,13 @@ def track(board, start, end, net, width=0.25):
 def main():
     path = sys.argv[1]
     board = pcbnew.LoadBoard(path)
+
+    rules = board.GetDesignSettings()  # stored in the .kicad_pro next to the board
+    rules.m_MinClearance = pcbnew.FromMM(0.127)
+    rules.m_TrackMinWidth = pcbnew.FromMM(0.127)
+    rules.m_ViasMinSize = pcbnew.FromMM(0.45)
+    rules.m_MinThroughDrill = pcbnew.FromMM(0.2)
+    rules.m_CopperEdgeClearance = pcbnew.FromMM(0.3)
 
     outline = pcbnew.PCB_SHAPE(board)
     outline.SetShape(pcbnew.SHAPE_T_RECT)

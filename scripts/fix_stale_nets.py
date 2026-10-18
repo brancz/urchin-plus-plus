@@ -12,11 +12,13 @@ load, but not of free copper (stitching vias, stubs) or zones.
 
 Copper keeps its UUID through a build, so each segment, arc, via and zone is
 matched to itself in the board as it was before this build (the baseline;
-scripts/ato_build.sh snapshots it), and put back on the net it had there:
-  - that net still exists (maybe renumbered)  -> its current number
-  - that net is gone, and the item's number now carries a name that didn't
-    exist before -> atopile renamed the net in place; keep the number
-  - otherwise -> net 0, listed as orphaned (board_diff then fails on it)
+scripts/ato_build.sh snapshots it):
+  - its net number is unchanged and still in the net table -> atopile kept that
+    net (maybe renamed it in place); leave it. atopile only hands out numbers
+    that were free when it loaded the board, so the number can't mean another net.
+  - otherwise (number gone or zeroed) -> the current number of the net it had
+    before, by name
+  - that name is gone too -> net 0, listed as orphaned (board_diff fails on it)
 Copper not in the baseline is left alone. Zones also get (net_name ...)
 rewritten, since KiCad resolves zones by name.
 
@@ -107,32 +109,32 @@ def main():
     text = Path(args.board).read_text(encoding="utf-8")
     old, new = net_table(old_text), net_table(text)
     new_by_name = {name: num for num, name in new.items()}
-    old_names = set(old.values())
     old_lines = old_text.split("\n")
-    was = {}  # uuid -> net name before the build
+    was = {}  # uuid -> (net number, net name) before the build
     for b in blocks(old_lines):
         if b["uuid"] and b["net"] is not None:
             name = old.get(b["net"], "")
             if not name and b["name_line"] is not None:
                 name = NET_NAME_LINE.match(old_lines[b["name_line"]]).group(2)
-            was[b["uuid"]] = name
+            was[b["uuid"]] = (b["net"], name)
 
     lines = text.split("\n")
     fixed, renamed, orphaned = [], [], []
     for b in blocks(lines):
         if b["net_line"] is None or b["uuid"] not in was:
             continue  # no net (graphic-only) or copper that didn't exist before the build
-        name, num = was[b["uuid"]], b["net"]
+        (before, name), num = was[b["uuid"]], b["net"]
         where = "%s at line %d (%s)" % (b["kind"], b["start"], b["uuid"][:8])
         if not name:
             continue  # had no net before; nothing to restore
-        if name in new_by_name:
+        if num == before and num and num in new:
+            target = num
+            if new[num] != name:
+                renamed.append("%s: net %s renamed to %s, number %d kept" % (where, name, new[num], num))
+        elif name in new_by_name:
             target = new_by_name[name]
             if target != num:
                 fixed.append("%s: net %d -> %d (%s)" % (where, num, target, name))
-        elif num and new.get(num) and new[num] not in old_names:
-            target = num
-            renamed.append("%s: net %s renamed to %s, number %d kept" % (where, name, new[num], num))
         else:
             target = 0
             orphaned.append("%s: net %s no longer exists -> 0" % (where, name))

@@ -1,16 +1,16 @@
 ok   kicad-cli        9.0.9
 ok   pcbnew           9.0.9
-20:56:59.455  I  …model.build_queue  BuildQueue: Started                                                                                                                                                                                        
-20:56:59.459  I  …model.build_queue  Build 9545fb530b5c93ba: starting worker - build=default, cwd=/Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj                                                                           
-20:56:59.459  I  …model.build_queue  BuildQueue: Started 9545fb530b5c93ba                                                                                                                                                                       
+12:34:21.520  I  …model.build_queue  BuildQueue: Started                                                                                                                                                                                        
+12:34:21.524  I  …model.build_queue  Build e349d633f38bc1e6: starting worker - build=default, cwd=/Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj                                                                           
+12:34:21.524  I  …model.build_queue  BuildQueue: Started e349d633f38bc1e6                                                                                                                                                                       
 
-20:57:00.075  I  …model.build_queue  BuildQueue: Build 9545fb530b5c93ba completed with status BuildStatus.SUCCESS                                                                                                                               
+12:34:22.139  I  …model.build_queue  BuildQueue: Build e349d633f38bc1e6 completed with status BuildStatus.SUCCESS                                                                                                                               
 
 ╭─ Build Summary ───────────────────────────────────────────╮
-│ ✓ default  [9545fb530b5c93ba]                             │
+│ ✓ default  [e349d633f38bc1e6]                             │
 │                                                           │
 │ Stages:                                                   │
-│   ✓ Resolving dependencies [0.02s]                        │
+│   ✓ Resolving dependencies [0.01s]                        │
 │   ✓ Initializing build context [0.05s]                    │
 │   ✓ Modify type graph [0.00s]                             │
 │   ✓ Instantiate app [0.00s]                               │
@@ -37,11 +37,11 @@ ok   pcbnew           9.0.9
 │   • fp:MH_M2:MountingHole_2.2mm_M2|H1 has no silk outline │
 │   • No pickers for App.hole                               │
 │                                                           │
-│ Total: 0.31s                                              │
+│ Total: 0.29s                                              │
 ╰───────────────────────────────────────────────────────────╯
 
 
-20:57:00.103  I  atopile.cli.build  Build successful! 🚀                                                                                                                                                                                        
+12:34:22.165  I  atopile.cli.build  Build successful! 🚀                                                                                                                                                                                        
 == /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb
 new board (no pre-build version); no net repair or diff
 ok   /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb

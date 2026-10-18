@@ -7,7 +7,9 @@ For each LCSC number:
   1. easyeda2kicad fetches the symbol, footprint and 3D model from EasyEDA/LCSC.
   2. kicad-cli upgrades the symbol and footprint to the current KiCad format
      (easyeda2kicad writes KiCad 5/6-era files).
-  3. The footprint's 3D model path is pointed at the STEP file in the part dir.
+  3. The footprint's 3D model path is pointed at the STEP file in the part dir,
+     and with --side bottom (the default; CLAUDE.md rule 2) the footprint is
+     rewritten as a bottom-side footprint (scripts/parts/footprint_to_bottom.py).
   4. <parts-dir>/<LCSC>/<LCSC>.ato is written with is_atomic_part,
      has_part_picked (LCSC supplier number) and one signal per named pin,
      following the conventions of atopile's own part generator.
@@ -19,6 +21,7 @@ Stock is NOT checked here; that is the BOM check's job (CLAUDE.md rule 3).
 import argparse
 import datetime
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -82,7 +85,7 @@ def clean_manufacturer(m):
     return re.sub(r"\s*[(（][^)）]*[)）]\s*$", "", m or "").strip() or "unknown"
 
 
-def import_part(lcsc, parts_dir, model_base):
+def import_part(lcsc, parts_dir, model_base, side):
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
         run(["easyeda2kicad", "--full", "--lcsc_id", lcsc, "--output", str(tmp / "lib")])
@@ -113,6 +116,9 @@ def import_part(lcsc, parts_dir, model_base):
             if n != 1:
                 raise SystemExit(f"{lcsc}: footprint has no model entry to rewrite")
         (out / fps[0].name).write_text(fp_text, encoding="utf-8")
+        if side == "bottom":
+            run([os.environ["KICAD_PY"], str(Path(__file__).resolve().parent / "footprint_to_bottom.py"),
+                 str(out), fps[0].stem])
         sym_file = f"{sym_name}.kicad_sym"
         shutil.copy(tmp / "up.kicad_sym", out / sym_file)
 
@@ -175,6 +181,7 @@ def import_part(lcsc, parts_dir, model_base):
         "datasheet_url": datasheet,
         "symbol": sym_file,
         "footprint": fps[0].name,
+        "side": side,
         "model": steps[0].name if steps else None,
         "pins": pin_map,
         "fetched_utc": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -190,17 +197,21 @@ def main():
     ap.add_argument("--parts-dir", required=True, type=Path)
     ap.add_argument("--model-base", default=DEFAULT_MODEL_BASE,
                     help="3D model path prefix written into footprints (default: %(default)s)")
+    ap.add_argument("--side", choices=("bottom", "top"), default="bottom",
+                    help="side of the library footprint (default: bottom, CLAUDE.md rule 2)")
     ap.add_argument("lcsc", nargs="+")
     args = ap.parse_args()
     # kicad-cli upgrade writes its own format; a newer KiCad makes files the pinned one can't load.
+    if args.side == "bottom" and not os.environ.get("KICAD_PY"):
+        raise SystemExit("--side bottom needs KICAD_PY (KiCad's Python) to flip the footprint")
     kicad = tool_version(["kicad-cli", "version"])
     if kicad != pinned("KICAD_VERSION"):
         raise SystemExit("kicad-cli is %s, pinned is %s (see docs/SETUP.md)" % (kicad, pinned("KICAD_VERSION")))
     for lcsc in args.lcsc:
         if not re.fullmatch(r"C[0-9]+", lcsc):
             raise SystemExit(f"not an LCSC number: {lcsc}")
-        s = import_part(lcsc, args.parts_dir, args.model_base)
-        print(f"{lcsc}: {s['manufacturer']} {s['mpn']} -> {args.parts_dir / lcsc}")
+        s = import_part(lcsc, args.parts_dir, args.model_base, args.side)
+        print(f"{lcsc}: {s['manufacturer']} {s['mpn']} ({args.side}) -> {args.parts_dir / lcsc}")
 
 
 if __name__ == "__main__":

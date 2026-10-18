@@ -1,12 +1,13 @@
 ok   [1-build] first build: 4 footprints, format 20241229
-ok   [2-edit] pcbnew edit saved as format 20241229; DRC 24 violations (0 errors), 0 unconnected
+ok   [2-edit] pcbnew edit saved as format 20241229; DRC 21 violations (0 errors), 0 unconnected
 ok   [3-rebuild] rebuild kept every edit (strict: semantic diff empty, normalized text identical); DRC identical to step 2
 ok   [4-idempotent] second rebuild and --frozen build are no-ops
 ok   [5-add-part] adding c_mid added exactly one footprint, nothing else changed (net repair: 3 fixed, 0 renamed, 0 orphaned)
 ok   [6-stable] rebuild and --frozen build are no-ops
 ok   [7-uncommitted-save] net churn (2 fixed, 0 renamed, 0 orphaned), uncommitted pcbnew save renumbered nets, rebuild: free MID via still MID (0 fixed, 0 renamed, 0 orphaned)
 ok   [8-rename] net MID renamed to MIDPOINT: copper followed (0 fixed, 2 renamed, 0 orphaned)
-ok   [9-foreign-footprint] a footprint atopile doesn't own is deleted by ato build, and the wrapper fails on it
-ok   [10-freerouting] Freerouting routed the ripped-up board ({"tracks": 10, "vias": 1}); DRC 46 violations (0 errors), 0 unconnected
-ok   [11-kikit] kikit fab jlcpcb wrote gerbers.zip (16 files)
+ok   [9-refused] refused before atopile ran, board untouched: a foreign footprint, a footprint flipped against its library, a lock
+ok   [10-board-history] board_history: 6 board versions OK; a dropped track fails without Board-Diff-Allow, passes with it, merge skipped
+ok   [11-freerouting] Freerouting routed the ripped-up board ({"tracks": 12, "vias": 1}); DRC 44 violations (0 errors), 0 unconnected
+ok   [12-kikit] kikit fab jlcpcb wrote gerbers.zip (16 files)
 ROUNDTRIP PASS

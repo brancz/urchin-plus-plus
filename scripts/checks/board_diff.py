@@ -8,35 +8,47 @@
 Copper (tracks, arcs, vias) and zones are matched by geometry, not by net, so a
 net change on existing copper is visible as such. Footprints are matched by their
 atopile_address field (reference designator if absent; duplicates get their UUID).
+A net rename is inferred from pads: every pad (of footprints in both boards) on old
+net A is now on new net B, and no other old net went to B. Copper that changes net
+in step with a rename is fine; copper that changes net on its own is not.
 
 Failures, by mode:
-  commit (default)  removals of footprints, footprint fields, tracks, arcs, vias,
-                    zones or board drawings; net changes on copper or zones that
-                    are not explained by a net rename (a net whose pads all moved
-                    to one new name that didn't exist before).
-  build             commit failures, plus anything atopile has no business
-                    changing: position/rotation/side/lock of existing footprints;
-                    their pads, graphics or attributes while the library footprint
-                    is unchanged (atopile re-syncs footprints from the library on
-                    every build; allow footprint-lib:KEY after editing a part's
-                    .kicad_mod); any zone property; any drawing; board setup.
+  commit (default)  removed footprints, footprint fields, tracks, arcs, vias,
+                    zones or board drawings; net changes on copper or zones not
+                    explained by a rename.
+  build             commit failures, plus everything atopile has no business
+                    changing: any added track, arc, via, zone or drawing; any
+                    change to a zone or board setup (design rules, stackup);
+                    position, rotation, side or lock of existing footprints;
+                    their field placement (layer, position, angle, visibility,
+                    size); their pads, graphics or attributes while the library
+                    footprint is unchanged (atopile re-syncs from the library on
+                    every build; after editing a part's .kicad_mod, allow
+                    footprint-lib:KEY). Drawings are matched by geometry, so a
+                    changed drawing shows as removed plus added.
   --strict          any difference at all: the semantic diff must be empty and
                     both boards must serialize identically after a pcbnew
                     load/save round, with order-free item lists (footprints,
-                    graphics, pads, copper) sorted.
-Exempt expected removals or net changes with --allow KIND:KEY (fnmatch; KIND is
-footprint, field, track, arc, via, zone, drawing, net-change, footprint-lib).
+                    graphics, pads, copper) sorted and numbers rounded to 0.1 um
+                    (pcbnew leaves ~1 nm noise on rotated footprints).
+Exempt expected changes with --allow KIND:KEY (fnmatch). KIND is one of footprint,
+field, track, arc, via, zone, drawing (removals), net-change (copper net changes),
+footprint-lib, field-placement, setup (KEY = setting name; build mode).
 
-A missing baseline is an error (exit 2), except with --allow-new for a board
-that is genuinely new. Must run under KiCad's Python (pcbnew); Python 3.9.
+Exit 0 OK, 1 failing differences, 2 can't compare (no baseline, bad revision, not a
+git repo); with --allow-new a missing baseline means a new board (exit 0).
+Must run under KiCad's Python (pcbnew); Python 3.9.
 """
 
 import argparse
+import atexit
 import collections
 import difflib
 import fnmatch
 import json
 import os
+import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -47,23 +59,21 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 from lib import sexp  # noqa: E402
 
 KINDS = ("footprint", "track", "arc", "via", "zone", "drawing")
+TMP = tempfile.mkdtemp(prefix="board_diff_")
+atexit.register(shutil.rmtree, TMP, True)
+
+
+def die(msg):
+    print("board_diff: ERROR %s" % msg)
+    sys.exit(2)
 
 
 def mm(v):
-    return round(pcbnew.ToMM(v), 4)
+    return None if v is None else round(pcbnew.ToMM(v), 4)
 
 
 def pt(p):
     return (mm(p.x), mm(p.y))
-
-
-def call(obj, name, *args):
-    """Call an optional API method; None if this KiCad doesn't have it."""
-    fn = getattr(obj, name, None)
-    try:
-        return fn(*args) if fn else None
-    except Exception:  # noqa: BLE001 - optional attribute, any failure means "unknown"
-        return None
 
 
 def poly(poly_set):
@@ -103,10 +113,35 @@ def shape_geom(s):
         g = "%s %s %s %s" % (pt(s.GetStart()), pt(s.GetBezierC1()), pt(s.GetBezierC2()), pt(s.GetEnd()))
     else:
         g = "%s->%s" % (pt(s.GetStart()), pt(s.GetEnd()))
-    return "%s %s %s w=%s fill=%s" % (s.GetLayerName(), name, g, mm(s.GetWidth()), call(s, "IsFilled"))
+    return "%s %s %s w=%s fill=%s" % (s.GetLayerName(), name, g, mm(s.GetWidth()), s.IsFilled())
 
 
-def snapshot(board):
+def text_geom(t):
+    return "%s %s %s %r angle=%s visible=%s size=%s" % (t.GetClass(), t.GetLayerName(), pt(t.GetPosition()), t.GetText(),
+                                                       t.GetTextAngleDegrees(), t.IsVisible(), pt(t.GetTextSize()))
+
+
+def placement(t):
+    """Where and how a text sits, without the text itself (designators get renumbered)."""
+    return "%s %s angle=%s visible=%s size=%s" % (t.GetLayerName(), pt(t.GetPosition()), t.GetTextAngleDegrees(),
+                                                 t.IsVisible(), pt(t.GetTextSize()))
+
+
+def graphic(g):
+    obj = g.Cast()
+    return shape_geom(obj) if g.GetClass() == "PCB_SHAPE" else text_geom(obj)
+
+
+def copper_finish(path):
+    """Read from the file: KiCad 9's Python doesn't wrap the stackup descriptor."""
+    setup = sexp.child(sexp.load(path), "setup")
+    stackup = sexp.child(setup, "stackup") if setup else None
+    finish = sexp.child(stackup, "copper_finish") if stackup else None
+    return finish[1] if finish else None
+
+
+def snapshot(path):
+    board = pcbnew.LoadBoard(path)
     s = {k: {} for k in KINDS}
 
     fps = list(board.GetFootprints())
@@ -118,29 +153,25 @@ def snapshot(board):
         pads, pad_nets = {}, {}
         for i, (num, p) in enumerate(sorted(((p.GetNumber(), p) for p in fp.Pads()), key=lambda t: t[0])):
             pk = "%s/%d" % (num, i)
-            pads[pk] = "%s %s %s drill=%s %s" % (pt(p.GetFPRelativePosition()), pt(p.GetSize(pcbnew.F_Cu)),
-                                                p.ShowPadShape(pcbnew.F_Cu), pt(p.GetDrillSize()),
-                                                p.GetLayerSet().FmtHex())
+            pads[pk] = "%s rot=%s %s %s rr=%s drill=%s %s mask=%s paste=%s/%s clr=%s" % (
+                pt(p.GetFPRelativePosition()), p.GetOrientationDegrees(), pt(p.GetSize(pcbnew.F_Cu)),
+                p.ShowPadShape(pcbnew.F_Cu), p.GetRoundRectRadiusRatio(pcbnew.F_Cu), pt(p.GetDrillSize()),
+                p.GetLayerSet().FmtHex(), mm(p.GetLocalSolderMaskMargin()), mm(p.GetLocalSolderPasteMargin()),
+                p.GetLocalSolderPasteMarginRatio(), mm(p.GetLocalClearance()))
             pad_nets[pk] = p.GetNetname()
-        graphics = []
-        for g in fp.GraphicalItems():
-            obj = g.Cast()
-            if g.GetClass() == "PCB_SHAPE":
-                graphics.append(shape_geom(obj))
-            else:
-                graphics.append("%s %s %s %r" % (g.GetClass(), g.GetLayerName(), pt(g.GetPosition()), call(obj, "GetText")))
         s["footprint"][k] = {
             "ref": fp.GetReference(),
-            "graphics": sorted(graphics),
             "lib_id": fp.GetFPIDAsString(),
             "pos": pt(fp.GetPosition()),
             "rot": round(fp.GetOrientationDegrees(), 3),
             "layer": fp.GetLayerName(),
             "locked": fp.IsLocked(),
             "attributes": fp.GetAttributes(),
-            "dnp": call(fp, "IsDNP"),
+            "dnp": fp.IsDNP(),
             "fields": {f.GetName(): f.GetText() for f in fp.GetFields()},
+            "field_placement": {f.GetName(): placement(f) for f in fp.GetFields()},
             "pads": pads,
+            "graphics": sorted(graphic(g) for g in fp.GraphicalItems()),
             "pad_nets": pad_nets,
         }
 
@@ -172,36 +203,29 @@ def snapshot(board):
             "net": None if z.GetIsRuleArea() else z.GetNetname(),
             "name": z.GetZoneName(),
             "priority": z.GetAssignedPriority(),
-            "clearance": call(z, "GetLocalClearance"),
+            "clearance": mm(z.GetLocalClearance()),
             "min_thickness": mm(z.GetMinThickness()),
             "pad_connection": z.GetPadConnection(),
             "thermal_gap": mm(z.GetThermalReliefGap()),
             "thermal_spoke": mm(z.GetThermalReliefSpokeWidth()),
-            "fill_mode": call(z, "GetFillMode"),
-            "island_removal": call(z, "GetIslandRemovalMode"),
-            "keepout": [call(z, m) for m in ("GetDoNotAllowTracks", "GetDoNotAllowVias", "GetDoNotAllowPads",
-                                             "GetDoNotAllowZoneFills", "GetDoNotAllowFootprints")],
+            "fill_mode": z.GetFillMode(),
+            "island_removal": z.GetIslandRemovalMode(),
+            "locked": z.IsLocked(),
+            "keepout": [z.GetDoNotAllowTracks(), z.GetDoNotAllowVias(), z.GetDoNotAllowPads(),
+                        z.GetDoNotAllowCopperPour(), z.GetDoNotAllowFootprints()],
         }
-        zones.append((key, json.loads(json.dumps(props, default=str))))
+        zones.append((key, props))
     for k, (_, props) in zip(unique(sorted(z[0] for z in zones)), sorted(zones, key=lambda z: z[0])):
         s["zone"][k] = props
 
-    drawings = []
-    for d in board.GetDrawings():
-        obj = d.Cast()
-        if d.GetClass() == "PCB_SHAPE":
-            drawings.append(shape_geom(obj))
-        else:
-            drawings.append("%s %s %s %r" % (d.GetClass(), d.GetLayerName(), pt(d.GetPosition()), call(obj, "GetText")))
-    for k in unique(sorted(drawings)):
+    for k in unique(sorted(graphic(d) for d in board.GetDrawings())):
         s["drawing"][k] = {}
 
     ds = board.GetDesignSettings()
-    stackup = call(ds, "GetStackupDescriptor")
-    s["setup"] = json.loads(json.dumps({
+    s["setup"] = {
         "copper_layers": board.GetCopperLayerCount(),
         "thickness": mm(ds.GetBoardThickness()),
-        "finish": getattr(stackup, "m_FinishType", None),
+        "finish": copper_finish(path),
         "min_clearance": mm(ds.m_MinClearance),
         "min_track": mm(ds.m_TrackMinWidth),
         "min_via": mm(ds.m_ViasMinSize),
@@ -209,26 +233,25 @@ def snapshot(board):
         "hole_clearance": mm(ds.m_HoleClearance),
         "copper_edge_clearance": mm(ds.m_CopperEdgeClearance),
         "mask_expansion": mm(ds.m_SolderMaskExpansion),
-    }, default=str))
+    }
     return s
 
 
 def net_renames(old, new):
-    """Old net -> new net where every common pad on the old net moved to one new net."""
+    """Old net -> new net where every common pad on the old net is now on one and the
+    same new net, and no other old net went there (a rename or a swap of names)."""
     seen = collections.defaultdict(set)
     for k in set(old["footprint"]) & set(new["footprint"]):
         a, b = old["footprint"][k]["pad_nets"], new["footprint"][k]["pad_nets"]
         for pad in set(a) & set(b):
             if a[pad]:
                 seen[a[pad]].add(b[pad])
-    old_nets = {p for f in old["footprint"].values() for p in f["pad_nets"].values()}
-    new_nets = {p for f in new["footprint"].values() for p in f["pad_nets"].values()}
+    targets = collections.Counter(next(iter(bs)) for bs in seen.values() if len(bs) == 1)
     renames = {}
     for a, bs in seen.items():
-        if len(bs) == 1:
-            b = next(iter(bs))
-            if b != a and b and a not in new_nets and b not in old_nets:
-                renames[a] = b
+        b = next(iter(bs))
+        if len(bs) == 1 and b and b != a and targets[b] == 1:
+            renames[a] = b
     return renames
 
 
@@ -256,6 +279,9 @@ def diff(old, new):
         for name in sorted(set(a["fields"]) & set(b["fields"])):
             if a["fields"][name] != b["fields"][name]:
                 changed("field", "%s/%s" % (k, name), "text", a["fields"][name], b["fields"][name])
+            if a["field_placement"][name] != b["field_placement"][name]:
+                changed("field-placement", "%s/%s" % (k, name), "placement",
+                        a["field_placement"][name], b["field_placement"][name])
 
     for kind in ("track", "arc", "via", "zone"):
         for k in sorted(set(old[kind]) & set(new[kind])):
@@ -267,7 +293,7 @@ def diff(old, new):
 
     for attr in sorted(set(old["setup"]) | set(new["setup"])):
         if old["setup"].get(attr) != new["setup"].get(attr):
-            changed("setup", "board", attr, old["setup"].get(attr), new["setup"].get(attr))
+            changed("setup", attr, "value", old["setup"].get(attr), new["setup"].get(attr))
     return out
 
 
@@ -277,19 +303,28 @@ def failures(d, mode, allow):
 
     lib_swapped = {c["key"] for c in d["changed"] if c["kind"] == "footprint" and c["attr"] == "lib_id"}
     bad = [r for r in d["removed"] if not allowed(r["kind"], r["key"])]
+    if mode == "build":
+        bad += [a for a in d["added"] if a["kind"] in ("track", "arc", "via", "zone", "drawing")]
     for c in d["changed"]:
-        if c["attr"] == "net" and not c.get("rename") and not allowed("net-change", c["key"]):
-            bad.append(c)
+        kind, attr = c["kind"], c["attr"]
+        if attr == "net" and kind in ("track", "arc", "via", "zone"):
+            if not c.get("rename") and not allowed("net-change", c["key"]):
+                bad.append(c)
         elif mode != "build":
             continue
-        elif c["kind"] == "footprint" and c["attr"] in ("pos", "rot", "layer", "locked"):
+        elif kind == "footprint" and attr in ("pos", "rot", "layer", "locked"):
             bad.append(c)
-        elif (c["kind"] == "footprint" and c["attr"] in ("pads", "graphics", "attributes")
-              and c["key"] not in lib_swapped and not allowed("footprint-lib", c["key"])):
-            # Same library footprint, different content: either the part's .kicad_mod was
-            # edited (allow with footprint-lib:KEY) or atopile's re-sync mangled it.
+        elif kind == "footprint" and attr in ("pads", "graphics", "attributes"):
+            # Same library footprint, different content: the part's .kicad_mod was
+            # edited (allow footprint-lib:KEY), or atopile's re-sync mangled it.
+            if c["key"] not in lib_swapped and not allowed("footprint-lib", c["key"]):
+                bad.append(c)
+        elif kind == "field-placement":
+            if c["key"].split("/")[0] not in lib_swapped and not allowed("field-placement", c["key"]):
+                bad.append(c)
+        elif kind == "zone":
             bad.append(c)
-        elif (c["kind"] == "zone" and c["attr"] != "net") or c["kind"] == "setup":
+        elif kind == "setup" and not allowed("setup", c["key"]):
             bad.append(c)
     return bad
 
@@ -298,9 +333,13 @@ def failures(d, mode, allow):
 UNORDERED = {"footprint", "segment", "arc", "via", "zone", "pad", "group", "fp_line", "fp_circle", "fp_arc",
              "fp_poly", "fp_rect", "fp_curve", "fp_text", "gr_line", "gr_circle", "gr_arc", "gr_poly",
              "gr_rect", "gr_curve", "gr_text", "model"}
+NUMBER = re.compile(r"^-?\d+\.\d+$")
 
 
 def canonical(node):
+    if isinstance(node, sexp.Atom) and NUMBER.match(node):
+        text = ("%.4f" % round(float(node), 4)).rstrip("0").rstrip(".")
+        return sexp.Atom("0" if text in ("-0", "") else text)
     if not isinstance(node, list):
         return node
     kids = [canonical(c) for c in node]
@@ -310,8 +349,12 @@ def canonical(node):
 
 
 def normalized_text(path):
-    """The board as pcbnew writes it, with order-free item lists sorted."""
-    out = os.path.join(tempfile.mkdtemp(), "n.kicad_pcb")
+    """The board as pcbnew writes it, with order-free item lists sorted and numbers rounded."""
+    out = os.path.join(tempfile.mkdtemp(dir=TMP), "n.kicad_pcb")
+    for ext in ("kicad_pro", "kicad_dru"):  # same design rules as the original
+        src = path[: -len(".kicad_pcb")] + "." + ext
+        if os.path.exists(src):
+            shutil.copy(src, out[: -len(".kicad_pcb")] + "." + ext)
     pcbnew.SaveBoard(out, pcbnew.LoadBoard(path))
     return sexp.dump_lines(canonical(sexp.load(out)))
 
@@ -321,22 +364,27 @@ def git(top, *args):
 
 
 def load_rev(board_path, rev):
-    """Board at `rev` as a temp file; None if the file doesn't exist there. Exits 2 on a bad rev."""
+    """Board (and its .kicad_pro/.kicad_dru) at `rev` in a temp dir; None if the board isn't there."""
     path = os.path.realpath(board_path)
     res = git(os.path.dirname(path), "rev-parse", "--show-toplevel")
     if res.returncode != 0:
-        sys.exit("board_diff: %s is not in a git repository" % board_path)
+        die("%s is not in a git repository" % board_path)
     top = os.path.realpath(res.stdout.decode().strip())
     if git(top, "rev-parse", "--verify", "--quiet", rev + "^{commit}").returncode != 0:
-        sys.exit("board_diff: revision %s not found (shallow clone?)" % rev)
+        die("revision %s not found (shallow clone?)" % rev)
     rel = os.path.relpath(path, top)
     res = git(top, "show", "%s:%s" % (rev, rel))
     if res.returncode != 0:
         return None
-    tmp = tempfile.NamedTemporaryFile(suffix=".kicad_pcb", delete=False)
-    tmp.write(res.stdout)
-    tmp.close()
-    return tmp.name
+    out = os.path.join(tempfile.mkdtemp(dir=TMP), os.path.basename(path))
+    with open(out, "wb") as f:
+        f.write(res.stdout)
+    for ext in ("kicad_pro", "kicad_dru"):
+        comp = git(top, "show", "%s:%s.%s" % (rev, rel[: -len(".kicad_pcb")], ext))
+        if comp.returncode == 0:
+            with open(out[: -len(".kicad_pcb")] + "." + ext, "wb") as f:
+                f.write(comp.stdout)
+    return out
 
 
 def main():
@@ -352,9 +400,11 @@ def main():
     ap.add_argument("--json", help="write the full result as JSON here")
     args = ap.parse_args()
 
+    if not os.path.exists(args.board):
+        die("%s does not exist" % args.board)
     if args.against:
         if not os.path.exists(args.against):
-            sys.exit("board_diff: baseline %s does not exist" % args.against)
+            die("baseline %s does not exist" % args.against)
         old_path, baseline = args.against, args.against
     else:
         old_path, baseline = load_rev(args.board, args.rev), "%s:%s" % (args.rev, args.board)
@@ -362,11 +412,10 @@ def main():
         if args.allow_new:
             print("board_diff: %s is new (not in %s)" % (args.board, args.rev))
             return 0
-        print("board_diff: FAIL %s not found at %s (pass --allow-new for a new board)" % (args.board, args.rev))
-        return 2
+        die("%s not found at %s (pass --allow-new for a new board)" % (args.board, args.rev))
 
-    old = snapshot(pcbnew.LoadBoard(old_path))
-    new = snapshot(pcbnew.LoadBoard(args.board))
+    old = snapshot(old_path)
+    new = snapshot(args.board)
     d = diff(old, new)
     bad = failures(d, args.mode, args.allow)
     text_diff = []
@@ -388,7 +437,7 @@ def main():
     }
     if args.json:
         with open(args.json, "w") as f:
-            json.dump(result, f, indent=2)
+            json.dump(result, f, indent=2, default=str)
 
     print("board_diff: %s vs %s (mode %s%s)" % (args.board, baseline, args.mode, ", strict" if args.strict else ""))
     print("  before: %s" % result["counts_before"])

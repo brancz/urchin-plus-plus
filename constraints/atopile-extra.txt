@@ -1,0 +1,4 @@
+# Hand-maintained: atopile dependencies that only install on Linux, so scripts/freeze_constraints.sh
+# can't see them on macOS. Versions as resolved in CI (2026-10-17). Used together with atopile.txt.
+jeepney==0.9.0
+secretstorage==3.5.0

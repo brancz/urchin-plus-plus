@@ -9,7 +9,7 @@ Machine: macOS with Homebrew. CI must use the same tool versions.
 | Tool | Version | Install |
 |---|---|---|
 | KiCad | 9.0.9 | `kicad-unified-universal-9.0.9.dmg` from the KiCad 9.0.9 release (kicad.org or `github.com/KiCad/kicad-source-mirror/releases/tag/9.0.9`), SHA-256 `75d16b7556c027e948bfe8836b1b419a6925bb6a8391339eabd9b9c8d1737df3`. Copy the DMG's `KiCad` folder to `/Applications/KiCad9` (`ditto`). Not the Homebrew cask: it tracks KiCad 10, which stays installed at `/Applications/KiCad` for other projects. |
-| atopile | 0.15.7 | `uv tool install atopile==0.15.7 --python 3.14 --constraints constraints/atopile.txt` |
+| atopile | 0.15.7 | `uv tool install atopile==0.15.7 --python 3.14 --constraints constraints/atopile.txt --constraints constraints/atopile-extra.txt` |
 | KiKit | 1.8.1 | `"$KICAD_PY" -m pip install -c constraints/kikit.txt kikit==1.8.1` (must live in KiCad's Python) |
 | Freerouting | 2.5.0 | `freerouting-2.5.0.jar` from the freerouting GitHub release v2.5.0, saved as `~/tools/freerouting.jar` |
 | Freerouting jar SHA-256 | `f6f51bb02245e8e717f9359bd260cc9c5c0b1bc0acc8b7cb2cd5b8ffeb5de3c7` | Matches the digest GitHub publishes for the release asset (checked 2026-10-17). CI downloads the jar and verifies this hash. |
@@ -30,6 +30,9 @@ Pitfalls already hit:
 - Don't put `has_datasheet` on parts: `ato build` then tries to download it, and LCSC's URL is a product page. Datasheets live in `docs/datasheets/`.
 - Run `ato build` only through `scripts/ato_build.sh` (see CLAUDE.md rule 5 and reports/phase0/).
 - atopile deletes every footprint it didn't create, and re-syncs the ones it did from their library on each build, matching items by geometry only. So mechanical footprints must be atopile parts, footprint edits go into the part's `.kicad_mod` (never the board), and a footprint must not have two same-type items with identical geometry on different layers (the guardrail checks).
+- atopile flips a footprint to its library's side and back on every build, and that corrupts bottom-side text rotations. Bottom-side parts therefore get bottom-side library footprints (`import_lcsc.py` does this by default); never flip a part on the board. KiCad's footprint editor saves library footprints front-side, so don't re-save part footprints in it.
+- atopile drops content it doesn't model: locks (footprints, tracks, zones), zones inside footprints, `fp_curve`, text boxes, groups. The guardrail refuses boards and parts that contain them.
+- `scripts/ato_build.sh` restores the boards if the build or a check fails; the failed result is in `<project>/build/ato_build-failed/`.
 - macOS ships bash 3.2; shell scripts must parse with it (`bash -n`). It misreads quotes and parens inside `"$(...)"` and `${var:?message}`.
 - KiCad's Python on macOS is 3.9: scripts that import `pcbnew` must stay 3.9-compatible.
 

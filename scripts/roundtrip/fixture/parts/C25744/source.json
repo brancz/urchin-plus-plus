@@ -5,6 +5,7 @@
   "datasheet_url": "https://lcsc.com/product-detail/Chip-Resistor-Surface-Mount-UniOhm_10KR-1002-1_C25744.html",
   "symbol": "0402WGF1002TCE.kicad_sym",
   "footprint": "R0402.kicad_mod",
+  "side": "bottom",
   "model": "R0402_L1.0-W0.5-H0.4.step",
   "pins": [
     {
@@ -18,7 +19,7 @@
       "signal": null
     }
   ],
-  "fetched_utc": "2026-10-17T18:14:14Z",
+  "fetched_utc": "2026-10-18T10:23:22Z",
   "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
   "kicad_cli": "9.0.9"
 }

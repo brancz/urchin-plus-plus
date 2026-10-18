@@ -1,0 +1,8 @@
+== 46f0e76 reroute: layouts/default/default.kicad_pcb
+board_diff: /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.CxbZw7yGWN/new/board.kicad_pcb vs /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.CxbZw7yGWN/old/board.kicad_pcb (mode commit)
+  before: {'footprint': 6, 'track': 2, 'arc': 0, 'via': 2, 'zone': 1, 'drawing': 1, 'field': 55}
+  after:  {'footprint': 6, 'track': 1, 'arc': 0, 'via': 2, 'zone': 1, 'drawing': 1, 'field': 55}
+  removed track     B.Cu (110.0, 104.57)->(116.0, 104.58) w=0.25
+board_diff: OK
+board_history: 1 board version(s) checked in HEAD~1..HEAD
+board_history: OK

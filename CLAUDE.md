@@ -42,7 +42,7 @@ scratch/         throwaway experiments (gitignored)
 - KiCad Python: `"$KICAD_PY" script.py` (pcbnew only imports from KiCad's bundled Python).
 - KiKit: `"$KICAD_PY" -m kikit.ui ...`
 - Freerouting headless: `java -jar "$FREEROUTING_JAR" -de in.dsn -do out.ses`
-- atopile: `scripts/ato_build.sh hardware` (never bare `ato build`). New parts: `python3 scripts/parts/import_lcsc.py --parts-dir hardware/parts C12345`; atopile's own part picker no longer works.
+- atopile: `scripts/ato_build.sh hardware` (never bare `ato build`). New parts: `python3 scripts/parts/import_lcsc.py --parts-dir hardware/parts C12345` (bottom-side footprint by default); atopile's own part picker no longer works. No locks and no footprint-owned zones: atopile drops them (keep-outs are board-level rule areas).
 - Toolchain proof: `scripts/roundtrip/run.sh` (also runs in CI).
 - Every generator and check is a script in `scripts/` that the CI workflow also runs. Avoid one-off commands that aren't captured in a script.
 

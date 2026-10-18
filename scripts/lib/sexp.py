@@ -104,16 +104,16 @@ def _atom(a):
 
 
 def dump_lines(node, indent=0):
-    """Serialize `node` as lines: one line per list whose children are all atoms."""
+    """Serialize `node` losslessly, one line per list whose children are all atoms."""
     pad = "  " * indent
     if not isinstance(node, list):
         return [pad + _atom(node)]
-    atoms = [c for c in node if not isinstance(c, list)]
-    lists = [c for c in node if isinstance(c, list)]
-    head = "(" + " ".join(_atom(a) for a in atoms)
-    if not lists:
-        return [pad + head + ")"]
-    out = [pad + head]
-    for c in lists:
+    if not any(isinstance(c, list) for c in node):
+        return [pad + "(" + " ".join(_atom(a) for a in node) + ")"]
+    i = 0
+    while not isinstance(node[i], list):
+        i += 1
+    out = [pad + "(" + " ".join(_atom(a) for a in node[:i])]
+    for c in node[i:]:
         out += dump_lines(c, indent + 1)
     return out + [pad + ")"]

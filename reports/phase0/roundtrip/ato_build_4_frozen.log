@@ -1,13 +1,13 @@
 ok   kicad-cli        9.0.9
 ok   pcbnew           9.0.9
-20:57:12.614  I  …model.build_queue  BuildQueue: Started                                                                                                                                                                                        
-20:57:12.619  I  …model.build_queue  Build daa37a8fe44c03ca: starting worker - build=default, cwd=/Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj                                                                           
-20:57:12.619  I  …model.build_queue  BuildQueue: Started daa37a8fe44c03ca                                                                                                                                                                       
+12:34:30.973  I  …model.build_queue  BuildQueue: Started                                                                                                                                                                                        
+12:34:30.979  I  …model.build_queue  Build 56749364dc88edde: starting worker - build=default, cwd=/Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj                                                                           
+12:34:30.979  I  …model.build_queue  BuildQueue: Started 56749364dc88edde                                                                                                                                                                       
 
-20:57:13.234  I  …model.build_queue  BuildQueue: Build daa37a8fe44c03ca completed with status BuildStatus.SUCCESS                                                                                                                               
+12:34:31.593  I  …model.build_queue  BuildQueue: Build 56749364dc88edde completed with status BuildStatus.SUCCESS                                                                                                                               
 
 ╭─ Build Summary ────────────────────────╮
-│ ✓ default  [daa37a8fe44c03ca]          │
+│ ✓ default  [56749364dc88edde]          │
 │                                        │
 │ Stages:                                │
 │   ✓ Resolving dependencies [0.01s]     │
@@ -37,15 +37,15 @@ ok   pcbnew           9.0.9
 │   • No pickers for App.hole            │
 │   • No part info found in PCB for hole │
 │                                        │
-│ Total: 0.28s                           │
+│ Total: 0.29s                           │
 ╰────────────────────────────────────────╯
 
 
-20:57:13.262  I  atopile.cli.build  Build successful! 🚀                                                                                                                                                                                        
+12:34:31.622  I  atopile.cli.build  Build successful! 🚀                                                                                                                                                                                        
 == /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb
 fix_stale_nets: 0 fixed, 0 renamed, 0 orphaned
 ok   /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb
-board_diff: /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb vs /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.in0Pmut5pv//Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb (mode build, strict)
+board_diff: /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb vs /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.wLPlaU6Y48//Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb (mode build, strict)
   before: {'footprint': 4, 'track': 2, 'arc': 0, 'via': 1, 'zone': 1, 'drawing': 1, 'field': 35}
   after:  {'footprint': 4, 'track': 2, 'arc': 0, 'via': 1, 'zone': 1, 'drawing': 1, 'field': 35}
 board_diff: OK

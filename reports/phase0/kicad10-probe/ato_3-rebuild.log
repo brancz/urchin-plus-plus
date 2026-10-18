@@ -1,14 +1,14 @@
-20:57:55.293  I  …model.build_queue  BuildQueue: Started                                                                                                                                                                                        
-20:57:55.297  I  …model.build_queue  Build dc2ee359c9000707: starting worker - build=default, cwd=/private/var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.5aLGHW9FEp/proj                                                                  
-20:57:55.298  I  …model.build_queue  BuildQueue: Started dc2ee359c9000707                                                                                                                                                                       
+12:35:11.532  I  …model.build_queue  BuildQueue: Started                                                                                                                                                                                        
+12:35:11.537  I  …model.build_queue  Build 88348a956960b083: starting worker - build=default, cwd=/private/var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.8UiJcbPrFf/proj                                                                  
+12:35:11.537  I  …model.build_queue  BuildQueue: Started 88348a956960b083                                                                                                                                                                       
 
-20:57:55.705  E  …model.build_queue  BuildQueue: Build dc2ee359c9000707 failed:                                                                                                                                                                 
+12:35:11.946  E  …model.build_queue  BuildQueue: Build 88348a956960b083 failed:                                                                                                                                                                 
 UnexpectedType in kicad.pcb.Layer field 'tenting' at 92:4: expected symbol, string, or number for enum                                                                                                                                          
 source:                         (front yes)                                                                                                                                                                                                     
             ^^^^^^^^^^^                                                                                                                                                                                                                         
 
 ╭─ Build Summary ────────────────────────────────────────────────────────────────────────────────────────────╮
-│ ✗ default  [dc2ee359c9000707]                                                                              │
+│ ✗ default  [88348a956960b083]                                                                              │
 │                                                                                                            │
 │ Stages:                                                                                                    │
 │   ✓ Resolving dependencies [0.01s]                                                                         │
@@ -26,10 +26,10 @@ source:                         (front yes)
 │ source:                         (front yes)                                                                │
 │             ^^^^^^^^^^^                                                                                    │
 │                                                                                                            │
-│ Total: 0.19s                                                                                               │
+│ Total: 0.18s                                                                                               │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 
 
-20:57:55.728  I  atopile.logging  Unfortunately errors ^^^ stopped the build. If you need a hand jump on Discord! https://discord.gg/CRe5xaDBr3 👋                                                                                              
-20:57:55.728  E  atopile.cli.build  Build failed! 1 of 1 targets failed                                                                                                                                                                         
-20:57:55.728  E  atopile.cli.build    - default                                                                                                                                                                                                 
+12:35:11.967  I  atopile.logging  Unfortunately errors ^^^ stopped the build. If you need a hand jump on Discord! https://discord.gg/CRe5xaDBr3 👋                                                                                              
+12:35:11.968  E  atopile.cli.build  Build failed! 1 of 1 targets failed                                                                                                                                                                         
+12:35:11.968  E  atopile.cli.build    - default                                                                                                                                                                                                 

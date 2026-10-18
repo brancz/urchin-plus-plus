@@ -1,11 +1,11 @@
-20:57:53.144  I  …model.build_queue  BuildQueue: Started                                                                                                                                                                                        
-20:57:53.149  I  …model.build_queue  Build 08743b675665b4d5: starting worker - build=default, cwd=/private/var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.5aLGHW9FEp/proj                                                                  
-20:57:53.150  I  …model.build_queue  BuildQueue: Started 08743b675665b4d5                                                                                                                                                                       
+12:35:09.459  I  …model.build_queue  BuildQueue: Started                                                                                                                                                                                        
+12:35:09.464  I  …model.build_queue  Build 511decd1bf69fa52: starting worker - build=default, cwd=/private/var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.8UiJcbPrFf/proj                                                                  
+12:35:09.465  I  …model.build_queue  BuildQueue: Started 511decd1bf69fa52                                                                                                                                                                       
 
-20:57:53.763  I  …model.build_queue  BuildQueue: Build 08743b675665b4d5 completed with status BuildStatus.SUCCESS                                                                                                                               
+12:35:10.082  I  …model.build_queue  BuildQueue: Build 511decd1bf69fa52 completed with status BuildStatus.SUCCESS                                                                                                                               
 
 ╭─ Build Summary ───────────────────────────────────────────╮
-│ ✓ default  [08743b675665b4d5]                             │
+│ ✓ default  [511decd1bf69fa52]                             │
 │                                                           │
 │ Stages:                                                   │
 │   ✓ Resolving dependencies [0.02s]                        │
@@ -16,7 +16,7 @@
 │   ✓ Verify instance graph [0.00s]                         │
 │   ✓ Modify instance graph [0.00s]                         │
 │   ✓ Verify electrical design [0.01s]                      │
-│   ✓ Loading PCB [0.04s]                                   │
+│   ✓ Loading PCB [0.05s]                                   │
 │   ✓ Picking parts [0.01s]                                 │
 │   ✓ Preparing nets [0.01s]                                │
 │   ✓ Running post-solve checks [0.00s]                     │
@@ -39,4 +39,4 @@
 ╰───────────────────────────────────────────────────────────╯
 
 
-20:57:53.807  I  atopile.cli.build  Build successful! 🚀                                                                                                                                                                                        
+12:35:10.105  I  atopile.cli.build  Build successful! 🚀                                                                                                                                                                                        

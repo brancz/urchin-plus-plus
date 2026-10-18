@@ -1,0 +1,5 @@
+ok   kicad-cli        9.0.9
+ok   pcbnew           9.0.9
+limits: board/footprint format <= 20241229, symbol format <= 20241209
+FAIL /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb: footprint C1: atopile drops (locked ...) on the next build
+ato_build: FAIL guardrails failed before the build; not running ato build

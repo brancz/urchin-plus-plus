@@ -13,9 +13,12 @@
 #    7 more net churn, then an uncommitted pcbnew save (KiCad renumbers nets), then
 #      rebuild: no copper changes net (a free MID via stays MID)
 #    8 rename net MID -> MIDPOINT: copper follows the rename
-#    9 a footprint atopile doesn't own: the wrapper must fail (atopile deletes it)
-#   10 Freerouting: rip up, autoroute, SES import, DRC 0 errors / 0 unconnected
-#   11 KiKit: JLC Gerbers
+#    9 things atopile would lose are refused before it runs, and the board is left as
+#      it was: a footprint it doesn't own, one flipped against its library side, a lock
+#   10 board_history over this repo's commits; a commit that drops a track fails
+#      unless its message allows it; merge commits are skipped
+#   11 Freerouting: rip up, autoroute, SES import, DRC 0 errors / 0 unconnected
+#   12 KiKit: JLC Gerbers
 # Exits non-zero on the first failure.
 #
 # Needs: ato, kicad-cli, java on PATH; KICAD_PY (KiCad's Python, with KiKit);
@@ -41,7 +44,9 @@ STEP=""
 NOISE='Debug: Adding duplicate image handler|create wxApp before calling this|swig/python detected a memory leak'
 fail() { echo "ROUNDTRIP FAIL [$STEP]: $*" | tee -a "$OUT/summary.txt"; exit 1; }
 ok() { echo "ok   [$STEP] $*" | tee -a "$OUT/summary.txt"; }
-commit() { git -c user.name=roundtrip -c user.email=roundtrip@localhost commit -qam "$1"; }
+# Throwaway repo: fixed identity, never sign (a signing prompt would block headless runs).
+GIT=(git -c user.name=roundtrip -c user.email=roundtrip@localhost -c commit.gpgsign=false -c tag.gpgsign=false)
+commit() { "${GIT[@]}" commit -qam "$1"; }
 kpy() {  # KiCad's Python; wx debug chatter dropped, real errors kept
   local err rc
   err="$(mktemp)"
@@ -185,22 +190,50 @@ grep -q '^  renamed net MID -> MIDPOINT$' "$OUT/ato_build_8.log" || fail "board_
 git add -A && commit "rename MID"
 ok "net MID renamed to MIDPOINT: copper followed ($(fixes ato_build_8))"
 
-STEP=9-foreign-footprint
-kpy "$ROOT/scripts/roundtrip/pcb_ops.py" "$BOARD" foreign 127 117 || fail "adding a foreign footprint"
-git add -A && commit "foreign footprint"
-if wrapper ato_build_9 ""; then fail "the wrapper passed although atopile deleted footprint H9"; fi
-grep -qE '^ !removed footprint H9$' "$OUT/ato_build_9.log" || fail "expected '!removed footprint H9' (see ato_build_9.log)"
-git reset -q --hard HEAD~1
-ok "a footprint atopile doesn't own is deleted by ato build, and the wrapper fails on it"
+STEP=9-refused
+refused() {  # NAME EXPECTED_MESSAGE PCB_OPS_ARGS...: the wrapper must refuse and leave the board untouched
+  local name="$1" want="$2"
+  shift 2
+  kpy "$ROOT/scripts/roundtrip/pcb_ops.py" "$BOARD" "$@" || fail "pcb_ops $*"
+  cp "$BOARD" "$WORK/before_$name.kicad_pcb"
+  if wrapper "ato_build_9_$name" ""; then fail "the wrapper accepted: $name"; fi
+  grep -q "$want" "$OUT/ato_build_9_$name.log" || fail "$name: expected '$want' (see ato_build_9_$name.log)"
+  cmp -s "$BOARD" "$WORK/before_$name.kicad_pcb" || fail "$name: the wrapper changed the board although it failed"
+  git checkout -q -- "$BOARD"
+}
+refused foreign "not found via fp-lib-table" foreign 127 117
+refused flipped "atopile would flip it on every build" flip r_top
+refused locked "atopile drops (locked" lock c_dec
+ok "refused before atopile ran, board untouched: a foreign footprint, a footprint flipped against its library, a lock"
 
-STEP=10-freerouting
+STEP=10-board-history
+"$ROOT/scripts/checks/board_history.sh" "$(git rev-list --max-parents=0 HEAD)..HEAD" >"$OUT/board_history.log" 2>&1 \
+  || fail "board_history over the round-trip history (see board_history.log)"
+CHECKED="$(sed -n 's/^board_history: \([0-9]*\) board version.*/\1/p' "$OUT/board_history.log")"
+[ "${CHECKED:-0}" -gt 0 ] || fail "board_history checked no boards"
+"${GIT[@]}" checkout -q -b reroute
+kpy "$ROOT/scripts/roundtrip/pcb_ops.py" "$BOARD" drop-track || fail "dropping a track"
+commit "drop a track"
+if "$ROOT/scripts/checks/board_history.sh" HEAD~1..HEAD >"$OUT/board_history_drop.log" 2>&1; then
+  fail "board_history accepted a dropped track without Board-Diff-Allow"
+fi
+"${GIT[@]}" commit -q --amend -m "reroute" -m "Board-Diff-Allow: track:*" -m "Some trailing paragraph."
+"$ROOT/scripts/checks/board_history.sh" HEAD~1..HEAD >"$OUT/board_history_allowed.log" 2>&1 \
+  || fail "board_history rejected an allowed removal (see board_history_allowed.log)"
+"${GIT[@]}" checkout -q -
+"${GIT[@]}" merge -q --no-ff reroute -m "Merge reroute"
+"$ROOT/scripts/checks/board_history.sh" HEAD~1..HEAD >"$OUT/board_history_merge.log" 2>&1 \
+  || fail "board_history failed on a merge of an allowed change (see board_history_merge.log)"
+ok "board_history: $CHECKED board versions OK; a dropped track fails without Board-Diff-Allow, passes with it, merge skipped"
+
+STEP=11-freerouting
 kpy "$ROOT/scripts/roundtrip/autoroute_smoke.py" "$BOARD" "$WORK/freerouting" >"$OUT/autoroute.json" \
   || fail "autoroute smoke test"
 cp "$WORK/freerouting/freerouting.log" "$OUT/freerouting.log"
 drc >"$OUT/drc_$STEP.txt" || fail "DRC after autorouting: $(cat "$OUT/drc_$STEP.txt")"
 ok "Freerouting routed the ripped-up board ($(cat "$OUT/autoroute.json")); DRC $(cat "$OUT/drc_$STEP.txt")"
 
-STEP=11-kikit
+STEP=12-kikit
 kpy -m kikit.ui fab jlcpcb --no-drc "$BOARD" "$WORK/fab" >"$OUT/kikit.log" || fail "kikit fab jlcpcb (see kikit.log)"
 [ -s "$WORK/fab/gerbers.zip" ] || fail "kikit produced no gerbers.zip"
 unzip -Z1 "$WORK/fab/gerbers.zip" | grep -v '/$' >"$OUT/kikit_gerbers.txt"

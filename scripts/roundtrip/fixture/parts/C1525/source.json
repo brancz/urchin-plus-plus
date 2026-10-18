@@ -5,6 +5,7 @@
   "datasheet_url": "https://lcsc.com/product-detail/Multilayer-Ceramic-Capacitors-MLCC-SMD-SMT_SAMSUNG_CL05B104KO5NNNC_100nF-104-10-16V_C1525.html",
   "symbol": "CL05B104KO5NNNC.kicad_sym",
   "footprint": "C0402.kicad_mod",
+  "side": "bottom",
   "model": "C0402_L1.0-W0.5-H0.5.step",
   "pins": [
     {
@@ -18,7 +19,7 @@
       "signal": null
     }
   ],
-  "fetched_utc": "2026-10-17T18:14:15Z",
+  "fetched_utc": "2026-10-18T10:23:23Z",
   "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
   "kicad_cli": "9.0.9"
 }

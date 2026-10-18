@@ -1,13 +1,13 @@
 ok   kicad-cli        9.0.9
 ok   pcbnew           9.0.9
-20:57:26.306  I  …model.build_queue  BuildQueue: Started                                                                                                                                                                                        
-20:57:26.311  I  …model.build_queue  Build b273b7ff817aa1c0: starting worker - build=default, cwd=/Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj                                                                           
-20:57:26.311  I  …model.build_queue  BuildQueue: Started b273b7ff817aa1c0                                                                                                                                                                       
+12:34:42.214  I  …model.build_queue  BuildQueue: Started                                                                                                                                                                                        
+12:34:42.219  I  …model.build_queue  Build 5bb9c8f9583b727d: starting worker - build=default, cwd=/Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj                                                                           
+12:34:42.219  I  …model.build_queue  BuildQueue: Started 5bb9c8f9583b727d                                                                                                                                                                       
 
-20:57:26.926  I  …model.build_queue  BuildQueue: Build b273b7ff817aa1c0 completed with status BuildStatus.SUCCESS                                                                                                                               
+12:34:42.835  I  …model.build_queue  BuildQueue: Build 5bb9c8f9583b727d completed with status BuildStatus.SUCCESS                                                                                                                               
 
 ╭─ Build Summary ────────────────────────╮
-│ ✓ default  [b273b7ff817aa1c0]          │
+│ ✓ default  [5bb9c8f9583b727d]          │
 │                                        │
 │ Stages:                                │
 │   ✓ Resolving dependencies [0.01s]     │
@@ -40,13 +40,13 @@ ok   pcbnew           9.0.9
 ╰────────────────────────────────────────╯
 
 
-20:57:26.950  I  atopile.cli.build  Build successful! 🚀                                                                                                                                                                                        
+12:34:42.861  I  atopile.cli.build  Build successful! 🚀                                                                                                                                                                                        
 == /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb
-fixed    via at line 1648: net 2 (GND) -> 4
-fixed    zone at line 1683: net 2 (GND) -> 4
+fixed    via at line 1666 (f2f18f23): net 2 -> 4 (GND)
+fixed    zone at line 1701 (f0d31ef1): net 2 -> 4 (GND)
 fix_stale_nets: 2 fixed, 0 renamed, 0 orphaned
 ok   /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb
-board_diff: /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb vs /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.VMx9WV7cG4//Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb (mode build)
+board_diff: /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb vs /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.y49EH8ak6f//Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb (mode build)
   before: {'footprint': 5, 'track': 2, 'arc': 0, 'via': 1, 'zone': 1, 'drawing': 1, 'field': 45}
   after:  {'footprint': 6, 'track': 2, 'arc': 0, 'via': 1, 'zone': 1, 'drawing': 1, 'field': 55}
   added   footprint c_foo

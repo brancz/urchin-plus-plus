@@ -45,7 +45,8 @@ jobs:
 
       - name: Install atopile (dependency tree from constraints/atopile.txt)
         run: |
-          uv tool install "atopile==${ATOPILE_VERSION}" --python "${ATOPILE_PYTHON}" --constraints constraints/atopile.txt
+          uv tool install "atopile==${ATOPILE_VERSION}" --python "${ATOPILE_PYTHON}" \
+            --constraints constraints/atopile.txt --constraints constraints/atopile-extra.txt
           uv tool dir --bin >> "$GITHUB_PATH"
 
       - name: Install KiKit into KiCad's Python (dependency tree from constraints/kikit.txt)
@@ -60,17 +61,18 @@ jobs:
           echo "${FREEROUTING_SHA256}  ${FREEROUTING_JAR}" | sha256sum -c -
 
       - name: Toolchain versions
-        run: scripts/checks/toolchain.sh
+        run: |
+          scripts/checks/toolchain.sh
+          scripts/freeze_constraints.sh --check-constrained
 
       - name: Round-trip (phase 0 toolchain proof)
         run: scripts/roundtrip/run.sh ci-out/roundtrip ci-out/reports/roundtrip
 
       - name: Guardrails on committed KiCad files (reports/ holds evidence, e.g. a KiCad 10 board)
         run: |
-          files="$(git ls-files -- '*.kicad_pcb' '*.kicad_mod' '*.kicad_sym' ':!reports/')"
-          if [ -n "$files" ]; then
-            # shellcheck disable=SC2086
-            python3 scripts/checks/kicad_guardrails.py $files
+          if [ -n "$(git ls-files -- '*.kicad_pcb' '*.kicad_mod' '*.kicad_sym' ':!reports/')" ]; then
+            git ls-files -z -- '*.kicad_pcb' '*.kicad_mod' '*.kicad_sym' ':!reports/' \
+              | xargs -0 python3 scripts/checks/kicad_guardrails.py
           else
             echo "no KiCad files committed"
           fi

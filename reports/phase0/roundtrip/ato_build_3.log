@@ -1,16 +1,16 @@
 ok   kicad-cli        9.0.9
 ok   pcbnew           9.0.9
-20:57:05.549  I  …model.build_queue  BuildQueue: Started                                                                                                                                                                                        
-20:57:05.553  I  …model.build_queue  Build 67746c34c9f4f8d6: starting worker - build=default, cwd=/Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj                                                                           
-20:57:05.553  I  …model.build_queue  BuildQueue: Started 67746c34c9f4f8d6                                                                                                                                                                       
+12:34:25.185  I  …model.build_queue  BuildQueue: Started                                                                                                                                                                                        
+12:34:25.189  I  …model.build_queue  Build f2f6176e00ab2258: starting worker - build=default, cwd=/Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj                                                                           
+12:34:25.190  I  …model.build_queue  BuildQueue: Started f2f6176e00ab2258                                                                                                                                                                       
 
-20:57:06.165  I  …model.build_queue  BuildQueue: Build 67746c34c9f4f8d6 completed with status BuildStatus.SUCCESS                                                                                                                               
+12:34:25.801  I  …model.build_queue  BuildQueue: Build f2f6176e00ab2258 completed with status BuildStatus.SUCCESS                                                                                                                               
 
 ╭─ Build Summary ────────────────────────╮
-│ ✓ default  [67746c34c9f4f8d6]          │
+│ ✓ default  [f2f6176e00ab2258]          │
 │                                        │
 │ Stages:                                │
-│   ✓ Resolving dependencies [0.01s]     │
+│   ✓ Resolving dependencies [0.02s]     │
 │   ✓ Initializing build context [0.05s] │
 │   ✓ Modify type graph [0.00s]          │
 │   ✓ Instantiate app [0.00s]            │
@@ -36,15 +36,15 @@ ok   pcbnew           9.0.9
 │ Warnings (1):                          │
 │   • No pickers for App.hole            │
 │                                        │
-│ Total: 0.28s                           │
+│ Total: 0.29s                           │
 ╰────────────────────────────────────────╯
 
 
-20:57:06.199  I  atopile.cli.build  Build successful! 🚀                                                                                                                                                                                        
+12:34:25.837  I  atopile.cli.build  Build successful! 🚀                                                                                                                                                                                        
 == /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb
 fix_stale_nets: 0 fixed, 0 renamed, 0 orphaned
 ok   /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb
-board_diff: /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb vs /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.OKjDdm608e//Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb (mode build, strict)
+board_diff: /Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb vs /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.kYr7f36rfw//Users/brancz/src/github.com/brancz/urchin++/scratch/roundtrip/proj/layouts/default/default.kicad_pcb (mode build, strict)
   before: {'footprint': 4, 'track': 2, 'arc': 0, 'via': 1, 'zone': 1, 'drawing': 1, 'field': 35}
   after:  {'footprint': 4, 'track': 2, 'arc': 0, 'via': 1, 'zone': 1, 'drawing': 1, 'field': 35}
 board_diff: OK

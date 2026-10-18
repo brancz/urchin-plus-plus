@@ -1,0 +1,101 @@
+843ca55 ato build: new board layouts/default/default.kicad_pcb
+== 53ed5d7 pcbnew edit: layouts/default/default.kicad_pcb
+board_diff: /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.und8xYT3jV/new/board.kicad_pcb vs /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.und8xYT3jV/old/board.kicad_pcb (mode commit)
+  before: {'footprint': 4, 'track': 0, 'arc': 0, 'via': 0, 'zone': 0, 'drawing': 0, 'field': 35}
+  after:  {'footprint': 4, 'track': 2, 'arc': 0, 'via': 1, 'zone': 1, 'drawing': 1, 'field': 35}
+  added   track     B.Cu (110.0, 104.57)->(116.0, 104.58) w=0.25
+  added   track     B.Cu (110.0, 105.43)->(109.5847, 110.1113) w=0.25
+  added   via       via (125.0, 115.0) 3 d=0.3 w=0.6 F.Cu-B.Cu
+  added   zone      copper [F.Cu,B.Cu] ((((100.5, 100.5), (129.5, 100.5), (129.5, 119.5), (100.5, 119.5)),),)
+  added   drawing   Edge.Cuts Rect (100.0, 100.0)->(130.0, 120.0) w=0.1 fill=False
+  changed footprint c_dec pos: (20.0, 0.0) -> (116.0, 105.0)
+  changed footprint c_dec rot: 0.0 -> -90.0
+  changed footprint c_dec pads: {'1/0': '(-0.42, 0.0) rot=180.0 (0.5, 0.54) Rect rr=0.25 drill=(0.0, 0.0) 00000000_00000000_00000000_0000800c mask=None paste=None/None clr=None', '2/1': '(0.42, 0.0) rot=180.0 (0.5, 0.54) Rect rr=0.25 drill=(0.0, 0.0) 00000000_00000000_00000000_0000800c mask=None paste=None/None clr=None'} -> {'1/0': '(-0.42, 0.0) rot=90.0 (0.5, 0.54) Rect rr=0.25 drill=(0.0, 0.0) 00000000_00000000_00000000_0000800c mask=None paste=None/None clr=None', '2/1': '(0.42, 0.0) rot=90.0 (0.5, 0.54) Rect rr=0.25 drill=(0.0, 0.0) 00000000_00000000_00000000_0000800c mask=None paste=None/None clr=None'}
+  changed footprint c_dec graphics: ['B.Courtyard Line (19.5, -0.25)->(19.5, 0.25) w=0.05 fill=False', 'B.Courtyard Line (19.5, 0.25)->(20.5, 0.25) w=0.05 fill=False', 'B.Courtyard Line (20.5, -0.25)->(19.5, -0.25) w=0.05 fill=False', 'B.Courtyard Line (20.5, 0.25)->(20.5, -0.25) w=0.05 fill=False', 'B.Silkscreen Arc (19.13, -0.35)->(19.1739, -0.4561)->(19.28, -0.5) w=0.15 fill=False', 'B.Silkscreen Arc (19.28, 0.5)->(19.1739, 0.4561)->(19.13, 0.35) w=0.15 fill=False', 'B.Silkscreen Arc (20.72, -0.5)->(20.8261, -0.4561)->(20.87, -0.35) w=0.15 fill=False', 'B.Silkscreen Arc (20.87, 0.35)->(20.8261, 0.4561)->(20.72, 0.5) w=0.15 fill=False', 'B.Silkscreen Circle c=(19.5, -0.25) r=0.03 w=0.06 fill=False', 'B.Silkscreen Line (19.13, -0.35)->(19.13, 0.35) w=0.15 fill=False', 'B.Silkscreen Line (19.28, 0.5)->(19.78, 0.5) w=0.15 fill=False', 'B.Silkscreen Line (19.78, -0.5)->(19.28, -0.5) w=0.15 fill=False', 'B.Silkscreen Line (20.22, 0.5)->(20.72, 0.5) w=0.15 fill=False', 'B.Silkscreen Line (20.72, -0.5)->(20.22, -0.5) w=0.15 fill=False', 'B.Silkscreen Line (20.87, 0.35)->(20.87, -0.35) w=0.15 fill=False'] -> ['B.Courtyard Line (115.75, 104.5)->(115.75, 105.5) w=0.05 fill=False', 'B.Courtyard Line (115.75, 105.5)->(116.25, 105.5) w=0.05 fill=False', 'B.Courtyard Line (116.25, 104.5)->(115.75, 104.5) w=0.05 fill=False', 'B.Courtyard Line (116.25, 105.5)->(116.25, 104.5) w=0.05 fill=False', 'B.Silkscreen Arc (115.5, 104.28)->(115.5439, 104.1739)->(115.65, 104.13) w=0.15 fill=False', 'B.Silkscreen Arc (115.65, 105.87)->(115.5439, 105.8261)->(115.5, 105.72) w=0.15 fill=False', 'B.Silkscreen Arc (116.35, 104.13)->(116.4561, 104.1739)->(116.5, 104.28) w=0.15 fill=False', 'B.Silkscreen Arc (116.5, 105.72)->(116.4561, 105.8261)->(116.35, 105.87) w=0.15 fill=False', 'B.Silkscreen Circle c=(116.25, 104.5) r=0.03 w=0.06 fill=False', 'B.Silkscreen Line (115.5, 104.28)->(115.5, 104.78) w=0.15 fill=False', 'B.Silkscreen Line (115.5, 105.22)->(115.5, 105.72) w=0.15 fill=False', 'B.Silkscreen Line (115.65, 105.87)->(116.35, 105.87) w=0.15 fill=False', 'B.Silkscreen Line (116.35, 104.13)->(115.65, 104.13) w=0.15 fill=False', 'B.Silkscreen Line (116.5, 104.78)->(116.5, 104.28) w=0.15 fill=False', 'B.Silkscreen Line (116.5, 105.72)->(116.5, 105.22) w=0.15 fill=False']
+  changed field-placement c_dec/Datasheet placement: 'B.Fab (20.0, 0.0) angle=0.0 visible=False size=(1.27, 1.27)' -> 'B.Fab (116.0, 105.0) angle=270.0 visible=False size=(1.27, 1.27)'
+  changed field-placement c_dec/Description placement: 'B.Fab (20.0, 0.0) angle=0.0 visible=False size=(1.27, 1.27)' -> 'B.Fab (116.0, 105.0) angle=270.0 visible=False size=(1.27, 1.27)'
+  changed field-placement c_dec/LCSC placement: 'User.9 (20.0, 0.0) angle=0.0 visible=False size=(1.0, 1.0)' -> 'User.9 (116.0, 105.0) angle=270.0 visible=False size=(1.0, 1.0)'
+  changed field-placement c_dec/LCSC Part placement: 'B.Fab (20.0, 0.0) angle=0.0 visible=False size=(1.27, 1.27)' -> 'B.Fab (116.0, 105.0) angle=270.0 visible=False size=(1.27, 1.27)'
+  changed field-placement c_dec/Manufacturer placement: 'User.9 (20.0, 0.0) angle=0.0 visible=False size=(1.0, 1.0)' -> 'User.9 (116.0, 105.0) angle=270.0 visible=False size=(1.0, 1.0)'
+  changed field-placement c_dec/Partnumber placement: 'User.9 (20.0, 0.0) angle=0.0 visible=False size=(1.0, 1.0)' -> 'User.9 (116.0, 105.0) angle=270.0 visible=False size=(1.0, 1.0)'
+  changed field-placement c_dec/Reference placement: 'B.Silkscreen (19.03, 0.0) angle=0.0 visible=True size=(1.0, 1.0)' -> 'B.Silkscreen (116.0, 104.03) angle=270.0 visible=True size=(1.0, 1.0)'
+  changed field-placement c_dec/Value placement: 'B.Fab (20.0, -4.0) angle=0.0 visible=True size=(1.0, 1.0)' -> 'B.Fab (120.0, 105.0) angle=270.0 visible=True size=(1.0, 1.0)'
+  changed field-placement c_dec/atopile_address placement: 'User.9 (20.0, 0.0) angle=0.0 visible=False size=(1.0, 1.0)' -> 'User.9 (116.0, 105.0) angle=270.0 visible=False size=(1.0, 1.0)'
+  changed field-placement c_dec/lcsc_id placement: 'User.9 (20.0, 0.0) angle=0.0 visible=False size=(1.0, 1.0)' -> 'User.9 (116.0, 105.0) angle=270.0 visible=False size=(1.0, 1.0)'
+  changed footprint hole pos: (30.0, 0.0) -> (125.0, 105.0)
+  changed footprint hole graphics: ['F.Courtyard Circle c=(30.0, 0.0) r=2.45 w=0.05 fill=False', 'User.Comments Circle c=(30.0, 0.0) r=2.2 w=0.15 fill=False'] -> ['F.Courtyard Circle c=(125.0, 105.0) r=2.45 w=0.05 fill=False', 'User.Comments Circle c=(125.0, 105.0) r=2.2 w=0.15 fill=False']
+  changed field-placement hole/Datasheet placement: 'F.Fab (30.0, 0.0) angle=0.0 visible=False size=(1.27, 1.27)' -> 'F.Fab (125.0, 105.0) angle=0.0 visible=False size=(1.27, 1.27)'
+  changed field-placement hole/Description placement: 'F.Fab (30.0, 0.0) angle=0.0 visible=False size=(1.27, 1.27)' -> 'F.Fab (125.0, 105.0) angle=0.0 visible=False size=(1.27, 1.27)'
+  changed field-placement hole/Reference placement: 'F.Silkscreen (30.0, -2.5) angle=0.0 visible=True size=(1.0, 1.0)' -> 'F.Silkscreen (125.0, 102.5) angle=0.0 visible=True size=(1.0, 1.0)'
+  changed field-placement hole/Value placement: 'F.Fab (30.0, 2.5) angle=0.0 visible=True size=(1.0, 1.0)' -> 'F.Fab (125.0, 107.5) angle=0.0 visible=True size=(1.0, 1.0)'
+  changed field-placement hole/atopile_address placement: 'User.9 (30.0, 0.0) angle=0.0 visible=False size=(1.0, 1.0)' -> 'User.9 (125.0, 105.0) angle=0.0 visible=False size=(1.0, 1.0)'
+  changed footprint r_bot pos: (10.0, 0.0) -> (110.0, 110.0)
+  changed footprint r_bot rot: 0.0 -> 15.0
+  changed footprint r_bot pads: {'1/0': '(-0.43, 0.0) rot=180.0 (0.566, 0.54) Rect rr=0.25 drill=(0.0, 0.0) 00000000_00000000_00000000_0000800c mask=None paste=None/None clr=None', '2/1': '(0.43, 0.0) rot=180.0 (0.566, 0.54) Rect rr=0.25 drill=(0.0, 0.0) 00000000_00000000_00000000_0000800c mask=None paste=None/None clr=None'} -> {'1/0': '(-0.43, 0.0) rot=195.0 (0.566, 0.54) Rect rr=0.25 drill=(0.0, 0.0) 00000000_00000000_00000000_0000800c mask=None paste=None/None clr=None', '2/1': '(0.43, 0.0) rot=195.0 (0.566, 0.54) Rect rr=0.25 drill=(0.0, 0.0) 00000000_00000000_00000000_0000800c mask=None paste=None/None clr=None'}
+  changed footprint r_bot graphics: ['B.Courtyard Line (10.5, -0.25)->(9.5, -0.25) w=0.05 fill=False', 'B.Courtyard Line (10.5, 0.25)->(10.5, -0.25) w=0.05 fill=False', 'B.Courtyard Line (9.5, -0.25)->(9.5, 0.25) w=0.05 fill=False', 'B.Courtyard Line (9.5, 0.25)->(10.5, 0.25) w=0.05 fill=False', 'B.Silkscreen Circle c=(9.5, -0.25) r=0.03 w=0.06 fill=False', 'B.Silkscreen Line (10.23, -0.5)->(10.94, -0.5) w=0.15 fill=False', 'B.Silkscreen Line (10.94, -0.5)->(10.94, 0.5) w=0.15 fill=False', 'B.Silkscreen Line (10.94, 0.5)->(10.23, 0.5) w=0.15 fill=False', 'B.Silkscreen Line (9.06, -0.5)->(9.06, 0.5) w=0.15 fill=False', 'B.Silkscreen Line (9.06, 0.5)->(9.77, 0.5) w=0.15 fill=False', 'B.Silkscreen Line (9.77, -0.5)->(9.06, -0.5) w=0.15 fill=False'] -> ['B.Courtyard Line (109.4523, 109.8879)->(109.5817, 110.3709) w=0.05 fill=False', 'B.Courtyard Line (109.5817, 110.3709)->(110.5477, 110.1121) w=0.05 fill=False', 'B.Courtyard Line (110.4183, 109.6291)->(109.4523, 109.8879) w=0.05 fill=False', 'B.Courtyard Line (110.5477, 110.1121)->(110.4183, 109.6291) w=0.05 fill=False', 'B.Silkscreen Circle c=(109.4523, 109.8879) r=0.03 w=0.06 fill=False', 'B.Silkscreen Line (108.9626, 109.7603)->(109.2214, 110.7263) w=0.15 fill=False', 'B.Silkscreen Line (109.2214, 110.7263)->(109.9072, 110.5425) w=0.15 fill=False', 'B.Silkscreen Line (109.6484, 109.5766)->(108.9626, 109.7603) w=0.15 fill=False', 'B.Silkscreen Line (110.0928, 109.4575)->(110.7786, 109.2737) w=0.15 fill=False', 'B.Silkscreen Line (110.7786, 109.2737)->(111.0374, 110.2397) w=0.15 fill=False', 'B.Silkscreen Line (111.0374, 110.2397)->(110.3516, 110.4234) w=0.15 fill=False']
+  changed field-placement r_bot/Datasheet placement: 'B.Fab (10.0, 0.0) angle=0.0 visible=False size=(1.27, 1.27)' -> 'B.Fab (110.0, 110.0) angle=15.0 visible=False size=(1.27, 1.27)'
+  changed field-placement r_bot/Description placement: 'B.Fab (10.0, 0.0) angle=0.0 visible=False size=(1.27, 1.27)' -> 'B.Fab (110.0, 110.0) angle=15.0 visible=False size=(1.27, 1.27)'
+  changed field-placement r_bot/LCSC placement: 'User.9 (10.0, 0.0) angle=0.0 visible=False size=(1.0, 1.0)' -> 'User.9 (110.0, 110.0) angle=15.0 visible=False size=(1.0, 1.0)'
+  changed field-placement r_bot/LCSC Part placement: 'B.Fab (10.0, 0.0) angle=0.0 visible=False size=(1.27, 1.27)' -> 'B.Fab (110.0, 110.0) angle=15.0 visible=False size=(1.27, 1.27)'
+  changed field-placement r_bot/Manufacturer placement: 'User.9 (10.0, 0.0) angle=0.0 visible=False size=(1.0, 1.0)' -> 'User.9 (110.0, 110.0) angle=15.0 visible=False size=(1.0, 1.0)'
+  changed field-placement r_bot/Partnumber placement: 'User.9 (10.0, 0.0) angle=0.0 visible=False size=(1.0, 1.0)' -> 'User.9 (110.0, 110.0) angle=15.0 visible=False size=(1.0, 1.0)'
+  changed field-placement r_bot/Reference placement: 'B.Silkscreen (8.96, 0.0) angle=0.0 visible=True size=(1.0, 1.0)' -> 'B.Silkscreen (108.9954, 110.2692) angle=15.0 visible=True size=(1.0, 1.0)'
+  changed field-placement r_bot/Value placement: 'B.Fab (10.0, -4.0) angle=0.0 visible=True size=(1.0, 1.0)' -> 'B.Fab (108.9647, 106.1363) angle=15.0 visible=True size=(1.0, 1.0)'
+  changed field-placement r_bot/atopile_address placement: 'User.9 (10.0, 0.0) angle=0.0 visible=False size=(1.0, 1.0)' -> 'User.9 (110.0, 110.0) angle=15.0 visible=False size=(1.0, 1.0)'
+  changed field-placement r_bot/lcsc_id placement: 'User.9 (10.0, 0.0) angle=0.0 visible=False size=(1.0, 1.0)' -> 'User.9 (110.0, 110.0) angle=15.0 visible=False size=(1.0, 1.0)'
+  changed footprint r_top pos: (0.0, 0.0) -> (110.0, 105.0)
+  changed footprint r_top rot: 0.0 -> -90.0
+  changed footprint r_top pads: {'1/0': '(-0.43, 0.0) rot=180.0 (0.566, 0.54) Rect rr=0.25 drill=(0.0, 0.0) 00000000_00000000_00000000_0000800c mask=None paste=None/None clr=None', '2/1': '(0.43, 0.0) rot=180.0 (0.566, 0.54) Rect rr=0.25 drill=(0.0, 0.0) 00000000_00000000_00000000_0000800c mask=None paste=None/None clr=None'} -> {'1/0': '(-0.43, 0.0) rot=90.0 (0.566, 0.54) Rect rr=0.25 drill=(0.0, 0.0) 00000000_00000000_00000000_0000800c mask=None paste=None/None clr=None', '2/1': '(0.43, 0.0) rot=90.0 (0.566, 0.54) Rect rr=0.25 drill=(0.0, 0.0) 00000000_00000000_00000000_0000800c mask=None paste=None/None clr=None'}
+  changed footprint r_top graphics: ['B.Courtyard Line (-0.5, -0.25)->(-0.5, 0.25) w=0.05 fill=False', 'B.Courtyard Line (-0.5, 0.25)->(0.5, 0.25) w=0.05 fill=False', 'B.Courtyard Line (0.5, -0.25)->(-0.5, -0.25) w=0.05 fill=False', 'B.Courtyard Line (0.5, 0.25)->(0.5, -0.25) w=0.05 fill=False', 'B.Silkscreen Circle c=(-0.5, -0.25) r=0.03 w=0.06 fill=False', 'B.Silkscreen Line (-0.23, -0.5)->(-0.94, -0.5) w=0.15 fill=False', 'B.Silkscreen Line (-0.94, -0.5)->(-0.94, 0.5) w=0.15 fill=False', 'B.Silkscreen Line (-0.94, 0.5)->(-0.23, 0.5) w=0.15 fill=False', 'B.Silkscreen Line (0.23, -0.5)->(0.94, -0.5) w=0.15 fill=False', 'B.Silkscreen Line (0.94, -0.5)->(0.94, 0.5) w=0.15 fill=False', 'B.Silkscreen Line (0.94, 0.5)->(0.23, 0.5) w=0.15 fill=False'] -> ['B.Courtyard Line (109.75, 104.5)->(109.75, 105.5) w=0.05 fill=False', 'B.Courtyard Line (109.75, 105.5)->(110.25, 105.5) w=0.05 fill=False', 'B.Courtyard Line (110.25, 104.5)->(109.75, 104.5) w=0.05 fill=False', 'B.Courtyard Line (110.25, 105.5)->(110.25, 104.5) w=0.05 fill=False', 'B.Silkscreen Circle c=(110.25, 104.5) r=0.03 w=0.06 fill=False', 'B.Silkscreen Line (109.5, 104.06)->(109.5, 104.77) w=0.15 fill=False', 'B.Silkscreen Line (109.5, 105.94)->(109.5, 105.23) w=0.15 fill=False', 'B.Silkscreen Line (110.5, 104.06)->(109.5, 104.06) w=0.15 fill=False', 'B.Silkscreen Line (110.5, 104.77)->(110.5, 104.06) w=0.15 fill=False', 'B.Silkscreen Line (110.5, 105.23)->(110.5, 105.94) w=0.15 fill=False', 'B.Silkscreen Line (110.5, 105.94)->(109.5, 105.94) w=0.15 fill=False']
+  changed field-placement r_top/Datasheet placement: 'B.Fab (0.0, 0.0) angle=0.0 visible=False size=(1.27, 1.27)' -> 'B.Fab (110.0, 105.0) angle=270.0 visible=False size=(1.27, 1.27)'
+  changed field-placement r_top/Description placement: 'B.Fab (0.0, 0.0) angle=0.0 visible=False size=(1.27, 1.27)' -> 'B.Fab (110.0, 105.0) angle=270.0 visible=False size=(1.27, 1.27)'
+  changed field-placement r_top/LCSC placement: 'User.9 (0.0, 0.0) angle=0.0 visible=False size=(1.0, 1.0)' -> 'User.9 (110.0, 105.0) angle=270.0 visible=False size=(1.0, 1.0)'
+  changed field-placement r_top/LCSC Part placement: 'B.Fab (0.0, 0.0) angle=0.0 visible=False size=(1.27, 1.27)' -> 'B.Fab (110.0, 105.0) angle=270.0 visible=False size=(1.27, 1.27)'
+  changed field-placement r_top/Manufacturer placement: 'User.9 (0.0, 0.0) angle=0.0 visible=False size=(1.0, 1.0)' -> 'User.9 (110.0, 105.0) angle=270.0 visible=False size=(1.0, 1.0)'
+  changed field-placement r_top/Partnumber placement: 'User.9 (0.0, 0.0) angle=0.0 visible=False size=(1.0, 1.0)' -> 'User.9 (110.0, 105.0) angle=270.0 visible=False size=(1.0, 1.0)'
+  changed field-placement r_top/Reference placement: 'B.Silkscreen (-1.04, 0.0) angle=0.0 visible=True size=(1.0, 1.0)' -> 'B.Silkscreen (110.0, 103.96) angle=270.0 visible=True size=(1.0, 1.0)'
+  changed field-placement r_top/Value placement: 'B.Fab (0.0, -4.0) angle=0.0 visible=True size=(1.0, 1.0)' -> 'B.Fab (114.0, 105.0) angle=270.0 visible=True size=(1.0, 1.0)'
+  changed field-placement r_top/atopile_address placement: 'User.9 (0.0, 0.0) angle=0.0 visible=False size=(1.0, 1.0)' -> 'User.9 (110.0, 105.0) angle=270.0 visible=False size=(1.0, 1.0)'
+  changed field-placement r_top/lcsc_id placement: 'User.9 (0.0, 0.0) angle=0.0 visible=False size=(1.0, 1.0)' -> 'User.9 (110.0, 105.0) angle=270.0 visible=False size=(1.0, 1.0)'
+  changed setup     copper_edge_clearance value: 0.5 -> 0.3
+  changed setup     min_clearance value: 0.0 -> 0.127
+  changed setup     min_through_drill value: 0.3 -> 0.2
+  changed setup     min_track value: 0.0 -> 0.127
+  changed setup     min_via value: 0.5 -> 0.45
+board_diff: OK
+== a02fd64 ato rebuild: layouts/default/default.kicad_pcb
+board_diff: /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.und8xYT3jV/new/board.kicad_pcb vs /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.und8xYT3jV/old/board.kicad_pcb (mode commit)
+  before: {'footprint': 4, 'track': 2, 'arc': 0, 'via': 1, 'zone': 1, 'drawing': 1, 'field': 35}
+  after:  {'footprint': 4, 'track': 2, 'arc': 0, 'via': 1, 'zone': 1, 'drawing': 1, 'field': 35}
+board_diff: OK
+== 1315220 add c_mid: layouts/default/default.kicad_pcb
+board_diff: /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.und8xYT3jV/new/board.kicad_pcb vs /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.und8xYT3jV/old/board.kicad_pcb (mode commit)
+  before: {'footprint': 4, 'track': 2, 'arc': 0, 'via': 1, 'zone': 1, 'drawing': 1, 'field': 35}
+  after:  {'footprint': 5, 'track': 2, 'arc': 0, 'via': 1, 'zone': 1, 'drawing': 1, 'field': 45}
+  added   footprint c_mid
+board_diff: OK
+== 0d3d7a6 formatting: layouts/default/default.kicad_pcb
+board_diff: /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.und8xYT3jV/new/board.kicad_pcb vs /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.und8xYT3jV/old/board.kicad_pcb (mode commit)
+  before: {'footprint': 5, 'track': 2, 'arc': 0, 'via': 1, 'zone': 1, 'drawing': 1, 'field': 45}
+  after:  {'footprint': 5, 'track': 2, 'arc': 0, 'via': 1, 'zone': 1, 'drawing': 1, 'field': 45}
+board_diff: OK
+== c1e6714 net churn: layouts/default/default.kicad_pcb
+board_diff: /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.und8xYT3jV/new/board.kicad_pcb vs /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.und8xYT3jV/old/board.kicad_pcb (mode commit)
+  before: {'footprint': 5, 'track': 2, 'arc': 0, 'via': 1, 'zone': 1, 'drawing': 1, 'field': 45}
+  after:  {'footprint': 6, 'track': 2, 'arc': 0, 'via': 2, 'zone': 1, 'drawing': 1, 'field': 55}
+  added   footprint c_foo
+  added   via       via (103.0, 103.0) 3 d=0.3 w=0.6 F.Cu-B.Cu
+board_diff: OK
+== d45cd7f rename MID: layouts/default/default.kicad_pcb
+board_diff: /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.und8xYT3jV/new/board.kicad_pcb vs /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.und8xYT3jV/old/board.kicad_pcb (mode commit)
+  before: {'footprint': 6, 'track': 2, 'arc': 0, 'via': 2, 'zone': 1, 'drawing': 1, 'field': 55}
+  after:  {'footprint': 6, 'track': 2, 'arc': 0, 'via': 2, 'zone': 1, 'drawing': 1, 'field': 55}
+  renamed net MID -> MIDPOINT
+  changed footprint c_mid pad_nets: {'1/0': 'MID', '2/1': 'GND'} -> {'1/0': 'MIDPOINT', '2/1': 'GND'}
+  changed footprint r_bot pad_nets: {'1/0': 'MID', '2/1': 'GND'} -> {'1/0': 'MIDPOINT', '2/1': 'GND'}
+  changed footprint r_top pad_nets: {'1/0': 'VCC', '2/1': 'MID'} -> {'1/0': 'VCC', '2/1': 'MIDPOINT'}
+  changed track     B.Cu (110.0, 105.43)->(109.5847, 110.1113) w=0.25 net: 'MID' -> 'MIDPOINT' (net rename)
+  changed via       via (103.0, 103.0) 3 d=0.3 w=0.6 F.Cu-B.Cu net: 'MID' -> 'MIDPOINT' (net rename)
+board_diff: OK
+board_history: 6 board version(s) checked in 8e018d2703777dd44195c2550bf2725108774d80..HEAD
+board_history: OK

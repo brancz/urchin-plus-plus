@@ -1,9 +1,9 @@
-date_utc: 2026-10-17T18:58:00Z
+date_utc: 2026-10-18T10:35:19Z
 
 ## atopile part/package servers (atopile 0.15.7 defaults)
 components.atopileapi.com: Host components.atopileapi.com not found: 3(NXDOMAIN)
 packages.atopileapi.com: Host packages.atopileapi.com not found: 3(NXDOMAIN)
-legacy.atopileapi.com: legacy.atopileapi.com has address 188.114.96.3
+legacy.atopileapi.com: legacy.atopileapi.com has address 172.67.196.180
 
 ## when the servers disappeared (upstream issue atopile/atopile#1829)
 components.atopileapi.com and packages.atopileapi.com are NXDOMAIN — all builds fail at part-picking

@@ -1,0 +1,8 @@
+== dc57645 drop a track: layouts/default/default.kicad_pcb
+board_diff: /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.tIQAmRweAk/new/board.kicad_pcb vs /var/folders/d5/8ygmn_cs7c9ccn0jbxx8x8vr0000gn/T/tmp.tIQAmRweAk/old/board.kicad_pcb (mode commit)
+  before: {'footprint': 6, 'track': 2, 'arc': 0, 'via': 2, 'zone': 1, 'drawing': 1, 'field': 55}
+  after:  {'footprint': 6, 'track': 1, 'arc': 0, 'via': 2, 'zone': 1, 'drawing': 1, 'field': 55}
+ !removed track     B.Cu (110.0, 104.57)->(116.0, 104.58) w=0.25
+board_diff: FAIL (1 failing differences)
+board_history: 1 board version(s) checked in HEAD~1..HEAD
+board_history: FAIL

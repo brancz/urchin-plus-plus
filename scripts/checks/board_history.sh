@@ -4,10 +4,12 @@
 #   scripts/checks/board_history.sh RANGE        e.g. origin/main..HEAD
 #
 # scripts/ato_build.sh guards each build; this guards what actually got committed
-# (a bare `ato build`, a pcbnew edit that lost copper). Per commit and changed
-# .kicad_pcb, scripts/checks/board_diff.py --mode commit against the parent's
-# version (following renames). A commit declares intended removals or net changes
-# with trailers, one pattern each, e.g.:
+# (a bare `ato build`, a pcbnew edit that lost copper). Per non-merge commit and
+# changed .kicad_pcb, scripts/checks/board_diff.py --mode commit against the
+# parent's version (following renames; .kicad_pro/.kicad_dru come along so both
+# sides load with their own design rules). Merge commits are skipped: the commits
+# they bring in are checked one by one. A commit declares intended removals or net
+# changes with lines anywhere in its message, one pattern each, e.g.:
 #
 #     Board-Diff-Allow: track:*
 #     Board-Diff-Allow: footprint:led_old
@@ -23,26 +25,44 @@ NOISE='Debug: Adding duplicate image handler|create wxApp before calling this|sw
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
-commits="$(git rev-list --reverse "$RANGE")" || { echo "board_history: FAIL bad range $RANGE (shallow clone?)"; exit 2; }
+# git show REV:PATH.kicad_pcb (plus its .kicad_pro/.kicad_dru) into DIR/board.kicad_pcb
+extract() {
+  local rev="$1" path="$2" dir="$3" ext
+  rm -rf "$dir"
+  mkdir -p "$dir"
+  git show "$rev:$path" >"$dir/board.kicad_pcb"
+  for ext in kicad_pro kicad_dru; do
+    git show "$rev:${path%.kicad_pcb}.$ext" >"$dir/board.$ext" 2>/dev/null || rm -f "$dir/board.$ext"
+  done
+}
+
+commits="$(git rev-list --reverse --no-merges "$RANGE")" || { echo "board_history: FAIL bad range $RANGE (shallow clone?)"; exit 2; }
 status=0
 checked=0
 while IFS= read -r c; do
   [ -n "$c" ] || continue
+  title="$(git log -1 --format='%h %s' "$c")"
   parent="$(git rev-parse --verify --quiet "$c^" || true)"
   if [ -z "$parent" ]; then
-    echo "$(git log -1 --format='%h %s' "$c"): root commit, nothing to compare"
+    echo "$title: root commit, nothing to compare"
     continue
   fi
-  allow=()
+  patterns=()
   while IFS= read -r pat; do
-    [ -n "$pat" ] && allow+=(--allow "$pat")
-  done < <(git log -1 --format='%(trailers:key=Board-Diff-Allow,valueonly,separator=%x0A)' "$c")
+    [ -n "$pat" ] && patterns+=("$pat")
+  done < <(git log -1 --format=%B "$c" | sed -n 's/^Board-Diff-Allow:[[:space:]]*//p' | sed 's/[[:space:]]*$//')
+  allow=()
+  for pat in ${patterns[@]+"${patterns[@]}"}; do allow+=(--allow "$pat"); done
   while IFS=$'\t' read -r kind old new; do
-    title="$(git log -1 --format='%h %s' "$c")"
     case "$kind" in
       A) echo "$title: new board $old"; continue ;;
       D)
-        if printf '%s\n' "${allow[@]+"${allow[@]}"}" | grep -qxF "board:$old"; then
+        ok=""
+        for pat in ${patterns[@]+"${patterns[@]}"}; do
+          # shellcheck disable=SC2053  # $pat is a glob on purpose
+          [[ "board:$old" == $pat ]] && ok=1
+        done
+        if [ -n "$ok" ]; then
           echo "$title: deleted board $old (allowed)"
         else
           echo "$title: FAIL board $old deleted without 'Board-Diff-Allow: board:$old'"
@@ -52,17 +72,16 @@ while IFS= read -r c; do
       R*) ;;
       *) new="$old" ;;
     esac
-    git show "$parent:$old" >"$TMP/old.kicad_pcb"
-    git show "$c:$new" >"$TMP/new.kicad_pcb"
+    extract "$parent" "$old" "$TMP/old"
+    extract "$c" "$new" "$TMP/new"
     echo "== $title: $new"
     checked=$((checked + 1))
-    err="$TMP/stderr"
-    if ! "$KICAD_PY" "$ROOT/scripts/checks/board_diff.py" "$TMP/new.kicad_pcb" --against "$TMP/old.kicad_pcb" \
-      --mode commit ${allow[@]+"${allow[@]}"} 2>"$err"; then
+    if ! "$KICAD_PY" "$ROOT/scripts/checks/board_diff.py" "$TMP/new/board.kicad_pcb" --against "$TMP/old/board.kicad_pcb" \
+      --mode commit ${allow[@]+"${allow[@]}"} 2>"$TMP/stderr"; then
       status=1
     fi
-    grep -vE "$NOISE" "$err" >&2 || true
-  done < <(git diff --name-status -M "$parent" "$c" -- '*.kicad_pcb' ':!reports/')
+    grep -vE "$NOISE" "$TMP/stderr" >&2 || true
+  done < <(git diff --name-status -M20% "$parent" "$c" -- '*.kicad_pcb' ':!reports/')
 done <<<"$commits"
 
 echo "board_history: $checked board version(s) checked in $RANGE"
