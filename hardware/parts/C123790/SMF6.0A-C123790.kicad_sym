@@ -2,7 +2,7 @@
 	(version 20241209)
 	(generator "kicad_symbol_editor")
 	(generator_version "9.0")
-	(symbol "1N4148W_C81598"
+	(symbol "SMF6.0A-C123790"
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -14,7 +14,7 @@
 				)
 			)
 		)
-		(property "Value" "1N4148W_C81598"
+		(property "Value" "SMF6.0A-C123790"
 			(at 0 -5.08 0)
 			(effects
 				(font
@@ -22,7 +22,7 @@
 				)
 			)
 		)
-		(property "Footprint" "lib:SOD-123F_L2.7-W1.6-LS3.8-RD"
+		(property "Footprint" "lib:SOD-123F_L2.8-W1.8-LS3.7-RD"
 			(at 0 -7.62 0)
 			(effects
 				(font
@@ -31,7 +31,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://lcsc.com/product-detail/Switching-Diode_1N4148W_C81598.html"
+		(property "Datasheet" "https://lcsc.com/product-detail/TVS_SMF6-0A_C123790.html"
 			(at 0 -10.16 0)
 			(effects
 				(font
@@ -40,7 +40,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "1N4148W"
+		(property "Description" ""
 			(at 0 0 0)
 			(effects
 				(font
@@ -49,7 +49,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "ST(先科)"
+		(property "Manufacturer" "MDD(辰达半导体)"
 			(at 0 -12.7 0)
 			(effects
 				(font
@@ -58,7 +58,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "1N4148W"
+		(property "MPN" "SMF6.0A"
 			(at 0 -15.24 0)
 			(effects
 				(font
@@ -67,7 +67,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part" "C81598"
+		(property "LCSC Part" "C123790"
 			(at 0 -17.78 0)
 			(effects
 				(font
@@ -76,7 +76,7 @@
 				(hide yes)
 			)
 		)
-		(property "ki_keywords" "Switching Diode"
+		(property "ki_keywords" "TVS"
 			(at 0 0 0)
 			(effects
 				(font
@@ -85,10 +85,10 @@
 				(hide yes)
 			)
 		)
-		(symbol "1N4148W_C81598_0_1"
+		(symbol "SMF6.0A-C123790_0_1"
 			(polyline
 				(pts
-					(xy -1.27 -1.52) (xy -1.27 1.52)
+					(xy -2.29 2.29) (xy -1.27 1.27) (xy -1.27 -1.27) (xy -0.25 -2.29)
 				)
 				(stroke
 					(width 0)
@@ -100,7 +100,7 @@
 			)
 			(polyline
 				(pts
-					(xy 1.27 1.52) (xy -1.27 0) (xy 1.27 -1.52) (xy 1.27 1.52)
+					(xy 1.27 -1.52) (xy -1.27 0) (xy 1.27 1.78) (xy 1.27 -1.52)
 				)
 				(stroke
 					(width 0)
@@ -113,7 +113,7 @@
 			(pin unspecified line
 				(at -5.08 0 0)
 				(length 3.81)
-				(name "K"
+				(name "C"
 					(effects
 						(font
 							(size 1.27 1.27)

@@ -69,7 +69,7 @@ Phases 7 and 8 can run in parallel with waiting for JLC delivery.
 ### Phase 9 — Bring-up (human, with agent guidance)
 1. Visual check of the delivered boards.
 2. Without a battery: power from USB, use a multimeter to check the charger output voltage and polarity at the battery pads, then VDDH and 3V3.
-3. Flash the bootloader over SWD with the Pico; unlock APPROTECT if needed.
+3. Flash the bootloader over SWD with a probe that follows the target voltage (e.g. J-Link; the module's I/O is at 1.8 V until the bootloader sets REGOUT0); unlock APPROTECT if needed.
 4. Flash ZMK over USB; test every key.
 5. Connect the battery; test pairing, battery reporting, LEDs, power switch.
 6. Test charging over USB, then over the dock, then with the switch off.

@@ -6,7 +6,8 @@
 #   1. Preflight: KiCad on PATH/KICAD_PY is the pinned version; guardrails pass on the
 #      existing boards and PROJECT_DIR/parts (a KiCad 10 save gets a clear message here,
 #      not atopile's parse error).
-#   2. Snapshot every board with its .kicad_pro/.kicad_dru, then `ato build`.
+#   2. Snapshot every board with its .kicad_pro/.kicad_dru, then `ato build`, repeated until
+#      a `ato build --frozen` passes (atopile sometimes needs a second build to settle).
 #   3. Per board, against its pre-build snapshot:
 #        scripts/fix_stale_nets.py         put copper back on the nets atopile moved it off
 #        scripts/checks/kicad_guardrails.py
@@ -46,7 +47,7 @@ BEFORE="$(boards)"
 check_paths=()
 while IFS= read -r b; do [ -n "$b" ] && check_paths+=("$b"); done <<<"$BEFORE"
 [ -d "$PROJECT/parts" ] && check_paths+=("$PROJECT/parts")
-if [ "${#check_paths[@]}" -gt 0 ] && ! pre="$(python3 "$ROOT/scripts/checks/kicad_guardrails.py" "${check_paths[@]}")"; then
+if [ "${#check_paths[@]}" -gt 0 ] && ! pre="$(python3 "$ROOT/scripts/checks/kicad_guardrails.py" --prebuild "${check_paths[@]}")"; then
   grep -v '^ok ' <<<"$pre"
   echo "ato_build: FAIL guardrails failed before the build; not running ato build"
   exit 1
@@ -81,6 +82,21 @@ rollback() {
 if ! (cd "$PROJECT" && ato build "$@"); then
   rollback "ato build failed"
 fi
+# atopile can need more than one build to settle: a new footprint gets its library's field
+# layers on the second build, and a footprint swapped to another library part gets its pad
+# nets only then. Rebuild until a --frozen build changes nothing (CI passes --frozen itself).
+case " $* " in
+  *" --frozen "*) ;;
+  *)
+    settled=0
+    for _ in 1 2 3; do
+      if (cd "$PROJECT" && ato build --frozen "$@" >/dev/null 2>&1); then settled=1; break; fi
+      echo "ato_build: layout not settled yet; building again"
+      (cd "$PROJECT" && ato build "$@") || rollback "ato build failed"
+    done
+    [ "$settled" -eq 1 ] || rollback "the layout did not settle after 4 builds"
+    ;;
+esac
 
 AFTER="$(boards)"
 [ -n "$AFTER" ] || rollback "no .kicad_pcb under $PROJECT after the build"

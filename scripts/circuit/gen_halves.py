@@ -18,7 +18,8 @@ gets its own GPIO map, chosen from geometry:
     rows cost a little more (they need a via to escape), and so do the pads next to
     the antenna end.
 Excluded GPIOs: P0.18 (reset), P0.09/P0.10 (NFC pins; free as GPIOs only after a
-UICR change). Positions come from hardware/geometry/urchin.json (keys) and
+UICR change), and P1.11, P1.10, P1.06 (module pins 1, 2, 42, within 1.5 mm of the
+antenna section; keeps key traces off the antenna end). Positions come from hardware/geometry/urchin.json (keys) and
 hardware/placement.json (module, LEDs' resistors, sense diodes). --check fails
 if the generated files differ from the committed ones. Python 3.9.
 """
@@ -35,7 +36,8 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from lib import sexp  # noqa: E402
 
 HW = ROOT / "hardware"
-EXCLUDED = {"P0_18", "P0_09", "P0_10"}
+EXCLUDED = {"P0_18", "P0_09", "P0_10",   # reset; NFC pins (GPIO only after a UICR change)
+            "P1_11", "P1_10", "P1_06"}   # the pads nearest the antenna end (pins 1, 2, 42)
 INNER_PENALTY = 1.5      # mm: inner-row module pads need a via or a squeeze to escape
 ANTENNA_PENALTY = 3.0    # mm: pads within 2 mm of the module's first pad row by the antenna
 FUNCTIONS = {  # core signal -> part whose position is the target

@@ -7,7 +7,7 @@ Date: 2026-10-18.
 | Criterion (docs/PLAN.md) | Result | Evidence |
 |---|---|---|
 | Netlist | Both halves build with `scripts/ato_build.sh hardware` (guardrails, snapshot, stale-net repair, board diff). `scripts/checks/connectivity.py` checks all 185 numbered pads per half against a netlist written from the datasheets' pin numbers, independent of the .ato sources. Both halves: OK. | `netlist-{left,right}.txt`, `connectivity-{left,right}.json` |
-| BOM with LCSC numbers and stock check date | 18 LCSC parts per half (27 placements), all in the JLC assembly library and in stock for 5 panels, checked 2026-10-18T11:46:48Z. Per-half quantities match atopile's BOM of each half. Datasheets saved for every part. | `bom.md`, `bom-stock.json` |
+| BOM with LCSC numbers and stock check date | 18 LCSC parts per half (29 placements), all in the JLC assembly library and in stock for 5 panels, checked 2026-10-18T11:46:48Z. Per-half quantities match atopile's BOM of each half. Datasheets saved for every part. | `bom.md`, `bom-stock.json` |
 | Pin map | Per half, generated from geometry by `scripts/circuit/gen_halves.py`: 17 keys + 5 GPIO functions on the module's free GPIOs. | `pinmap.md`, `hardware/pinmap.json` |
 | Open items in ARCHITECTURE.md resolved | E73 stock/assembly/VDDH/crystal, socket, part stock and net naming resolved; battery and bottom space move to phase 3; footprints reviewed here | `footprints/footprints.md`, ARCHITECTURE.md |
 | Review | | `review.md` |

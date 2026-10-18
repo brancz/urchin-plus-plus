@@ -1,8 +1,8 @@
-(footprint "SOD-123F_L2.7-W1.6-LS3.8-RD"
+(footprint "R0402"
   (version 20241229)
   (generator "urchin++ footprint_to_bottom")
   (layer "B.Cu")
-  (descr "1N4148W")
+  (descr "220Ω (2200) ±1%")
   (property "Reference" "REF**"
     (at 0 4 0)
     (layer "B.SilkS")
@@ -14,7 +14,7 @@
       (justify mirror)
     )
   )
-  (property "Value" "SOD-123F_L2.7-W1.6-LS3.8-RD"
+  (property "Value" "R0402"
     (at 0 -4 0)
     (layer "B.Fab")
     (effects
@@ -49,7 +49,7 @@
       (justify mirror)
     )
   )
-  (property "LCSC Part" "C81598"
+  (property "LCSC Part" "C25091"
     (at 0 0 0)
     (layer "B.Fab")
     (hide yes)
@@ -63,8 +63,8 @@
   )
   (attr smd)
   (fp_line
-    (start 1.38 0.93)
-    (end 1.38 0.73)
+    (start -0.94 -0.5)
+    (end -0.94 0.5)
     (stroke
       (width 0.15)
       (type solid)
@@ -72,8 +72,8 @@
     (layer "B.SilkS")
   )
   (fp_line
-    (start 1.38 -0.93)
-    (end 1.38 -0.73)
+    (start -0.94 0.5)
+    (end -0.23 0.5)
     (stroke
       (width 0.15)
       (type solid)
@@ -81,8 +81,8 @@
     (layer "B.SilkS")
   )
   (fp_line
-    (start -0.92 0.88)
-    (end -0.92 -0.88)
+    (start -0.23 -0.5)
+    (end -0.94 -0.5)
     (stroke
       (width 0.15)
       (type solid)
@@ -90,8 +90,8 @@
     (layer "B.SilkS")
   )
   (fp_line
-    (start -1.38 0.93)
-    (end 1.38 0.93)
+    (start 0.23 -0.5)
+    (end 0.94 -0.5)
     (stroke
       (width 0.15)
       (type solid)
@@ -99,8 +99,17 @@
     (layer "B.SilkS")
   )
   (fp_line
-    (start -1.38 -0.93)
-    (end 1.38 -0.93)
+    (start 0.94 -0.5)
+    (end 0.94 0.5)
+    (stroke
+      (width 0.15)
+      (type solid)
+    )
+    (layer "B.SilkS")
+  )
+  (fp_line
+    (start 0.94 0.5)
+    (end 0.23 0.5)
     (stroke
       (width 0.15)
       (type solid)
@@ -108,8 +117,8 @@
     (layer "B.SilkS")
   )
   (fp_circle
-    (center -1.9 -0.8)
-    (end -1.87 -0.8)
+    (center -0.5 -0.25)
+    (end -0.47 -0.25)
     (stroke
       (width 0.06)
       (type solid)
@@ -117,39 +126,9 @@
     (fill no)
     (layer "B.SilkS")
   )
-  (fp_poly
-    (pts
-      (xy -1.299947 1.002309)
-      (xy -1.299947 0.68232)
-      (xy -1.604747 0.68232)
-      (xy -1.604747 1.002309)
-      (xy -1.299947 1.002309)
-    )
-    (stroke
-      (width 0)
-      (type solid)
-    )
-    (fill yes)
-    (layer "B.SilkS")
-  )
-  (fp_poly
-    (pts
-      (xy -1.299947 -1.002513)
-      (xy -1.299947 -0.682523)
-      (xy -1.604747 -0.682523)
-      (xy -1.604747 -1.002513)
-      (xy -1.299947 -1.002513)
-    )
-    (stroke
-      (width 0)
-      (type solid)
-    )
-    (fill yes)
-    (layer "B.SilkS")
-  )
   (fp_line
-    (start 1.35 0.8)
-    (end 1.35 -0.8)
+    (start -0.5 -0.25)
+    (end -0.5 0.25)
     (stroke
       (width 0.05)
       (type solid)
@@ -157,8 +136,8 @@
     (layer "B.CrtYd")
   )
   (fp_line
-    (start 1.35 -0.8)
-    (end -1.35 -0.8)
+    (start -0.5 0.25)
+    (end 0.5 0.25)
     (stroke
       (width 0.05)
       (type solid)
@@ -166,8 +145,8 @@
     (layer "B.CrtYd")
   )
   (fp_line
-    (start -1.35 0.8)
-    (end 1.35 0.8)
+    (start 0.5 -0.25)
+    (end -0.5 -0.25)
     (stroke
       (width 0.05)
       (type solid)
@@ -175,8 +154,8 @@
     (layer "B.CrtYd")
   )
   (fp_line
-    (start -1.35 -0.8)
-    (end -1.35 0.8)
+    (start 0.5 0.25)
+    (end 0.5 -0.25)
     (stroke
       (width 0.05)
       (type solid)
@@ -184,17 +163,17 @@
     (layer "B.CrtYd")
   )
   (pad "1" smd rect
-    (at -1.73 0 180)
-    (size 1.1 1)
+    (at -0.43 0)
+    (size 0.566 0.54)
     (layers "B.Cu" "B.Mask" "B.Paste")
   )
   (pad "2" smd rect
-    (at 1.73 0 180)
-    (size 1.1 1)
+    (at 0.43 0)
+    (size 0.566 0.54)
     (layers "B.Cu" "B.Mask" "B.Paste")
   )
   (embedded_fonts no)
-  (model "${KIPRJMOD}/../../parts/C81598/SOD-123F_L2.7-W1.6-LS3.8-RD.step"
+  (model "${KIPRJMOD}/../../parts/C25091/R0402_L1.0-W0.5-H0.4.step"
     (offset
       (xyz 0 0 0)
     )

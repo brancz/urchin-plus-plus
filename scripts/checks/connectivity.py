@@ -6,10 +6,12 @@
 The expected netlist below is written from the datasheets' pin numbers, not from
 the .ato sources, so it is an independent second reading of the circuit:
 every numbered pad of every footprint must be on the expected net (by name), or
-alone on its net where it is meant to be unconnected ("open"). The keys and the
-GPIO functions come from hardware/pinmap.json (generated per half), and each
-GPIO's module pin is cross-checked against the E73 pin table in hardware/parts.json.
-A pad no rule covers is a failure. --netlist writes the board's nets (every pad,
+alone on its net where it is meant to be unconnected ("open"). Every assembled
+footprint must carry the LCSC number listed here for its designator (catches a
+swapped value). The keys and the GPIO functions come from hardware/pinmap.json
+(generated per half); each GPIO's module pin is checked against the E73 GPIO table
+below (read from the datasheet separately from hardware/parts.json, which must
+agree). A pad no rule covers is a failure. --netlist writes the board's nets (every pad,
 by net name) as text. Runs under KiCad's Python (pcbnew); Python 3.9.
 """
 
@@ -43,7 +45,7 @@ EXPECTED = {
     "J1": {"A1B12": "GND", "B1A12": "GND", "A4B9": "VBUS", "B4A9": "VBUS", "A5": "CC1", "B5": "CC2",
            "A6": "USB_DP", "B6": "USB_DP", "A7": "USB_DN", "B7": "USB_DN", "A8": OPEN, "B8": OPEN,
            "1": "GND", "2": "GND", "3": "GND", "4": "GND"},
-    # B5819W, SMF5.0A, 1N4148W: pad 1 cathode, pad 2 anode
+    # B5819W, SMF6.0A: pad 1 cathode, pad 2 anode
     "D1": {"1": "VIN", "2": "VBUS"},
     "D2": {"1": "VIN", "2": "DOCK_5V"},
     "D3": {"1": "DOCK_5V", "2": "GND"},
@@ -64,8 +66,27 @@ TWO_TERMINAL = {  # resistors and capacitors: either orientation
     "R5": ("ISET", "GND"), "R6": ("LED_CHG_R", "CHG_N"), "R7": ("LED_CHG_G", "PGOOD_N"),
     "R8": ("LED_R_K", "LED_R"), "R9": ("LED_G_K", "LED_G"), "R10": ("LED_B_K", "LED_B"),
     "C1": ("VDD", "GND"), "C2": ("VIN", "GND"), "C3": ("VSYS", "GND"), "C4": ("VBAT", "GND"),
-    "C5": ("VBUS", "GND"), "C6": ("VDDH", "GND"),
+    "C5": ("VBUS", "GND"), "C6": ("VDDH", "GND"), "R11": ("VBUS", "GND"),
 }
+# E73-2G4M08S1C datasheet p.6 pin table: module pin -> nRF52840 GPIO
+E73_GPIO = {1: "P1_11", 2: "P1_10", 3: "P0_03", 4: "P0_28", 6: "P1_13", 7: "P0_02", 8: "P0_29", 9: "P0_31",
+            10: "P0_30", 11: "P0_00", 12: "P0_26", 13: "P0_01", 14: "P0_06", 15: "P0_05", 16: "P0_08", 17: "P1_09",
+            18: "P0_04", 20: "P0_12", 22: "P0_07", 26: "P0_18", 28: "P0_15", 30: "P0_17", 32: "P0_20", 33: "P0_13",
+            34: "P0_22", 35: "P0_24", 36: "P1_00", 38: "P1_02", 40: "P1_04", 41: "P0_09", 42: "P1_06", 43: "P0_10"}
+NEVER_GPIO = {"P0_18", "P0_09", "P0_10"}  # reset; NFC
+# designator -> LCSC part (value and package), from the BOM intent in docs/ARCHITECTURE.md
+LCSC = {"U1": "C356849", "U2": "C15220", "U3": "C7519", "J1": "C165948",
+        "D1": "C8598", "D2": "C8598", "D4": "C8598", "D5": "C8598", "D3": "C123790",
+        "SW35": "C431540", "SW36": "C720477", "LED1": "C409782", "LED2": "C409782",
+        "R1": "C25744", "R11": "C25744",                                  # 10 k
+        "R2": "C25905", "R3": "C25905", "R4": "C25905", "R5": "C25905",  # 5.1 k
+        "R6": "C11702", "R7": "C11702",                                   # 1 k
+        "R8": "C25117",                                                   # 470 R
+        "R9": "C25091", "R10": "C25091",                                  # 220 R
+        "C1": "C1525",                                                    # 100 nF
+        "C2": "C15849",                                                   # 1 uF 50 V
+        "C5": "C19666",                                                   # 4.7 uF
+        "C3": "C19702", "C4": "C19702", "C6": "C19702"}                   # 10 uF
 FUNCTION_NETS = {"led_r": "LED_R", "led_g": "LED_G", "led_b": "LED_B",
                  "chg_sense": "CHG_SENSE", "pgood_sense": "PGOOD_SENSE"}
 
@@ -84,10 +105,15 @@ def main():
     problems = []
 
     expected = {ref: dict(pads) for ref, pads in EXPECTED.items()}
+    for num, gpio in E73_GPIO.items():
+        if e73.get(str(num)) != gpio:
+            problems.append("parts.json names E73 pin %d %s, the datasheet table here says %s" % (num, e73.get(str(num)), gpio))
     for w in pinmap:
         pin = str(w["module_pin"])
-        if e73.get(pin) != w["gpio"]:
-            problems.append("pinmap %s: %s is not module pin %s (parts.json says %s)" % (w["signal"], w["gpio"], pin, e73.get(pin)))
+        if E73_GPIO.get(int(pin)) != w["gpio"]:
+            problems.append("pinmap %s: %s is not module pin %s (datasheet: %s)" % (w["signal"], w["gpio"], pin, E73_GPIO.get(int(pin))))
+        if w["gpio"] in NEVER_GPIO:
+            problems.append("pinmap %s: %s is reserved" % (w["signal"], w["gpio"]))
         if pin in expected["U1"]:
             problems.append("pinmap %s: module pin %s already has a fixed role" % (w["signal"], pin))
         if w["kind"] == "key":
@@ -106,6 +132,12 @@ def main():
     for f in board.GetFootprints():
         ref = f.GetReference()
         seen.add(ref)
+        assembled = not (f.IsExcludedFromBOM() or f.IsExcludedFromPosFiles())
+        lcsc = f.GetFieldText("LCSC") if f.HasFieldByName("LCSC") else ""
+        if assembled and LCSC.get(ref) != lcsc:
+            problems.append("%s carries LCSC %r, expected %r" % (ref, lcsc, LCSC.get(ref)))
+        if not assembled and ref in LCSC:
+            problems.append("%s is excluded from BOM/CPL but should be assembled" % ref)
         for p in f.Pads():
             num, net = p.GetNumber(), p.GetNetname()
             if not num:  # mechanical holes

@@ -251,6 +251,13 @@
    "rot": 0,
    "side": "bottom",
    "note": "rubber foot"
+  },
+  "R11": {
+   "x": 228.6,
+   "y": 76.6,
+   "rot": 0,
+   "side": "bottom",
+   "note": "VBUS pull-down, below U3 (its VBUS pin)"
   }
  }
 }

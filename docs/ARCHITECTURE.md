@@ -22,8 +22,8 @@ USB-C VBUS ──Schottky──┐
 dock pads 5V ─TVS─Schottky┘           └── BAT ── protected LiPo
 ```
 
-- **Charger: TI BQ24073** (was BQ24075; see the decision log). Power-path type (the system runs from the input supply while charging). Input rated to 28 V with overvoltage protection, which matters for exposed pads. USB100 mode: the input is limited to about 95 mA, so a ~200 mAh cell charges at about 0.45C. The status (CHG) and power-good (PGOOD) pins go to GPIOs so firmware knows the charging state.
-- **The diodes** make the pads input-only. A metal surface across the pads can't drain or short the battery.
+- **Charger: TI BQ24073** (was BQ24075; see the decision log). Power-path type (the system runs from the input supply while charging). Input rated to 28 V with 6.6 V overvoltage shutdown. On the exposed dock pad an SMF6.0A TVS clamps ESD and transients; a sustained source above about 7 V would destroy the TVS (it fails short, protecting the rest). USB100 mode: the input is limited to about 95 mA, so a ~200 mAh cell charges at about 0.45C. The status (CHG) and power-good (PGOOD) pins go to GPIOs so firmware knows the charging state.
+- **The diodes** make the pads input-only. A 10 kΩ pull-down holds USB VBUS low while docked (D1 leaks back from VIN), so a docked half isn't seen as USB-connected. A metal surface across the pads can't drain or short the battery.
 - **Switch placement** between the charger output and VDDH, so the battery still charges while the board is switched off.
 - **No external regulator.** The battery drives the nRF52840's high-voltage input (VDDH) directly, following the module datasheet's reference circuit.
 - **No battery divider.** ZMK's `zmk,battery-nrf-vddh` driver measures the voltage internally, so there's no leakage path.
@@ -39,7 +39,7 @@ dock pads 5V ─TVS─Schottky┘           └── BAT ── protected LiPo
 
 **Programming and reset.**
 - A reset button; double-tap enters the UF2 bootloader.
-- SWD pads (SWDIO, SWCLK, GND, 3V3) at 2.54 mm pitch for the one-time bootloader flash. Use a Raspberry Pi Pico running `debugprobe` with pyOCD, which can also unlock APPROTECT if a module ships locked.
+- SWD pads (VDD, SWDIO, SWDCLK, RESET, GND) at 2.54 mm pitch for the one-time bootloader flash. Use a probe that follows the target voltage on VTref (e.g. a J-Link) with pyOCD, which can also unlock APPROTECT if a module ships locked: a blank module runs its I/O at 1.8 V (decision log).
 
 **Charging contacts.** Three ENIG pads on the bottom (GND / 5V / GND, symmetric) in a gap between sockets near the electronics. Thin steel discs are stuck to the bottom for the dock magnets. Rubber feet sit taller than the tallest bottom component.
 
@@ -71,7 +71,7 @@ dock pads 5V ─TVS─Schottky┘           └── BAT ── protected LiPo
 | Panel + fab outputs | KiKit: left+right panel with mouse bites, fiducials, tooling holes; `kikit fab jlcpcb` for Gerbers, BOM, CPL with rotation corrections |
 | Dock CAD | build123d |
 | Firmware build | ZMK in GitHub Actions |
-| First flash | Raspberry Pi Pico + debugprobe + pyOCD |
+| First flash | SWD probe that follows the target voltage (e.g. J-Link) + pyOCD |
 | CI | GitHub Actions in the `kicad/kicad:9.0.9` image (pinned by digest): toolchain check → round-trip → ato build → board checks → KiKit outputs → firmware |
 
 ## Verification layers
@@ -137,3 +137,6 @@ Append entries as `YYYY-MM-DD: decision — reason`.
 - 2026-10-18: JLCPCB design rules live in each half's `.kicad_pro`, written by `scripts/placement/board_setup.py` (0.15 mm min track/space, 0.3/0.6 mm vias, 0.3 mm copper-to-edge); DRC errors are excused only through `hardware/drc_allow.json` (the two inherited ones).
 - 2026-10-18: Unnumbered plated holes without an annular ring (the USB-C and slide-switch locating pegs) become non-plated in `scripts/lib/footprint.py` sanitize; KiCad flagged them as zero-width annular rings.
 - 2026-10-18: atopile moves the reference field of a new mechanical footprint to its library footprint's layer on the second build only; that one-time change was accepted with `BOARD_DIFF_ARGS="--allow field-placement:*/Reference"`, and later builds are stable (`--frozen` passes).
+- 2026-10-18: Phase 2 review changes (reports/phase2/review.md): R11 10 kΩ VBUS pull-down; CHG/PGOOD sense diodes are B5819W Schottkys (more logic-low margin; 1N4148W dropped); status LED green/blue use 220 Ω (red stays 470 Ω); charger OUT and BAT capacitors are 10 µF (4.7 µF X5R loses half at 4.4 V); dock TVS is SMF6.0A (C123790; 6.0 V standoff covers USB's 5.25 V); module pins 1, 2 and 42 (next to the antenna) are never assigned to keys or LEDs.
+- 2026-10-18: Bottom-side library footprints keep KiCad's native representation of a flipped footprint (pad positions mirrored top-bottom, i.e. the left-right mirror turned 180°) but with the footprint and pad angles turned back to 0° (`footprint_to_bottom.py`); before, every pad carried an extra 180°, which rotated custom pad shapes about their centres. Placement rotations are therefore KiCad-native for bottom parts, and phase 6 applies KiCad's usual bottom-side rotation handling for JLC.
+- 2026-10-18: `scripts/ato_build.sh` rebuilds until `ato build --frozen` changes nothing (at most 4 builds): atopile settles new footprints' field layers and swapped footprints' pad nets only on the second build (phase 2 review H1). Before a build, a footprint whose library part was replaced is not a guardrail failure (`kicad_guardrails.py --prebuild`).

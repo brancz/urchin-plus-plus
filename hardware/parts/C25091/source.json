@@ -1,0 +1,30 @@
+{
+  "lcsc": "C25091",
+  "manufacturer": "UNI-ROYAL",
+  "mpn": "0402WGF2200TCE",
+  "datasheet_url": "https://lcsc.com/product-detail/Chip-Resistor-Surface-Mount-UniOhm_220R-2200-1_C25091.html",
+  "symbol": "0402WGF2200TCE.kicad_sym",
+  "footprint": "R0402.kicad_mod",
+  "side": "bottom",
+  "footprint_changes": [
+    "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
+  ],
+  "fixups_source": null,
+  "pin_names": null,
+  "model": "R0402_L1.0-W0.5-H0.4.step",
+  "pins": [
+    {
+      "pin": "1",
+      "name": "1",
+      "signal": null
+    },
+    {
+      "pin": "2",
+      "name": "2",
+      "signal": null
+    }
+  ],
+  "fetched_utc": "2026-10-18T12:30:14Z",
+  "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
+  "kicad_cli": "9.0.9"
+}

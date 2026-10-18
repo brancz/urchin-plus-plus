@@ -51,7 +51,9 @@ def main():
           "Every assembled part's footprint as used on the boards (`hardware/parts/`), shown as the front-side "
           "land pattern (component side, top view) for comparison with each datasheet's recommended land "
           "pattern. Coordinates in mm relative to the footprint origin; rotation in degrees. The boards use "
-          "the bottom-side versions (x mirrored). SVGs show the copper of each footprint.", ""]
+          "the bottom-side versions (x mirrored). SVGs show the copper of each footprint. The reverse-mount "
+          "LED (C409782) is drawn here front-side too, which is the mirror of the datasheet's 'Reverse Type' "
+          "pad drawing: that drawing is seen from the light side, i.e. from the top of this board.", ""]
     tmp = Path(tempfile.mkdtemp())
     for lcsc, role, fix in entries:
         fp_path = next((ROOT / "hardware/parts" / lcsc).glob("*.kicad_mod"))

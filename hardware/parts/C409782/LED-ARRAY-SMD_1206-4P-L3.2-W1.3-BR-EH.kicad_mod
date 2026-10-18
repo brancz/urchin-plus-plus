@@ -62,15 +62,6 @@
   )
   (attr smd)
   (fp_line
-    (start 1.75 1.1)
-    (end -1.6 1.1)
-    (stroke
-      (width 0.15)
-      (type solid)
-    )
-    (layer "B.SilkS")
-  )
-  (fp_line
     (start 1.75 -1.06)
     (end -1.6 -1.06)
     (stroke
@@ -79,14 +70,13 @@
     )
     (layer "B.SilkS")
   )
-  (fp_circle
-    (center 2.41 -0.56)
-    (end 2.54 -0.56)
+  (fp_line
+    (start 1.75 1.1)
+    (end -1.6 1.1)
     (stroke
-      (width 0.25)
+      (width 0.15)
       (type solid)
     )
-    (fill no)
     (layer "B.SilkS")
   )
   (fp_circle
@@ -94,6 +84,16 @@
     (end 1.63 -0.62)
     (stroke
       (width 0.06)
+      (type solid)
+    )
+    (fill no)
+    (layer "B.SilkS")
+  )
+  (fp_circle
+    (center 2.41 -0.56)
+    (end 2.54 -0.56)
+    (stroke
+      (width 0.25)
       (type solid)
     )
     (fill no)
@@ -110,17 +110,8 @@
     (layer "Cmts.User")
   )
   (fp_line
-    (start 1.6 0.62)
-    (end 1.6 -0.63)
-    (stroke
-      (width 0.05)
-      (type solid)
-    )
-    (layer "B.CrtYd")
-  )
-  (fp_line
-    (start 1.6 -0.63)
-    (end -1.6 -0.63)
+    (start -1.6 -0.63)
+    (end -1.6 0.62)
     (stroke
       (width 0.05)
       (type solid)
@@ -137,8 +128,17 @@
     (layer "B.CrtYd")
   )
   (fp_line
-    (start -1.6 -0.63)
-    (end -1.6 0.62)
+    (start 1.6 -0.63)
+    (end -1.6 -0.63)
+    (stroke
+      (width 0.05)
+      (type solid)
+    )
+    (layer "B.CrtYd")
+  )
+  (fp_line
+    (start 1.6 0.62)
+    (end 1.6 -0.63)
     (stroke
       (width 0.05)
       (type solid)
@@ -146,28 +146,28 @@
     (layer "B.CrtYd")
   )
   (pad "" np_thru_hole circle
-    (at 0 0 180)
+    (at 0 0)
     (size 2.1 2.1)
     (drill 2.1)
     (layers "*.Cu" "*.Mask")
   )
   (pad "1" smd rect
-    (at 1.55 -0.55 180)
+    (at 1.55 -0.55)
     (size 0.8 0.7)
     (layers "B.Cu" "B.Mask" "B.Paste")
   )
   (pad "2" smd rect
-    (at 1.55 0.55 180)
+    (at 1.55 0.55)
     (size 0.8 0.7)
     (layers "B.Cu" "B.Mask" "B.Paste")
   )
   (pad "3" smd rect
-    (at -1.55 0.55 180)
+    (at -1.55 0.55)
     (size 0.8 0.7)
     (layers "B.Cu" "B.Mask" "B.Paste")
   )
   (pad "4" smd rect
-    (at -1.55 -0.55 180)
+    (at -1.55 -0.55)
     (size 0.8 0.7)
     (layers "B.Cu" "B.Mask" "B.Paste")
   )

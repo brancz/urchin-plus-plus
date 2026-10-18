@@ -196,4 +196,18 @@
 		(options "")
 		(descr "atopile: part lib: STEEL_DISC")
 	)
+	(lib
+		(name "C123790")
+		(type "KiCad")
+		(uri "${KIPRJMOD}/../../parts/C123790")
+		(options "")
+		(descr "atopile: part lib: C123790")
+	)
+	(lib
+		(name "C25091")
+		(type "KiCad")
+		(uri "${KIPRJMOD}/../../parts/C25091")
+		(options "")
+		(descr "atopile: part lib: C25091")
+	)
 )

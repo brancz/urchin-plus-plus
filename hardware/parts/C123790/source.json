@@ -1,10 +1,10 @@
 {
-  "lcsc": "C81598",
-  "manufacturer": "ST",
-  "mpn": "1N4148W",
-  "datasheet_url": "https://lcsc.com/product-detail/Switching-Diode_1N4148W_C81598.html",
-  "symbol": "1N4148W_C81598.kicad_sym",
-  "footprint": "SOD-123F_L2.7-W1.6-LS3.8-RD.kicad_mod",
+  "lcsc": "C123790",
+  "manufacturer": "MDD",
+  "mpn": "SMF6.0A",
+  "datasheet_url": "https://lcsc.com/product-detail/TVS_SMF6-0A_C123790.html",
+  "symbol": "SMF6.0A-C123790.kicad_sym",
+  "footprint": "SOD-123F_L2.8-W1.8-LS3.7-RD.kicad_mod",
   "side": "bottom",
   "footprint_changes": [
     "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
@@ -14,7 +14,7 @@
     "1": "K",
     "2": "A"
   },
-  "model": "SOD-123F_L2.7-W1.6-LS3.8-RD.step",
+  "model": "SOD-123FL_L2.8-W1.8-LS3.7-RD-1.step",
   "pins": [
     {
       "pin": "2",
@@ -27,7 +27,7 @@
       "signal": "K"
     }
   ],
-  "fetched_utc": "2026-10-18T11:26:08Z",
+  "fetched_utc": "2026-10-18T12:30:12Z",
   "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
   "kicad_cli": "9.0.9"
 }

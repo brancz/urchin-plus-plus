@@ -108,7 +108,7 @@ def library_layers(board_path):
     return layer
 
 
-def check_pcb(path, max_format):
+def check_pcb(path, max_format, prebuild=False):
     problems = []
     root = sexp.load(path)
     version = sexp.child(root, "version")
@@ -132,7 +132,8 @@ def check_pcb(path, max_format):
                 want = lib_layer(c[1])
                 have = sexp.child(c, "layer")[1]
                 if want is None:
-                    problems.append("footprint %s: library footprint %s not found via fp-lib-table" % (ref, c[1]))
+                    if not prebuild:  # before a build the part may have been swapped; the build replaces it
+                        problems.append("footprint %s: library footprint %s not found via fp-lib-table" % (ref, c[1]))
                 elif want != have:
                     problems.append("footprint %s is on %s but its library footprint %s is on %s; atopile would "
                                     "flip it on every build. Use a %s-side library footprint."
@@ -181,6 +182,8 @@ def check_pro(path):
 def main(argv):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("paths", nargs="+", type=Path)
+    ap.add_argument("--prebuild", action="store_true",
+                    help="boards are about to be rebuilt: a footprint whose library part is gone is not an error")
     args = ap.parse_args(argv)
     max_pcb = int(pinned("MAX_PCB_FORMAT"))
     max_sym = int(pinned("MAX_SYM_FORMAT"))
@@ -197,7 +200,7 @@ def main(argv):
     failed = False
     for f in files:
         if f.suffix == ".kicad_pcb":
-            problems = ["%s: %s" % (f, p) for p in check_pcb(f, max_pcb)]
+            problems = ["%s: %s" % (f, p) for p in check_pcb(f, max_pcb, args.prebuild)]
             pro = f.with_suffix(".kicad_pro")
             if pro.exists():
                 problems += ["%s: %s" % (pro, p) for p in check_pro(pro)]

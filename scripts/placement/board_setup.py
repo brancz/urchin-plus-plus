@@ -14,7 +14,8 @@ with margin where it costs nothing:
   hole to copper            0.25 mm
   copper to board edge      0.3 mm (routed edge)
   silkscreen text           0.8 mm height, 0.12 mm stroke min
-Net classes: Power (0.4 mm) for the supply nets and their ground return; USB
+Net classes: Power (0.3 mm; the input is limited to ~100 mA, and 0.3 mm still leaves
+the BQ24073's 0.5 mm-pitch QFN pads) for the supply nets and ground; USB
 (0.2 mm, 0.15 mm gap) for the data pair. The settings are merged into an existing
 file, keeping what KiCad adds when it saves the project (its defaults); --check
 fails if any setting here differs from the file.
@@ -67,6 +68,7 @@ SEVERITIES = {
     "isolated_copper": "warning",
     "starved_thermal": "warning",
     "footprint_type_mismatch": "ignore",    # mechanical parts are board-only
+    "hole_to_hole": "error",                # drill breakage risk at JLC (0.5 mm minimum)
 }
 POWER = ["VIN", "VSYS", "VDDH", "VBAT", "VBUS", "DOCK_5V", "GND"]
 
@@ -98,7 +100,7 @@ def project(half):
         },
         "meta": {"filename": "%s.kicad_pro" % half, "version": 3},
         "net_settings": {
-            "classes": [netclass("Default", 0.2, 0.15), netclass("Power", 0.4, 0.2),
+            "classes": [netclass("Default", 0.2, 0.15), netclass("Power", 0.3, 0.15),
                         netclass("USB", 0.2, 0.15, priority=1)],
             "meta": {"version": 4},
             "netclass_patterns": [{"netclass": "Power", "pattern": n} for n in POWER] +

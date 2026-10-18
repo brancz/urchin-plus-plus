@@ -43,11 +43,21 @@ def main():
     board.Add(fp)  # Flip needs a parent board
     fp.SetPosition(pcbnew.VECTOR2I(0, 0))
     fp.Flip(fp.GetPosition(), pcbnew.FLIP_DIRECTION_LEFT_RIGHT)
+    # KiCad flips left-right as a top-bottom mirror plus a 180 degree turn; the board file
+    # keeps that turn in the footprint's (at), which a library footprint can't carry.
+    # Turn back to 0 so the library footprint is the plain left-right mirror (pin 1 where
+    # the datasheet's bottom view has it), not that mirror rotated by 180 degrees.
+    fp.SetOrientationDegrees(0)
     tmp = os.path.join(tempfile.mkdtemp(), "t.kicad_pcb")
     pcbnew.SaveBoard(tmp, board)
     root = sexp.load(tmp)
     node = strip(sexp.children(root, "footprint")[0])
     node = [c for c in node if not (isinstance(c, list) and sexp.head(c) == "at")]
+    for t in sexp.children(node, "property") + sexp.children(node, "fp_text"):
+        at = sexp.child(t, "at")  # texts keep the angle they had before the turn back
+        if at is not None and len(at) > 3:
+            a = (float(at[3]) + 180) % 360
+            at[3] = sexp.Atom(("%g" % a) if a else "0")
     node[2:2] = [[sexp.Atom("version"), sexp.child(root, "version")[1]],
                  [sexp.Atom("generator"), "urchin++ footprint_to_bottom"]]
     with open(os.path.join(lib, name + ".kicad_mod"), "w", encoding="utf-8") as f:

@@ -1,4 +1,4 @@
-(footprint "SOD-123FL_L2.7-W1.8-LS3.8-RD"
+(footprint "SOD-123F_L2.8-W1.8-LS3.7-RD"
   (version 20241229)
   (generator "urchin++ footprint_to_bottom")
   (layer "B.Cu")
@@ -13,7 +13,7 @@
       (justify mirror)
     )
   )
-  (property "Value" "SOD-123FL_L2.7-W1.8-LS3.8-RD"
+  (property "Value" "SOD-123F_L2.8-W1.8-LS3.7-RD"
     (at 0 -4 0)
     (layer "B.Fab")
     (effects
@@ -48,7 +48,7 @@
       (justify mirror)
     )
   )
-  (property "LCSC Part" "C193402"
+  (property "LCSC Part" "C123790"
     (at 0 0 0)
     (layer "B.Fab")
     (hide yes)
@@ -62,53 +62,71 @@
   )
   (attr smd)
   (fp_line
-    (start 1.38 0.93)
-    (end 1.38 0.73)
+    (start -1.52 0.95)
+    (end 1.48 0.95)
     (stroke
-      (width 0.15)
+      (width 0.25)
       (type solid)
     )
     (layer "B.SilkS")
   )
   (fp_line
-    (start 1.38 -0.93)
-    (end 1.38 -0.73)
+    (start -1.51 -0.93)
+    (end 1.49 -0.93)
     (stroke
-      (width 0.15)
+      (width 0.25)
       (type solid)
     )
     (layer "B.SilkS")
   )
   (fp_line
-    (start -0.72 0.88)
-    (end -0.72 -0.88)
+    (start -0.76 0)
+    (end 0.76 0)
     (stroke
-      (width 0.15)
+      (width 0.25)
       (type solid)
     )
     (layer "B.SilkS")
   )
   (fp_line
-    (start -1.38 0.93)
-    (end 1.38 0.93)
+    (start -0.51 0)
+    (end 0.51 0.41)
     (stroke
-      (width 0.15)
+      (width 0.25)
       (type solid)
     )
     (layer "B.SilkS")
   )
   (fp_line
-    (start -1.38 -0.93)
-    (end 1.38 -0.93)
+    (start -0.51 0.51)
+    (end -0.51 -0.51)
     (stroke
-      (width 0.15)
+      (width 0.25)
+      (type solid)
+    )
+    (layer "B.SilkS")
+  )
+  (fp_line
+    (start 0.51 -0.41)
+    (end -0.51 0)
+    (stroke
+      (width 0.25)
+      (type solid)
+    )
+    (layer "B.SilkS")
+  )
+  (fp_line
+    (start 0.51 0.41)
+    (end 0.51 -0.41)
+    (stroke
+      (width 0.25)
       (type solid)
     )
     (layer "B.SilkS")
   )
   (fp_circle
-    (center -1.95 -0.9)
-    (end -1.92 -0.9)
+    (center -1.85 -0.85)
+    (end -1.82 -0.85)
     (stroke
       (width 0.06)
       (type solid)
@@ -116,39 +134,9 @@
     (fill no)
     (layer "B.SilkS")
   )
-  (fp_poly
-    (pts
-      (xy -1.299997 1.002411)
-      (xy -1.299997 0.682422)
-      (xy -1.604797 0.682422)
-      (xy -1.604797 1.002411)
-      (xy -1.299997 1.002411)
-    )
-    (stroke
-      (width 0)
-      (type solid)
-    )
-    (fill yes)
-    (layer "B.SilkS")
-  )
-  (fp_poly
-    (pts
-      (xy -1.299997 -1.002411)
-      (xy -1.299997 -0.682422)
-      (xy -1.604797 -0.682422)
-      (xy -1.604797 -1.002411)
-      (xy -1.299997 -1.002411)
-    )
-    (stroke
-      (width 0)
-      (type solid)
-    )
-    (fill yes)
-    (layer "B.SilkS")
-  )
   (fp_line
-    (start 1.35 0.9)
-    (end 1.35 -0.9)
+    (start -1.35 -0.85)
+    (end -1.35 0.85)
     (stroke
       (width 0.05)
       (type solid)
@@ -156,8 +144,8 @@
     (layer "B.CrtYd")
   )
   (fp_line
-    (start 1.35 -0.9)
-    (end -1.35 -0.9)
+    (start -1.35 0.85)
+    (end 1.35 0.85)
     (stroke
       (width 0.05)
       (type solid)
@@ -165,8 +153,8 @@
     (layer "B.CrtYd")
   )
   (fp_line
-    (start -1.35 0.9)
-    (end 1.35 0.9)
+    (start 1.35 -0.85)
+    (end -1.35 -0.85)
     (stroke
       (width 0.05)
       (type solid)
@@ -174,8 +162,8 @@
     (layer "B.CrtYd")
   )
   (fp_line
-    (start -1.35 -0.9)
-    (end -1.35 0.9)
+    (start 1.35 0.85)
+    (end 1.35 -0.85)
     (stroke
       (width 0.05)
       (type solid)
@@ -183,17 +171,17 @@
     (layer "B.CrtYd")
   )
   (pad "1" smd rect
-    (at -1.63 0 180)
-    (size 1.2 1.2)
+    (at -1.65 0)
+    (size 1 1.2)
     (layers "B.Cu" "B.Mask" "B.Paste")
   )
   (pad "2" smd rect
-    (at 1.63 0 180)
-    (size 1.2 1.2)
+    (at 1.65 0)
+    (size 1 1.2)
     (layers "B.Cu" "B.Mask" "B.Paste")
   )
   (embedded_fonts no)
-  (model "${KIPRJMOD}/../../parts/C193402/SOD-123FL_L2.8-W1.8-H1.1-LS3.6.step"
+  (model "${KIPRJMOD}/../../parts/C123790/SOD-123FL_L2.8-W1.8-LS3.7-RD-1.step"
     (offset
       (xyz 0 0 0)
     )
@@ -201,7 +189,7 @@
       (xyz 1 1 1)
     )
     (rotate
-      (xyz 0 0 180)
+      (xyz 0 0 0)
     )
   )
 )

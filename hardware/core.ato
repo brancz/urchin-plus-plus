@@ -11,15 +11,15 @@ from "parts/C15220/C15220.ato" import C15220_package
 from "parts/C165948/C165948.ato" import C165948_package
 from "parts/C7519/C7519.ato" import C7519_package
 from "parts/C8598/C8598.ato" import C8598_package
-from "parts/C193402/C193402.ato" import C193402_package
+from "parts/C123790/C123790.ato" import C123790_package
 from "parts/C431540/C431540.ato" import C431540_package
 from "parts/C720477/C720477.ato" import C720477_package
 from "parts/C409782/C409782.ato" import C409782_package
-from "parts/C81598/C81598.ato" import C81598_package
 from "parts/C25744/C25744.ato" import C25744_package
 from "parts/C25905/C25905.ato" import C25905_package
 from "parts/C11702/C11702.ato" import C11702_package
 from "parts/C25117/C25117.ato" import C25117_package
+from "parts/C25091/C25091.ato" import C25091_package
 from "parts/C1525/C1525.ato" import C1525_package
 from "parts/C15849/C15849.ato" import C15849_package
 from "parts/C19666/C19666.ato" import C19666_package
@@ -154,6 +154,10 @@ module Core:
     trait c_vbus has_designator<designator="C5">
     c_vbus.1 ~ vbus
     c_vbus.2 ~ gnd
+    r_vbus = new C25744_package   # 10 k: holds VBUS low when docked; D1 leaks back from VIN (5-100 uA)
+    trait r_vbus has_designator<designator="R11">
+    r_vbus.1 ~ vbus
+    r_vbus.2 ~ gnd
 
     # ---- Charger input: USB and dock, each through a Schottky -----------------------
     d_usb = new C8598_package
@@ -166,7 +170,7 @@ module Core:
     dock.GND ~ gnd
     dock.V5 ~ dock_5v
 
-    tvs = new C193402_package     # SMF5.0A on the exposed pad
+    tvs = new C123790_package     # SMF6.0A on the exposed pad
     trait tvs has_designator<designator="D3">
     tvs.K ~ dock_5v
     tvs.A ~ gnd
@@ -212,11 +216,11 @@ module Core:
     trait c_in has_designator<designator="C2">
     c_in.1 ~ vin
     c_in.2 ~ gnd
-    c_out = new C19666_package
+    c_out = new C19702_package    # 10 uF: the BQ24073 needs 4.7 uF or more after DC bias
     trait c_out has_designator<designator="C3">
     c_out.1 ~ vsys
     c_out.2 ~ gnd
-    c_bat = new C19666_package
+    c_bat = new C19702_package
     trait c_bat has_designator<designator="C4">
     c_bat.1 ~ vbat
     c_bat.2 ~ gnd
@@ -250,13 +254,14 @@ module Core:
     r_chg_g.1 ~ led_chg_g
     r_chg_g.2 ~ pgood_n
 
-    # CHG and PGOOD to GPIOs through diodes: the GPIO (pulled up to VDD) reads low when
-    # the pin pulls low; the LED's input-side voltage never reaches the GPIO.
-    d_chg = new C81598_package
+    # CHG and PGOOD to GPIOs through Schottky diodes: the GPIO (pulled up to VDD) reads low
+    # (pin low + ~0.25 V) when the pin pulls low; the LED's input-side voltage never reaches
+    # the GPIO.
+    d_chg = new C8598_package
     trait d_chg has_designator<designator="D4">
     d_chg.K ~ chg_n
     d_chg.A ~ chg_sense
-    d_pg = new C81598_package
+    d_pg = new C8598_package
     trait d_pg has_designator<designator="D5">
     d_pg.K ~ pgood_n
     d_pg.A ~ pgood_sense
@@ -272,11 +277,11 @@ module Core:
     trait r_led_r has_designator<designator="R8">
     r_led_r.1 ~ led_r_k
     r_led_r.2 ~ led_r
-    r_led_g = new C25117_package
+    r_led_g = new C25091_package  # 220 R: green and blue need more forward voltage than red
     trait r_led_g has_designator<designator="R9">
     r_led_g.1 ~ led_g_k
     r_led_g.2 ~ led_g
-    r_led_b = new C25117_package
+    r_led_b = new C25091_package
     trait r_led_b has_designator<designator="R10">
     r_led_b.1 ~ led_b_k
     r_led_b.2 ~ led_b

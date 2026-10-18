@@ -10,6 +10,10 @@
   - Everything else: hardware/placement.json (left half; mirrored for the right half).
     A part's side must match its library footprint's side: footprints are never
     flipped here (atopile re-syncs footprints from the library on every build).
+  - Under the module's core (inside its inner pad rows, from the antenna section down),
+    a rule area MODULE_CORE on B.Cu, the module's side, forbidding tracks and vias, so
+    the ground pour there stays whole (E73 datasheet p.8: under the module, route only
+    on the far layer and keep ground on the module side).
   - The antenna keep-out: a board-level rule area named ANTENNA_KEEPOUT on both copper
     layers forbidding tracks, vias and copper pour (pads are allowed only so that the NPTH
     case holes in the old notch's ears pass; clearance.py rejects any copper pad in it),
@@ -34,6 +38,8 @@ import pcbnew
 ROOT = Path(__file__).resolve().parents[2]
 KEEPOUT_NAME = "ANTENNA_KEEPOUT"
 KEEPOUT_LOCAL = (-9.4, 9.4, -15.98, -7.58)  # x0, x1, y0, y1 in U1's frame (mm)
+CORE_NAME = "MODULE_CORE"
+CORE_LOCAL = (-2.8, 2.8, -7.58, 3.4)        # inside the module's inner pad rows
 
 
 def nm(v):
@@ -59,8 +65,8 @@ def half_parts(placement, half):
     return out
 
 
-def keepout_polygon(u1):
-    x0, x1, y0, y1 = KEEPOUT_LOCAL
+def keepout_polygon(u1, box=KEEPOUT_LOCAL):
+    x0, x1, y0, y1 = box
     pts = []
     for lx, ly in ((x0, y0), (x1, y0), (x1, y1), (x0, y1)):
         dx, dy = rotate(lx, ly, u1["rot"])
@@ -92,7 +98,7 @@ def main():
     # Take every wrapper before changing anything: after the first edit KiCad 9's SWIG can
     # hand back untyped objects from the board's item lists.
     footprints = list(board.GetFootprints())
-    zones = [z for z in board.Zones() if z.GetIsRuleArea() and z.GetZoneName() == KEEPOUT_NAME]
+    zones = [z for z in board.Zones() if z.GetIsRuleArea() and z.GetZoneName() in (KEEPOUT_NAME, CORE_NAME)]
     edges = [d for d in board.GetDrawings() if d.GetLayer() == pcbnew.Edge_Cuts]
     if not args.check:
         for item in zones + edges:
@@ -121,13 +127,15 @@ def main():
     for ref in sorted(set(targets) - seen):
         problems.append("%s: placed but not on the board" % ref)
     if args.check:
-        if len(zones) != 1:
-            problems.append("%d %s rule areas, expected 1" % (len(zones), KEEPOUT_NAME))
-        else:
-            got = sorted((p.x, p.y) for p in [zones[0].Outline().COutline(0).CPoint(i)
-                                               for i in range(zones[0].Outline().COutline(0).PointCount())])
-            if got != sorted((nm(x), nm(y)) for x, y in keepout_polygon(parts["U1"])):
-                problems.append("%s outline differs from the one drawn from U1" % KEEPOUT_NAME)
+        for name, box in ((KEEPOUT_NAME, KEEPOUT_LOCAL), (CORE_NAME, CORE_LOCAL)):
+            mine = [z for z in zones if z.GetZoneName() == name]
+            if len(mine) != 1:
+                problems.append("%d %s rule areas, expected 1" % (len(mine), name))
+                continue
+            o = mine[0].Outline().COutline(0)
+            got = sorted((o.CPoint(i).x, o.CPoint(i).y) for i in range(o.PointCount()))
+            if got != sorted((nm(x), nm(y)) for x, y in keepout_polygon(parts["U1"], box)):
+                problems.append("%s outline differs from the one drawn from U1" % name)
         print("placement %s (%s): %s" % (args.board, args.half, "OK" if not problems else "FAIL (%d)" % len(problems)))
     if problems:
         for p in problems:
@@ -166,9 +174,23 @@ def main():
         outline.Append(nm(x), nm(y))
     board.Add(z)
 
+    c = pcbnew.ZONE(board)
+    c.SetIsRuleArea(True)
+    c.SetZoneName(CORE_NAME)
+    c.SetLayerSet(pcbnew.LSET().AddLayer(pcbnew.B_Cu))
+    c.SetDoNotAllowTracks(True)
+    c.SetDoNotAllowVias(True)
+    c.SetDoNotAllowPads(False)
+    c.SetDoNotAllowCopperPour(False)
+    c.SetDoNotAllowFootprints(False)
+    c.Outline().NewOutline()
+    for x, y in keepout_polygon(parts["U1"], CORE_LOCAL):
+        c.Outline().Append(nm(x), nm(y))
+    board.Add(c)
+
     board.Save(args.board)
-    print("placed %d footprints on %s (%s), outline %d primitives, %s" % (
-        len(seen), args.board, args.half, len(geo["outline"]) + len(geo["closures"]), KEEPOUT_NAME))
+    print("placed %d footprints on %s (%s), outline %d primitives, %s, %s" % (
+        len(seen), args.board, args.half, len(geo["outline"]) + len(geo["closures"]), KEEPOUT_NAME, CORE_NAME))
     sys.stdout.flush()
     os._exit(0)  # KiCad 9's SWIG objects segfault in destructors at exit
 

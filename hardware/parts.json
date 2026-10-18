@@ -78,8 +78,8 @@
     },
     {
       "lcsc": "C8598",
-      "qty": 2,
-      "role": "Schottky diodes: USB VBUS and dock 5V into the charger input (B5819W)",
+      "qty": 4,
+      "role": "Schottky diodes: USB VBUS and dock 5V into the charger input (D1, D2), and CHG/PGOOD sense into GPIOs (D4, D5) (B5819W)",
       "pin_names": {
         "1": "K",
         "2": "A"
@@ -87,14 +87,14 @@
       "pin_names_source": "SOD-123: pin 1 is the cathode (band); EasyEDA calls it 'neg'"
     },
     {
-      "lcsc": "C193402",
+      "lcsc": "C123790",
       "qty": 1,
-      "role": "TVS on the exposed dock 5V pad (SMF5.0A)",
+      "role": "TVS on the exposed dock 5V pad (SMF6.0A: 6.0 V standoff covers USB's 5.25 V)",
       "pin_names": {
         "1": "K",
         "2": "A"
       },
-      "pin_names_source": "SOD-123FL: pin 1 is the cathode"
+      "pin_names_source": "SOD-123FL: pin 1 is the cathode (band)"
     },
     {
       "lcsc": "C431540",
@@ -159,19 +159,9 @@
       "pin_names_source": "MHT151RGBCT datasheet p.2 polarity: 1 common anode, 2 blue, 3 green, 4 red (EasyEDA names all three cathodes 'neg', which would short them)"
     },
     {
-      "lcsc": "C81598",
-      "qty": 2,
-      "role": "isolate the CHG and PGOOD GPIO reads from the charge LED's input-side supply (1N4148W)",
-      "pin_names": {
-        "1": "K",
-        "2": "A"
-      },
-      "pin_names_source": "SOD-123: pin 1 is the cathode"
-    },
-    {
       "lcsc": "C25744",
-      "qty": 1,
-      "role": "10k: charger TS (no thermistor)"
+      "qty": 2,
+      "role": "10k: charger TS (no thermistor); VBUS pull-down (holds VBUS low against D1's reverse leakage when docked)"
     },
     {
       "lcsc": "C25905",
@@ -185,8 +175,13 @@
     },
     {
       "lcsc": "C25117",
-      "qty": 3,
-      "role": "470R: status LED red, green, blue"
+      "qty": 1,
+      "role": "470R: status LED red"
+    },
+    {
+      "lcsc": "C25091",
+      "qty": 2,
+      "role": "220R: status LED green and blue (higher forward voltage than red)"
     },
     {
       "lcsc": "C1525",
@@ -200,13 +195,13 @@
     },
     {
       "lcsc": "C19666",
-      "qty": 3,
-      "role": "4.7uF 16V 0603: charger OUT, charger BAT, nRF VBUS"
+      "qty": 1,
+      "role": "4.7uF 16V 0603: nRF VBUS"
     },
     {
       "lcsc": "C19702",
-      "qty": 1,
-      "role": "10uF 10V 0603: VDDH bulk"
+      "qty": 3,
+      "role": "10uF 10V 0603: VDDH bulk, charger OUT and BAT (4.7 uF minimum after DC bias at 4.4 V)"
     }
   ]
 }

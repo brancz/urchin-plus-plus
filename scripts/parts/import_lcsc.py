@@ -27,6 +27,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -89,7 +90,14 @@ def clean_manufacturer(m):
 def import_part(lcsc, parts_dir, model_base, side, fixups=None, pin_names=None):
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
-        run(["easyeda2kicad", "--full", "--lcsc_id", lcsc, "--output", str(tmp / "lib")])
+        for attempt in range(5):  # EasyEDA's API answers 403 to bursts of requests; back off and retry
+            res = subprocess.run(["easyeda2kicad", "--full", "--lcsc_id", lcsc, "--output", str(tmp / "lib")],
+                                 capture_output=True, text=True)
+            if res.returncode == 0 and "[ERROR]" not in res.stdout + res.stderr:
+                break
+            if "403" not in res.stdout + res.stderr or attempt == 4:
+                raise SystemExit(f"easyeda2kicad failed for {lcsc}:\n{res.stdout}\n{res.stderr}")
+            time.sleep(20 * (attempt + 1))
         run(["kicad-cli", "fp", "upgrade", "-o", str(tmp / "up.pretty"), str(tmp / "lib.pretty")])
         run(["kicad-cli", "sym", "upgrade", "-o", str(tmp / "up.kicad_sym"), str(tmp / "lib.kicad_sym")])
 

@@ -50,17 +50,8 @@
   )
   (attr smd exclude_from_pos_files exclude_from_bom)
   (fp_line
-    (start 5.75 2.5)
-    (end 5.75 -2.5)
-    (stroke
-      (width 0.05)
-      (type default)
-    )
-    (layer "B.CrtYd")
-  )
-  (fp_line
-    (start 5.75 -2.5)
-    (end -5.75 -2.5)
+    (start -5.75 -2.5)
+    (end -5.75 2.5)
     (stroke
       (width 0.05)
       (type default)
@@ -77,8 +68,17 @@
     (layer "B.CrtYd")
   )
   (fp_line
-    (start -5.75 -2.5)
-    (end -5.75 2.5)
+    (start 5.75 -2.5)
+    (end -5.75 -2.5)
+    (stroke
+      (width 0.05)
+      (type default)
+    )
+    (layer "B.CrtYd")
+  )
+  (fp_line
+    (start 5.75 2.5)
+    (end 5.75 -2.5)
     (stroke
       (width 0.05)
       (type default)
@@ -119,17 +119,17 @@
     )
   )
   (pad "1" smd rect
-    (at -4 0 180)
+    (at -4 0)
     (size 2.5 4)
     (layers "B.Cu" "B.Mask")
   )
   (pad "2" smd rect
-    (at 0 0 180)
+    (at 0 0)
     (size 2.5 4)
     (layers "B.Cu" "B.Mask")
   )
   (pad "3" smd rect
-    (at 4 0 180)
+    (at 4 0)
     (size 2.5 4)
     (layers "B.Cu" "B.Mask")
   )
