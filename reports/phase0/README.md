@@ -7,7 +7,7 @@ Dates: 2026-10-17 to 2026-10-18. Machine: macOS (arm64), bash 3.2. CI: GitHub Ac
 | Criterion (docs/PLAN.md) | Result | Evidence |
 |---|---|---|
 | Clean round-trip report | **KiCad 10.0.7: fails.** atopile can't rebuild a board KiCad 10 has saved. **KiCad 9.0.9** (the documented fallback): all 12 steps pass, locally and in CI | `kicad10-probe/`, `roundtrip/` |
-| CI green on an empty build | green | see "CI" |
+| CI green on an empty build | green: run 39119942514 | see "CI" |
 | Exact tool versions and Freerouting checksum in SETUP.md | recorded; `scripts/checks/toolchain.sh --local` passes, including the frozen dependency trees | `docs/SETUP.md`, `toolchain.env`, `constraints/`, `roundtrip/toolchain.txt` |
 | Repo layout, `.gitignore`, CI skeleton | done | repo root, `.github/workflows/ci.yml` |
 | Reviewer pass | two rounds; every finding fixed or dispositioned | `review.md` |
@@ -56,7 +56,18 @@ atopile builds the fixture, and KiCad 10.0.7's pcbnew edits and saves it (format
 
 ## CI
 
-The first two runs on this work failed, and both failures led to fixes. In the first, the round-trip failed at step 5 on Linux, which is how F3's platform difference was found. In the second, the guardrail correctly rejected the KiCad 10 evidence board under `reports/`. The final run is linked in `review.md`.
+Green: https://github.com/brancz/urchin-plus-plus/actions/runs/39119942514 (commit 6c2ccd6). In that run:
+
+- toolchain check OK, and all 137 installed atopile/KiKit packages are pinned
+- the 12-step round-trip passes on Linux
+- the guardrails pass on the committed KiCad files
+- board history is OK (no design boards yet)
+- the macOS job parses every script with bash 3.2 and compiles them with Python 3.9
+- the dock environment installs from its lockfile
+
+Earlier runs failed twice, and both failures led to fixes. In the first, the round-trip failed at step 5 on Linux, which is how F3's platform difference was found. In the second, the guardrail correctly rejected the KiCad 10 evidence board under `reports/`.
+
+The second review round's fixes were checked against the reviewer's repro scripts and are covered by the round-trip. They have not been re-reviewed independently.
 
 ## Reproduce
 

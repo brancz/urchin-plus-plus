@@ -81,7 +81,7 @@ Update this section whenever a phase moves.
 
 | Phase | Status | Notes |
 |---|---|---|
-| 0 Toolchain proof | in progress | KiCad 10 round-trip failed (atopile can't parse KiCad 10 boards); KiCad 9.0.9 fallback passes the full 12-step round-trip locally and in CI. Two reviewer rounds dispositioned. Pending: final CI run. Evidence in `reports/phase0/`. |
+| 0 Toolchain proof | done (2026-10-18) | KiCad 10 failed the atopile round-trip, so KiCad 9.0.9 per the fallback. The 12-step round-trip passes locally and in CI (run 39119942514). Two reviewer rounds dispositioned in `reports/phase0/review.md`. Decisions in ARCHITECTURE.md (local atomic parts, bottom-side library footprints, all-or-nothing `ato_build.sh`). |
 | 1 Geometry | not started | |
 | 2 Circuit and parts | not started | |
 | 3 Placement | not started | |
