@@ -10,17 +10,19 @@ The decisions below were made deliberately. Change one only with a reason, and r
 
 **Board sides.** All SMD parts are on the bottom, alongside the hotswap sockets, so JLC assembles one side only. The top carries switches and the battery. Left and right are separate layouts (the original is a panel of two separate halves; one-sided bottom assembly rules out mirroring a layout), but they share one circuit definition and are panelized together into one order.
 
-**MCU.** Ebyte E73-2G4M08S1C, a pre-certified nRF52840 module, so there's no RF matching to verify. Fallback if out of stock: Holyiot 18010. The antenna end sits at the outer board edge. The datasheet's keep-out applies on every layer: no copper, traces, parts, or battery inside it. The 32 kHz clock comes from the internal RC oscillator unless the module includes a crystal; configure ZMK and the bootloader to match.
+**MCU.** Ebyte E73-2G4M08S1C, a pre-certified nRF52840 module, so there's no RF matching to verify. Fallback if out of stock: Holyiot 18010. The module sits on the bottom in the old nice!nano area with its antenna end on the board edge, in the notch where the nice!nano's USB port was (both halves, same orientation). The keep-out applies on every layer: no copper, traces, parts, or battery inside it. The module has no 32 kHz crystal, so the internal RC oscillator is used; configure ZMK and the bootloader to match.
+
+**GPIO map.** Each half has its own key-to-GPIO map, because the module isn't mirrored but the key layout is: `scripts/circuit/gen_halves.py` assigns the 17 keys and the five GPIO functions (status LED R/G/B, CHG and PGOOD sense) to free module pads by shortest total path around the module (`hardware/pinmap.json`), and writes the per-half wiring (`hardware/halves.ato`). The shared circuit is `hardware/core.ato`.
 
 **Power path.**
 
 ```
 USB-C VBUS ──Schottky──┐
-                        ├──> BQ24075 IN ── OUT ──[slide switch]──> nRF52840 VDDH
+                        ├──> BQ24073 IN ── OUT ──[slide switch]──> nRF52840 VDDH
 dock pads 5V ─TVS─Schottky┘           └── BAT ── protected LiPo
 ```
 
-- **Charger: TI BQ24075.** Power-path type (the system runs from the input supply while charging). Input rated to 28 V with overvoltage protection, which matters for exposed pads. Charge current set to about 0.5C of the chosen cell. The status (CHG) and power-good (PGOOD) pins go to GPIOs so firmware knows the charging state.
+- **Charger: TI BQ24073** (was BQ24075; see the decision log). Power-path type (the system runs from the input supply while charging). Input rated to 28 V with overvoltage protection, which matters for exposed pads. USB100 mode: the input is limited to about 95 mA, so a ~200 mAh cell charges at about 0.45C. The status (CHG) and power-good (PGOOD) pins go to GPIOs so firmware knows the charging state.
 - **The diodes** make the pads input-only. A metal surface across the pads can't drain or short the battery.
 - **Switch placement** between the charger output and VDDH, so the battery still charges while the board is switched off.
 - **No external regulator.** The battery drives the nRF52840's high-voltage input (VDDH) directly, following the module datasheet's reference circuit.
@@ -28,11 +30,11 @@ dock pads 5V ─TVS─Schottky┘           └── BAT ── protected LiPo
 
 **Battery.** A protected LiPo, the largest cell that fits the old nice!nano area on top at 4 mm thickness or less (expect roughly 150–250 mAh). Wires are soldered to pads, no JST connector, to save height. The exact cell is chosen in phase 2 from the real free area.
 
-**USB-C.** Same position as the original nice!nano's port. 5.1 kΩ CC pull-down resistors, a USBLC6-2 for ESD on D+/D-. Used for flashing; it also charges.
+**USB-C.** On the bottom at the inner board edge, below the power switch (the old nice!nano port position now holds the antenna; see the decision log). 5.1 kΩ CC pull-down resistors, a USBLC6-2 for ESD on D+/D- and VBUS. Used for flashing; it also charges. Only USB VBUS reaches the nRF52840's VBUS pin, so a docked half doesn't look USB-connected to the firmware.
 
 **Indicators.**
 - Status: a plain (non-addressable) RGB LED, reverse-mounted on the bottom and shining up through a hole, driven by GPIOs via `zmk-rgbled-widget`. It blinks battery level on wake and connection state on profile changes, then stays dark.
-- Charge: a second LED driven by the charger's CHG pin, powered from the input supply (zero battery cost).
+- Charge: a second LED of the same type, powered from the charger input (zero battery cost): red on CHG, green on PGOOD, so amber = charging, green = charged.
 - Fallback if reverse-mount parts aren't stocked: side-view LEDs at the inner board edge.
 
 **Programming and reset.**
@@ -53,7 +55,7 @@ dock pads 5V ─TVS─Schottky┘           └── BAT ── protected LiPo
 
 - **ZMK, split, no dongle.** A custom board definition, not a shield, because the MCU is on the board. It lives in `firmware/` as a ZMK module.
 - **Bootloader:** Adafruit nRF52 UF2 bootloader built for this board.
-- **Modules:** `zmk-rgbled-widget`. Battery reporting via `zmk,battery-nrf-vddh`. Charging state read from the BQ24075 status pins.
+- **Modules:** `zmk-rgbled-widget`. Battery reporting via `zmk,battery-nrf-vddh`. Charging state read from the BQ24073 status pins (CHG_SENSE, PGOOD_SENSE; GPIOs per half in `hardware/pinmap.json`).
 
 ## Toolchain
 
@@ -83,15 +85,14 @@ dock pads 5V ─TVS─Schottky┘           └── BAT ── protected LiPo
 7. ZMK firmware builds for both halves
 8. JLC's DFM check on upload (done by the human)
 
-## Open items to verify (phase 2 unless noted)
+## Open items to verify
 
-- E73-2G4M08S1C: LCSC stock, JLC assemblability, VDDH/DC-DC wiring, whether it has a 32 kHz crystal
-- Kailh Choc hotswap socket: LCSC part, JLC assembly of bottom-side sockets
-- BQ24075, USBLC6-2, slide switch, reverse-mount RGB and single LEDs, SMD pogo pins (dock): stock
+Resolved in phase 2 (2026-10-18): E73 stock, assemblability, VDDH wiring and crystal (decision log); Kailh socket (hand-soldered); stock of every keyboard part (`reports/phase2/bom.md`); `ElectricPower` net names (the circuit names plain signals). Still open:
+
+- SMD pogo pins for the dock: stock (phase 7)
 - Battery cell dimensions vs free area (phase 3)
 - Charging pads vs tenting puck vs sockets: space on the bottom (phase 3)
-- Net names for `ElectricPower` rails: the type's own `hv`/`lv` suggestions win over instance traits, so name rails on plain signals (found in phase 0)
-- easyeda2kicad footprints: silkscreen overlaps their own pads (DRC warnings in phase 0); review every footprint against its datasheet land pattern
+- easyeda2kicad footprints: silkscreen overlaps their own pads (DRC warnings in phase 0); every footprint's pads are reviewed against its datasheet land pattern at gate 1 (`reports/phase2/footprints.md`)
 - KiKit's `fab jlcpcb --assembly` needs a schematic, which atopile doesn't produce: build BOM/CPL from atopile's BOM and `kicad-cli pcb export pos` (phase 6)
 - Bottom-side parts use bottom-side library footprints (decision below): check that `kicad-cli pcb export pos` and JLC's rotation corrections give the right orientation for them (phase 6)
 
@@ -126,3 +127,8 @@ Append entries as `YYYY-MM-DD: decision — reason`.
 - 2026-10-18: No 32.768 kHz crystal (the E73 has none; the LFRC oscillator is used, as planned) and REG0 runs as an LDO: the module contains REG1's DC/DC inductors and the VDD/VDDH/DECUSB capacitors but not REG0's inductor, and DCCH stays unconnected. Firmware must not enable REG0's DC/DC; REG1's DC/DC may be enabled.
 - 2026-10-18: Both LEDs are the reverse-mount common-anode RGB MHT151RGBCT (one extended part instead of two): status LED anode on VDD, cathodes via 470 Ω to GPIOs (active low); charge LED anode on the charger input, red cathode via 1 kΩ to CHG (on while charging), green via 1 kΩ to PGOOD (on while input power is good), so amber = charging, green = charged, at zero battery cost. CHG and PGOOD reach their GPIOs through 1N4148W diodes so the LEDs' input-side voltage never reaches a GPIO. EasyEDA's footprint was corrected to the datasheet's reverse-mount land pattern with the 2.1 mm hole.
 - 2026-10-18: The first SWD flash needs a probe that follows the target voltage (e.g. J-Link, VTref): a blank nRF52840 in high-voltage mode runs VDD at the 1.8 V default until the bootloader sets UICR.REGOUT0 to 3.3 V, and a Raspberry Pi Pico's fixed 3.3 V I/O can't safely drive or reliably read 1.8 V SWD. Bring-up (phase 9) must set REGOUT0 first.
+- 2026-10-18: The module sits with its antenna end on the board edge in the old nice!nano notch (top edge, y = 39.846, centred in the notch), same orientation on both halves, and USB-C moves from the nice!nano's port position to the inner board edge (bottom side, below the slide switch). The antenna needs the board edge and copper-free surroundings; the notch is the only edge next to the controller area that no key or socket crowds, and the battery fits below the keep-out on top. USB-C on the inner edge points the cable at the other half, which is fine for flashing and charging. Supersedes "USB-C: same position as the original nice!nano's port".
+- 2026-10-18: Per-half GPIO maps generated from geometry (`scripts/circuit/gen_halves.py`, Hungarian assignment on path length around the module and its antenna end) instead of one shared map: the module can't be mirrored (single-sided assembly), so on one half the keys face pins 26-43 and on the other pins 1-10. The socket pad nearer the module is each key's GPIO, the other its ground. P0.18 (reset) and P0.09/P0.10 (NFC) are never assigned.
+- 2026-10-18: nRF52840 VBUS is fed from USB VBUS only (before its Schottky), not from the charger input, so a docked half isn't seen as USB-powered by ZMK; the dock state is read from PGOOD.
+- 2026-10-18: The tenting-puck footprint gets a 2 mm silkscreen cross at its centre — atopile 0.15.7 crashes ("min() iterable argument is empty") placing designators on a footprint whose silkscreen is only circles and arcs. Pads, holes and outline are unchanged (rule 1).
+- 2026-10-18: `scripts/checks/connectivity.py` checks every numbered pad of each half against a netlist written from the datasheets' pin numbers (not from the .ato sources), plus the generated pin map cross-checked with the E73 pin table; nothing unlisted may be connected.

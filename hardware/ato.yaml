@@ -1,0 +1,11 @@
+requires-atopile: "0.15.7"
+
+paths:
+  src: ./
+  layout: ./layouts
+
+builds:
+  left:
+    entry: halves.ato:LeftHalf
+  right:
+    entry: halves.ato:RightHalf

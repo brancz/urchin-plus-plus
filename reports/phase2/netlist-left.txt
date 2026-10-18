@@ -1,0 +1,63 @@
+# hardware/layouts/left/left.kicad_pcb: nets by name, every numbered pad (single-pad nets are unconnected pins)
+1              U1.1
+2              U1.2
+3              U1.3
+4              U1.4
+6              U1.6
+7              U1.7
+8              U1.8
+41             U1.41
+43             U1.43
+A8             J1.A8
+B              LED2.2
+B8             J1.B8
+CC1            J1.A5 R2.1
+CC2            J1.B5 R3.1
+CHG_N          D4.1 R6.2 U2.9
+CHG_SENSE      D4.2 U1.14
+DCCH           U1.25
+DOCK_5V        D2.2 D3.1 TP1.2
+GND            BT1.2 C1.2 C2.2 C3.2 C4.2 C5.2 C6.2 D3.2 J1.1 J1.2 J1.3 J1.4 J1.A1B12 J1.B1A12 R1.2 R2.2 R3.2 R4.2 R5.2 SW1.1 SW2.1 SW3.1 SW4.1 SW5.1 SW6.1 SW7.1 SW8.1 SW9.1 SW10.1 SW11.1 SW12.1 SW13.1 SW14.1 SW15.1 SW16.1 SW17.2 SW35.4 SW35.4 SW35.4 SW35.4 SW36.2 TP1.1 TP1.3 TP2.5 U1.5 U1.21 U1.24 U2.4 U2.5 U2.6 U2.8 U2.15 U2.17 U3.2
+ILIM           R4.1 U2.12
+ISET           R5.1 U2.16
+KEY_R0C0       SW1.2 U1.32
+KEY_R0C1       SW2.2 U1.35
+KEY_R0C2       SW3.2 U1.38
+KEY_R0C3       SW4.2 U1.40
+KEY_R0C4       SW5.2 U1.42
+KEY_R1C0       SW6.2 U1.22
+KEY_R1C1       SW7.2 U1.30
+KEY_R1C2       SW8.2 U1.34
+KEY_R1C3       SW9.2 U1.33
+KEY_R1C4       SW10.2 U1.36
+KEY_R2C0       SW11.2 U1.17
+KEY_R2C1       SW12.2 U1.20
+KEY_R2C2       SW13.2 U1.28
+KEY_R2C3       SW14.2 U1.18
+KEY_R2C4       SW15.2 U1.16
+KEY_T0         SW16.2 U1.15
+KEY_T1         SW17.1 U1.9
+LED_B          R10.2 U1.10
+LED_B_K        LED1.2 R10.1
+LED_CHG_G      LED2.3 R7.1
+LED_CHG_R      LED2.4 R6.1
+LED_G          R9.2 U1.11
+LED_G_K        LED1.3 R9.1
+LED_R          R8.2 U1.13
+LED_R_K        LED1.4 R8.1
+PGOOD_N        D5.1 R7.2 U2.7
+PGOOD_SENSE    D5.2 U1.12
+RESET_N        SW36.1 TP2.4 U1.26
+SWDCLK         TP2.3 U1.39
+SWDIO          TP2.2 U1.37
+TMR            U2.14
+TS             R1.1 U2.1
+USB_DN         J1.A7 J1.B7 U1.29 U3.3 U3.4
+USB_DP         J1.A6 J1.B6 U1.31 U3.1 U3.6
+VBAT           BT1.1 C4.1 U2.2 U2.3
+VBUS           C5.1 D1.2 J1.A4B9 J1.B4A9 U1.27 U3.5
+VDD            C1.1 LED1.1 TP2.1 U1.19
+VDDH           C6.1 SW35.2 U1.23
+VIN            C2.1 D1.1 D2.1 LED2.1 U2.13
+VSYS           C3.1 SW35.1 U2.10 U2.11
+core.sw_pwr-3  SW35.3

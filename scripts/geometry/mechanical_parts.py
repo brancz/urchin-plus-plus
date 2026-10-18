@@ -11,7 +11,9 @@ original's, unchanged except for the format upgrade KiCad's writer applies:
                stocked at JLC or LCSC (ARCHITECTURE.md decision log), so it is
                hand-soldered: the footprint is excluded from the BOM and position
                files and its socket pads carry no paste (no stencil aperture).
-  PUCK         Tenting_Puck2_no_pads (reference/urchin/lib), unchanged
+  PUCK         Tenting_Puck2_no_pads (reference/urchin/lib), plus a 2 mm silkscreen cross
+               at its centre: atopile sizes a footprint's silkscreen from its lines
+               and crashes on one whose silkscreen is only circles and arcs
   HOLE_M2_4_2  swoop:M2_hole_4.2mm   (embedded in reference/urchin/main.kicad_pcb)
   HOLE_M2_3_5  swoop:M2_hole_3.5mm / chocolad:M2_hole_3.5mm (identical pads)
                Case holes are made non-plated, same drill: several sit 0.25 mm from
@@ -164,7 +166,7 @@ def write_part(parts_dir, name, fp, prefix, doc, pins=None, exclude=True, prefer
 PARTS = {
     "KEY_CHOC": dict(src=("lib", "SW_Hotswap_Kailh_Choc_V1_tweaked"), prefix="SW", pins=("1", "2"), no_paste=True,
                      doc="Kailh Choc v1 switch position with a hand-soldered Kailh hotswap socket (CPG135001S30)."),
-    "PUCK": dict(src=("lib", "Tenting_Puck2_no_pads"), prefix="H", prefer=("B.Silkscreen",),
+    "PUCK": dict(src=("lib", "Tenting_Puck2_no_pads"), prefix="H", prefer=("B.Silkscreen",), centre_mark=True,
                  doc="Tenting-puck mount of the original Urchin."),
     "HOLE_M2_4_2": dict(src=("board", "swoop:M2_hole_4.2mm"), prefix="H", npth=True,
                         doc="Case mounting hole, 3.8 mm drill (non-plated; the original has a 4.2 mm pad)."),
@@ -194,6 +196,15 @@ def one(parts, name):
             p.SetLayerSet(pcbnew.LSET.AllCuMask().AddLayer(pcbnew.F_Mask).AddLayer(pcbnew.B_Mask))
         if spec.get("no_paste") and p.GetAttribute() == pcbnew.PAD_ATTRIB_SMD:
             p.SetLayerSet(p.GetLayerSet().RemoveLayer(pcbnew.F_Paste).RemoveLayer(pcbnew.B_Paste))
+    if spec.get("centre_mark"):
+        for a, b in (((-1, 0), (1, 0)), ((0, -1), (0, 1))):
+            line = pcbnew.PCB_SHAPE(fp)
+            line.SetShape(pcbnew.SHAPE_T_SEGMENT)
+            line.SetStart(pcbnew.VECTOR2I(*(int(round(v * 1e6)) for v in a)))
+            line.SetEnd(pcbnew.VECTOR2I(*(int(round(v * 1e6)) for v in b)))
+            line.SetLayer(pcbnew.B_SilkS)
+            line.SetWidth(int(round(0.12e6)))
+            fp.Add(line)
     write_part(parts, name, fp, spec["prefix"], spec["doc"], pins=spec.get("pins"), prefer=spec.get("prefer", ()))
 
 

@@ -1,0 +1,293 @@
+#pragma experiment("TRAITS")
+#pragma experiment("INSTANCE_TRAITS")
+# The electronics of one half, shared by both (docs/ARCHITECTURE.md, "Keyboard").
+# Per-half wiring (which GPIO goes to which key or LED) is generated into halves.ato
+# by scripts/circuit/gen_halves.py; this file exposes those functions as signals.
+
+import has_net_name_suggestion
+import has_designator
+from "parts/C356849/C356849.ato" import C356849_package
+from "parts/C15220/C15220.ato" import C15220_package
+from "parts/C165948/C165948.ato" import C165948_package
+from "parts/C7519/C7519.ato" import C7519_package
+from "parts/C8598/C8598.ato" import C8598_package
+from "parts/C193402/C193402.ato" import C193402_package
+from "parts/C431540/C431540.ato" import C431540_package
+from "parts/C720477/C720477.ato" import C720477_package
+from "parts/C409782/C409782.ato" import C409782_package
+from "parts/C81598/C81598.ato" import C81598_package
+from "parts/C25744/C25744.ato" import C25744_package
+from "parts/C25905/C25905.ato" import C25905_package
+from "parts/C11702/C11702.ato" import C11702_package
+from "parts/C25117/C25117.ato" import C25117_package
+from "parts/C1525/C1525.ato" import C1525_package
+from "parts/C15849/C15849.ato" import C15849_package
+from "parts/C19666/C19666.ato" import C19666_package
+from "parts/C19702/C19702.ato" import C19702_package
+from "parts/BAT_PADS/BAT_PADS.ato" import BAT_PADS_package
+from "parts/DOCK_PADS/DOCK_PADS.ato" import DOCK_PADS_package
+from "parts/SWD_PADS/SWD_PADS.ato" import SWD_PADS_package
+
+module Core:
+    # ---- nets -------------------------------------------------------------------
+    signal gnd
+    signal vbus        # USB-C VBUS (after the connector, before its diode)
+    signal dock_5v     # the exposed dock pad
+    signal vin         # charger input: USB and dock ORed through Schottky diodes
+    signal vsys        # charger output (power path): input power, else the battery
+    signal vddh        # nRF52840 high-voltage supply, after the power switch
+    signal vdd         # nRF52840 REG0 output (LDO mode), 3.3 V once UICR.REGOUT0 is set
+    signal vbat        # battery +
+    signal usb_dp
+    signal usb_dn
+    signal cc1
+    signal cc2
+    signal reset_n     # P0.18
+    signal swdio
+    signal swdclk
+    signal chg_n       # charger CHG, open drain: low while charging
+    signal pgood_n     # charger PGOOD, open drain: low while the input is good
+    signal led_chg_r   # charge LED red cathode, to its resistor
+    signal led_chg_g
+    signal led_r_k     # status LED cathodes, to their resistors
+    signal led_g_k
+    signal led_b_k
+    signal ts
+    signal ilim
+    signal iset
+
+    # Functions the generated per-half wiring connects to GPIOs
+    signal led_r       # status LED red, active low
+    signal led_g
+    signal led_b
+    signal chg_sense   # reads CHG through D4 (pull-up in the nRF52840)
+    signal pgood_sense # reads PGOOD through D5
+
+    trait gnd has_net_name_suggestion<name="GND", level="EXPECTED">
+    trait vbus has_net_name_suggestion<name="VBUS", level="EXPECTED">
+    trait dock_5v has_net_name_suggestion<name="DOCK_5V", level="EXPECTED">
+    trait vin has_net_name_suggestion<name="VIN", level="EXPECTED">
+    trait vsys has_net_name_suggestion<name="VSYS", level="EXPECTED">
+    trait vddh has_net_name_suggestion<name="VDDH", level="EXPECTED">
+    trait vdd has_net_name_suggestion<name="VDD", level="EXPECTED">
+    trait vbat has_net_name_suggestion<name="VBAT", level="EXPECTED">
+    trait usb_dp has_net_name_suggestion<name="USB_DP", level="EXPECTED">
+    trait usb_dn has_net_name_suggestion<name="USB_DN", level="EXPECTED">
+    trait cc1 has_net_name_suggestion<name="CC1", level="EXPECTED">
+    trait cc2 has_net_name_suggestion<name="CC2", level="EXPECTED">
+    trait reset_n has_net_name_suggestion<name="RESET_N", level="EXPECTED">
+    trait swdio has_net_name_suggestion<name="SWDIO", level="EXPECTED">
+    trait swdclk has_net_name_suggestion<name="SWDCLK", level="EXPECTED">
+    trait chg_n has_net_name_suggestion<name="CHG_N", level="EXPECTED">
+    trait pgood_n has_net_name_suggestion<name="PGOOD_N", level="EXPECTED">
+    trait led_chg_r has_net_name_suggestion<name="LED_CHG_R", level="EXPECTED">
+    trait led_chg_g has_net_name_suggestion<name="LED_CHG_G", level="EXPECTED">
+    trait led_r_k has_net_name_suggestion<name="LED_R_K", level="EXPECTED">
+    trait led_g_k has_net_name_suggestion<name="LED_G_K", level="EXPECTED">
+    trait led_b_k has_net_name_suggestion<name="LED_B_K", level="EXPECTED">
+    trait ts has_net_name_suggestion<name="TS", level="EXPECTED">
+    trait ilim has_net_name_suggestion<name="ILIM", level="EXPECTED">
+    trait iset has_net_name_suggestion<name="ISET", level="EXPECTED">
+    trait led_r has_net_name_suggestion<name="LED_R", level="EXPECTED">
+    trait led_g has_net_name_suggestion<name="LED_G", level="EXPECTED">
+    trait led_b has_net_name_suggestion<name="LED_B", level="EXPECTED">
+    trait chg_sense has_net_name_suggestion<name="CHG_SENSE", level="EXPECTED">
+    trait pgood_sense has_net_name_suggestion<name="PGOOD_SENSE", level="EXPECTED">
+
+    # ---- MCU: E73-2G4M08S1C (nRF52840), high-voltage mode -------------------------
+    mcu = new C356849_package
+    trait mcu has_designator<designator="U1">
+    mcu.GND ~ gnd
+    mcu.VDDH ~ vddh
+    mcu.VDD ~ vdd
+    mcu.VBUS ~ vbus          # USB peripheral supply; USB only, so docking doesn't look like a USB host
+    mcu.DP ~ usb_dp
+    mcu.DN ~ usb_dn
+    mcu.P0_18 ~ reset_n
+    mcu.SWDIO ~ swdio
+    mcu.SWDCLK ~ swdclk
+    # DCCH (REG0's DC/DC switch node) stays unconnected: REG0 runs as an LDO.
+
+    c_vddh = new C19702_package   # 10 uF bulk on VDDH
+    trait c_vddh has_designator<designator="C6">
+    c_vddh.1 ~ vddh
+    c_vddh.2 ~ gnd
+    c_vdd = new C1525_package     # 100 nF on VDD
+    trait c_vdd has_designator<designator="C1">
+    c_vdd.1 ~ vdd
+    c_vdd.2 ~ gnd
+
+    # ---- USB-C ------------------------------------------------------------------
+    usb = new C165948_package
+    trait usb has_designator<designator="J1">
+    usb.GND ~ gnd
+    usb.EH ~ gnd
+    usb.VBUS ~ vbus
+    usb.DP1 ~ usb_dp
+    usb.DP2 ~ usb_dp
+    usb.DN1 ~ usb_dn
+    usb.DN2 ~ usb_dn
+    usb.CC1 ~ cc1
+    usb.CC2 ~ cc2
+    # SBU1/SBU2 unused
+
+    r_cc1 = new C25905_package    # 5.1 k: identifies a USB-C sink to the source
+    trait r_cc1 has_designator<designator="R2">
+    r_cc1.1 ~ cc1
+    r_cc1.2 ~ gnd
+    r_cc2 = new C25905_package
+    trait r_cc2 has_designator<designator="R3">
+    r_cc2.1 ~ cc2
+    r_cc2.2 ~ gnd
+
+    esd = new C7519_package       # USBLC6-2: clamps D+/D- and VBUS
+    trait esd has_designator<designator="U3">
+    esd.IO1 ~ usb_dp
+    esd.IO2 ~ usb_dn
+    esd.VBUS ~ vbus
+    esd.GND ~ gnd
+
+    c_vbus = new C19666_package   # 4.7 uF on VBUS (nRF52840 reference circuit)
+    trait c_vbus has_designator<designator="C5">
+    c_vbus.1 ~ vbus
+    c_vbus.2 ~ gnd
+
+    # ---- Charger input: USB and dock, each through a Schottky -----------------------
+    d_usb = new C8598_package
+    trait d_usb has_designator<designator="D1">
+    d_usb.A ~ vbus
+    d_usb.K ~ vin
+
+    dock = new DOCK_PADS_package
+    trait dock has_designator<designator="TP1">
+    dock.GND ~ gnd
+    dock.V5 ~ dock_5v
+
+    tvs = new C193402_package     # SMF5.0A on the exposed pad
+    trait tvs has_designator<designator="D3">
+    tvs.K ~ dock_5v
+    tvs.A ~ gnd
+
+    d_dock = new C8598_package
+    trait d_dock has_designator<designator="D2">
+    d_dock.A ~ dock_5v
+    d_dock.K ~ vin
+
+    # ---- Charger: BQ24073, USB100 mode (docs/ARCHITECTURE.md decision log) -------------
+    chg = new C15220_package
+    trait chg has_designator<designator="U2">
+    chg.IN ~ vin
+    chg.OUT ~ vsys
+    chg.BAT ~ vbat
+    chg.VSS ~ gnd
+    chg.EP ~ gnd
+    chg.EN1 ~ gnd
+    chg.EN2 ~ gnd
+    chg.n_CE_ ~ gnd
+    chg.TD ~ gnd             # termination enabled
+    # TMR open: default safety timers
+    chg.TS ~ ts
+    chg.ILIM ~ ilim
+    chg.ISET ~ iset
+    chg.n_CHG_ ~ chg_n
+    chg.n_PGOOD_ ~ pgood_n
+
+    r_ts = new C25744_package     # 10 k in place of a thermistor
+    trait r_ts has_designator<designator="R1">
+    r_ts.1 ~ ts
+    r_ts.2 ~ gnd
+    r_ilim = new C25905_package
+    trait r_ilim has_designator<designator="R4">
+    r_ilim.1 ~ ilim
+    r_ilim.2 ~ gnd
+    r_iset = new C25905_package
+    trait r_iset has_designator<designator="R5">
+    r_iset.1 ~ iset
+    r_iset.2 ~ gnd
+
+    c_in = new C15849_package     # 1 uF 50 V
+    trait c_in has_designator<designator="C2">
+    c_in.1 ~ vin
+    c_in.2 ~ gnd
+    c_out = new C19666_package
+    trait c_out has_designator<designator="C3">
+    c_out.1 ~ vsys
+    c_out.2 ~ gnd
+    c_bat = new C19666_package
+    trait c_bat has_designator<designator="C4">
+    c_bat.1 ~ vbat
+    c_bat.2 ~ gnd
+
+    bat = new BAT_PADS_package
+    trait bat has_designator<designator="BT1">
+    bat.POS ~ vbat
+    bat.NEG ~ gnd
+
+    # ---- Power switch: charger OUT -> VDDH (charging continues while off) --------------
+    sw_pwr = new C431540_package
+    trait sw_pwr has_designator<designator="SW35">
+    sw_pwr.T1 ~ vsys
+    sw_pwr.COM ~ vddh
+    sw_pwr.SHELL ~ gnd
+    # T3: off position, unconnected
+
+    # ---- Charge LED: powered from the charger input, zero battery cost ------------------
+    led_chg = new C409782_package
+    trait led_chg has_designator<designator="LED2">
+    led_chg.ANODE ~ vin
+    led_chg.R ~ led_chg_r
+    led_chg.G ~ led_chg_g
+    # blue unused
+    r_chg_r = new C11702_package  # 1 k
+    trait r_chg_r has_designator<designator="R6">
+    r_chg_r.1 ~ led_chg_r
+    r_chg_r.2 ~ chg_n
+    r_chg_g = new C11702_package
+    trait r_chg_g has_designator<designator="R7">
+    r_chg_g.1 ~ led_chg_g
+    r_chg_g.2 ~ pgood_n
+
+    # CHG and PGOOD to GPIOs through diodes: the GPIO (pulled up to VDD) reads low when
+    # the pin pulls low; the LED's input-side voltage never reaches the GPIO.
+    d_chg = new C81598_package
+    trait d_chg has_designator<designator="D4">
+    d_chg.K ~ chg_n
+    d_chg.A ~ chg_sense
+    d_pg = new C81598_package
+    trait d_pg has_designator<designator="D5">
+    d_pg.K ~ pgood_n
+    d_pg.A ~ pgood_sense
+
+    # ---- Status LED: anode on VDD, cathodes to GPIOs via 470 R (active low) ----------
+    led_st = new C409782_package
+    trait led_st has_designator<designator="LED1">
+    led_st.ANODE ~ vdd
+    led_st.R ~ led_r_k
+    led_st.G ~ led_g_k
+    led_st.B ~ led_b_k
+    r_led_r = new C25117_package
+    trait r_led_r has_designator<designator="R8">
+    r_led_r.1 ~ led_r_k
+    r_led_r.2 ~ led_r
+    r_led_g = new C25117_package
+    trait r_led_g has_designator<designator="R9">
+    r_led_g.1 ~ led_g_k
+    r_led_g.2 ~ led_g
+    r_led_b = new C25117_package
+    trait r_led_b has_designator<designator="R10">
+    r_led_b.1 ~ led_b_k
+    r_led_b.2 ~ led_b
+
+    # ---- Reset and SWD -------------------------------------------------------------
+    sw_rst = new C720477_package
+    trait sw_rst has_designator<designator="SW36">
+    sw_rst.A ~ reset_n
+    sw_rst.B ~ gnd
+
+    swd = new SWD_PADS_package
+    trait swd has_designator<designator="TP2">
+    swd.VDD ~ vdd
+    swd.SWDIO ~ swdio
+    swd.SWDCLK ~ swdclk
+    swd.RESET ~ reset_n
+    swd.GND ~ gnd
