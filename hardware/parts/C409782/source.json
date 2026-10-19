@@ -7,14 +7,16 @@
   "footprint": "LED-ARRAY-SMD_1206-4P-L3.2-W1.3-BR-EH.kicad_mod",
   "side": "bottom",
   "footprint_changes": [
-    "pad 1 moved from (1.45, 0.55) to (1.55, 0.55)",
-    "pad 2 moved from (1.45, -0.55) to (1.55, -0.55)",
-    "pad 3 moved from (-1.45, -0.55) to (-1.55, -0.55)",
-    "pad 4 moved from (-1.45, 0.55) to (-1.55, 0.55)",
+    "pad 1 moved from (1.45, 0.55) to (1.7, 0.55)",
+    "pad 2 moved from (1.45, -0.55) to (1.7, -0.55)",
+    "pad 3 moved from (-1.45, -0.55) to (-1.7, -0.55)",
+    "pad 4 moved from (-1.45, 0.55) to (-1.7, 0.55)",
     "non-plated hole 2.10 mm added at (0, 0)",
+    "3D model offset set to [0, 0, 1.0]",
+    "3D model rotate set to [180, 0, 0]",
     "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
   ],
-  "fixups_source": "docs/datasheets/C409782_MHT151RGBCT.pdf p.2, 'Recommended Solder Pad (Reverse Type)': 0.8 x 0.7 mm pads, 2.3 mm between pad rows, 2.1 mm hole. EasyEDA's footprint has the pads 0.2 mm closer together and no hole.",
+  "fixups_source": "docs/datasheets/C409782_MHT151RGBCT.pdf p.2: the lens is 1.4 x 1.25 mm (diagonal 1.88 mm), and 'Recommended Solder Pad (Reverse Type)' has a 2.1 mm hole and 0.8 x 0.7 mm pads 2.3 mm apart, which puts the pad corners 0.12 mm from the hole. The hole is the datasheet's 2.1 mm; the pads sit 0.15 mm further out (centres at x +-1.70) so they keep 0.265 mm from the hole (JLC hole-to-copper 0.25 mm) and still overlap the LED's end terminals by 0.3 mm (phases 4-6 second review M3; the earlier 1.8 mm hole left the lens diagonal no room). EasyEDA's footprint has the pads closer together and no hole.",
   "pin_names": {
     "1": "ANODE",
     "2": "B",
@@ -44,7 +46,7 @@
       "signal": "R"
     }
   ],
-  "fetched_utc": "2026-10-18T12:27:52Z",
+  "fetched_utc": "2026-10-18T18:05:40Z",
   "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
   "kicad_cli": "9.0.9"
 }

@@ -87,7 +87,7 @@ def clean_manufacturer(m):
     return re.sub(r"\s*[(（][^)）]*[)）]\s*$", "", m or "").strip() or "unknown"
 
 
-def import_part(lcsc, parts_dir, model_base, side, fixups=None, pin_names=None):
+def import_part(lcsc, parts_dir, model_base, side, fixups=None, pin_names=None, model=None):
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
         for attempt in range(5):  # EasyEDA's API answers 403 to bursts of requests; back off and retry
@@ -135,6 +135,7 @@ def import_part(lcsc, parts_dir, model_base, side, fixups=None, pin_names=None):
                  str(out), fps[0].stem])
         node = sexp.load(out / fps[0].name)
         try:
+            changes += fplib.model_fixups(node, model)
             changes += fplib.sanitize(node)
         except ValueError as e:
             raise SystemExit("%s: %s" % (lcsc, e))
@@ -234,18 +235,19 @@ def main():
     kicad = tool_version(["kicad-cli", "version"])
     if kicad != pinned("KICAD_VERSION"):
         raise SystemExit("kicad-cli is %s, pinned is %s (see docs/SETUP.md)" % (kicad, pinned("KICAD_VERSION")))
-    todo = [(c, args.side, None, None) for c in args.lcsc]
+    todo = [(c, args.side, None, None, None) for c in args.lcsc]
     if args.manifest:
         for part in json.loads(args.manifest.read_text())["parts"]:
-            todo.append((part["lcsc"], part.get("side", "bottom"), part.get("fixups"), part.get("pin_names")))
+            todo.append((part["lcsc"], part.get("side", "bottom"), part.get("fixups"), part.get("pin_names"),
+                         part.get("model")))
     if not todo:
         raise SystemExit("nothing to import: give LCSC numbers or --manifest")
-    for lcsc, side, fixups, pin_names in todo:
+    for lcsc, side, fixups, pin_names, model in todo:
         if not re.fullmatch(r"C[0-9]+", lcsc):
             raise SystemExit(f"not an LCSC number: {lcsc}")
         if side == "bottom" and not os.environ.get("KICAD_PY"):
             raise SystemExit("--side bottom needs KICAD_PY (KiCad's Python) to flip the footprint")
-        s = import_part(lcsc, args.parts_dir, args.model_base, side, fixups, pin_names)
+        s = import_part(lcsc, args.parts_dir, args.model_base, side, fixups, pin_names, model)
         print(f"{lcsc}: {s['manufacturer']} {s['mpn']} ({side}) -> {args.parts_dir / lcsc}"
               + "".join(f"\n    {c}" for c in s["footprint_changes"]))
 

@@ -2,7 +2,7 @@
   (version 20241229)
   (generator "urchin++ footprint_to_bottom")
   (layer "B.Cu")
-  (descr "100nF (104) ±10% 16V")
+  (descr "4.7uF (475) ±20% 10V")
   (property "Reference" "REF**"
     (at 0 4 0)
     (layer "B.SilkS")
@@ -49,7 +49,7 @@
       (justify mirror)
     )
   )
-  (property "LCSC Part" "C1525"
+  (property "LCSC Part" "C23733"
     (at 0 0 0)
     (layer "B.Fab")
     (hide yes)
@@ -213,7 +213,7 @@
     (layers "B.Cu" "B.Mask" "B.Paste")
   )
   (embedded_fonts no)
-  (model "${KIPRJMOD}/../../parts/C1525/C0402_L1.0-W0.5-H0.5.step"
+  (model "${KIPRJMOD}/../../parts/C23733/C0402_L1.0-W0.5-H0.5.step"
     (offset
       (xyz 0 0 0)
     )

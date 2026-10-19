@@ -67,7 +67,7 @@ dock pads 5V ─TVS─Schottky┘           └── BAT ── protected LiPo
 | Footprints / 3D models | easyeda2kicad (from LCSC part numbers), upgraded with kicad-cli and wrapped as atopile atomic parts by `scripts/parts/import_lcsc.py` |
 | Board files | KiCad 9.0.9, headless via kicad-cli and pcbnew Python |
 | Placement | Python script: switches at extracted coordinates, electronics at agent-defined coordinates |
-| Routing | Scripted critical nets (power, USB pair, antenna zone), then Freerouting 2.5.0 for the rest |
+| Routing | `scripts/routing/route.py`: Freerouting 2.5.0 for every net (GND included), with the antenna keep-out and the module-core rule area as keep-outs, then a GND pour on both layers |
 | Panel + fab outputs | KiKit: left+right panel with mouse bites, fiducials, tooling holes; `kikit fab jlcpcb` for Gerbers, BOM, CPL with rotation corrections |
 | Dock CAD | build123d |
 | Firmware build | ZMK in GitHub Actions |
@@ -91,8 +91,9 @@ Resolved in phase 2 (2026-10-18): E73 stock, assemblability, VDDH wiring and cry
 
 - SMD pogo pins for the dock: stock (phase 7)
 - easyeda2kicad footprints: silkscreen overlaps their own pads (DRC warnings in phase 0); every footprint's pads are reviewed against its datasheet land pattern at gate 1 (`reports/phase2/footprints.md`)
-- KiKit's `fab jlcpcb --assembly` needs a schematic, which atopile doesn't produce: build BOM/CPL from atopile's BOM and `kicad-cli pcb export pos` (phase 6)
-- Bottom-side parts use bottom-side library footprints (decision below): check that `kicad-cli pcb export pos` and JLC's rotation corrections give the right orientation for them (phase 6)
+- JLC's live placement preview for the bottom side: the CPL convention (Y negated, rotation 180° − KiCad angle, as KiKit's `MirrorBottom`) was traced pin by pin by two reviews, but only JLC's preview at order time confirms it (checklist in `reports/phase6/README.md`)
+
+Resolved in phase 6 (2026-10-18): BOM and CPL without a schematic come from `scripts/fab/jlc_assembly.py`, which uses KiKit's position functions on the panel. The bottom-side rotation convention was checked by the phases 4–6 reviews against every polarised part's pin 1.
 
 ## Decision log
 
@@ -140,3 +141,48 @@ Append entries as `YYYY-MM-DD: decision — reason`.
 - 2026-10-18: Phase 2 review changes (reports/phase2/review.md): R11 10 kΩ VBUS pull-down; CHG/PGOOD sense diodes are B5819W Schottkys (more logic-low margin; 1N4148W dropped); status LED green/blue use 220 Ω (red stays 470 Ω); charger OUT and BAT capacitors are 10 µF (4.7 µF X5R loses half at 4.4 V); dock TVS is SMF6.0A (C123790; 6.0 V standoff covers USB's 5.25 V); module pins 1, 2 and 42 (next to the antenna) are never assigned to keys or LEDs.
 - 2026-10-18: Bottom-side library footprints keep KiCad's native representation of a flipped footprint (pad positions mirrored top-bottom, i.e. the left-right mirror turned 180°) but with the footprint and pad angles turned back to 0° (`footprint_to_bottom.py`); before, every pad carried an extra 180°, which rotated custom pad shapes about their centres. Placement rotations are therefore KiCad-native for bottom parts, and phase 6 applies KiCad's usual bottom-side rotation handling for JLC.
 - 2026-10-18: `scripts/ato_build.sh` rebuilds until `ato build --frozen` changes nothing (at most 4 builds): atopile settles new footprints' field layers and swapped footprints' pad nets only on the second build (phase 2 review H1). Before a build, a footprint whose library part was replaced is not a guardrail failure (`kicad_guardrails.py --prebuild`).
+- 2026-10-18: Phase 3 review changes (reports/phase3/review.md): clearance.py uses exact intersection tests and checks rule-area settings and pour fill area after a fresh fill; LED holes 1.8 mm (0.25 mm to the pads; datasheet 2.1 mm); 3D model offsets in `parts.json` (`model`), checked by STEP export; right half's default rotation is 180 − rotation (mirrors two-terminal pin order); libraries carry no item UUIDs (atopile copied them onto every instance) and boards must have unique UUIDs (guardrail); DRC allow-list names the overhanging sockets per half. Feet: at least 5 mm tall for use with a USB cable plugged in. Nylon screws in the ear holes beside the antenna.
+- 2026-10-18: All four diodes are 1N5819WS (C191023, SOD-323, basic part) instead of B5819W (SOD-123): same 40 V/1 A Schottky function at half the footprint, which the crowded area under the module needed for routing.
+- 2026-10-18: Routing is Freerouting on every net instead of hand-scripted critical routes. The nets here are slow (USB full speed at 12 Mb/s, static key and LED lines, ≤100 mA power), so there's no impedance or length requirement a script would have to meet. The script makes the router respect what it otherwise ignores: the routing boundary is inset 0.7 mm (Freerouting keeps only track and via centres inside it; 0.3 mm copper-to-edge plus a via radius), vias are 0.7/0.3 mm (0.2 mm ring; with 0.15 mm clearance their holes stay 0.5 mm apart, JLC's hole-to-hole), clearance is 0.17 mm for routing (Freerouting undershoots near pads; the rule is 0.15 mm), the router's neck-downs at pads are widened to JLC's 0.127 mm 2-layer minimum (the design rule's minimum track; elsewhere tracks are 0.15–0.3 mm), and GND stubs closer than 0.3 mm to the edge are dropped when the pour keeps them connected. Freerouting's result depends on track widths, so it runs four width variants in parallel (signal/power 0.2/0.3, 0.15/0.25, 0.175/0.3, 0.15/0.3 mm) and keeps the most complete. GND is routed as a net too, so connectivity never depends on the pour. CI doesn't re-route (the result isn't reproducible to the micron); it checks the committed routed boards with full DRC, the keep-out checks and connectivity. The one place it can't finish is the USB-C receptacle's paired pins (D+ on A6/B6 and D- on A7/B7 interleave, VBUS on two pads), so those joins are scripted (`scripts/routing/preroutes.py`, in the connector's own frame) and fixed before routing: D- as a U under the receptacle body, D+ and VBUS through vias with a top-layer link behind the pads. Freerouting's own "0 unrouted" proved wrong (its session can miss whole nets), so each attempt is imported and counted with KiCad's connectivity, and the best is kept.
+- 2026-10-18: Antenna-adjacent module pins: P1.11/P1.10/P1.06 (pins 1, 2, 42) stay unused on the left half, but the right half uses pins 1 and 2 for keys. There they face the keys and their traces leave sideways, away from the antenna, about 4 mm from its end where the ground pour runs anyway. The right half needs them: its other side (pins 26–43) faces the inner edge, which the switch and USB-C crowd, and with only 17 GPIOs elsewhere five functions landed there and the board didn't route. Supersedes the earlier "pins 1, 2 and 42 are never assigned" for the right half.
+- 2026-10-18: Phases 4–6 review changes (reports/phase5/review.md):
+  - **Track widening.** After routing, `scripts/routing/widen.py` widens every track narrower than 0.15 mm to 0.15 mm wherever KiCad's DRC allows, which gives margin over JLC's 0.127 mm minimum.
+  - **Routing runs 24 variants**, not four. There are eight signal/power width pairs: 0.2/0.3, 0.15/0.25, 0.175/0.3, 0.15/0.3, 0.127/0.25, 0.127/0.3, 0.175/0.25 and 0.2/0.25 mm. Each runs at a routing clearance of 0.17, 0.175 and 0.18 mm.
+    - Freerouting is deterministic for a given input, so these variants are the only way to get different results. The right half routed completely only at 0.175 mm.
+    - The script keeps the most complete result, then the one with fewest vias.
+    - It runs six Freerouting processes at a time, each taking about 2 GB.
+    - Supersedes "four width variants" above.
+  - **Module ground (M1).** `route.py` now adds three things after the pours:
+    - a solid-connection GND zone on B.Cu under U1 (its courtyard grown 1.2 mm, no thermal spokes on the module's GND pads);
+    - GND stitching vias: a 5 mm grid over the board, a fence 0.9 mm outside the antenna keep-out's edge, and a ring around the module at 1.6 mm steps;
+    - a via is kept only where it lies wholly inside GND copper on both layers, outside rule areas and part bodies, and 0.5 mm hole-to-hole from every other hole.
+
+    A rule area keeping a 2 mm band under the module's RF end clear on both layers was tried and taken out. With it, Freerouting could no longer route the module's inner pins, and its sessions dropped nets. The only trace it moved is a static key line on the far layer, 0.8 mm from the antenna section.
+
+    Slow signals (keys, LEDs, SWD, status sense) may still pass under the module's digital part on B.Cu outside MODULE_CORE. The E73 datasheet (p.8) forbids high-frequency digital, high-frequency analog and power traces under the module, and none of those run there.
+  - **No vias under the USB-C receptacle's shell (L1).** A rule area `J1_SHELL` (J1's courtyard, both layers) forbids vias there; tracks may still pass under it, insulated by solder mask.
+  - **J1 pin-in-paste (M3).** J1's four through-hole shell legs get bottom paste apertures (`paste_pads` in `hardware/parts.json`), so reflow solders them. Hand soldering is not needed.
+  - **Panel (M2, L2).**
+    - The panel has a 5 mm frame on all four sides, because J1 and SW35 reach 1 mm past the halves' inner edges, which are the panel's short edges.
+    - Each half is held by tabs: two to the top frame, two to the bottom, the original two across the gap, and one to the side frame beside the antenna, where the keep-out keeps copper away from the mouse bites. All tabs are placed clear of the overhanging socket pads.
+    - The layout plugin sets each half's tab boundary itself, because KiKit's bounding-box partition drops a side where the two halves' boxes differ by tens of µm.
+    - Mill radius is 0.5 mm, the original's smallest inside corner, and the mouse bites sit 0.1 mm inside the edge.
+    - KiKit's arc approximation (128 chords per circle, up to 0.025 mm off on the large arcs) is replaced in the layout plugin by one within 0.5 µm. KiKit's arc reconstruction is off, because it re-fit arcs up to 0.012 mm off.
+    - `scripts/checks/panel_outline.py` checks that the panel keeps each half's outline outside the tabs, within 2 µm.
+  - **Silkscreen (L3).** Text is 1.0 mm with a 0.15 mm stroke, JLC's legibility guidance. The custom parts' outlines are 0.15 mm lines. The original footprints keep their 0.12 mm lines, and JLC's own footprints keep their 0.06 mm marker dots.
+- 2026-10-18: Phases 4–6 second review changes (reports/phase5/review.md, second review):
+  - **LED lens hole.** The MHT151RGBCT's lens is 1.4 × 1.25 mm, so its diagonal (1.88 mm) didn't fit the 1.8 mm hole. The hole is now the datasheet's 2.1 mm, and the four pads sit 0.15 mm further out (centres at x ±1.70). That keeps 0.265 mm between hole and copper and still overlaps the LED's end terminals by 0.3 mm. Supersedes the 1.8 mm hole in the phase 3 review entry.
+  - **C1 is 4.7 µF** (C23733, 0402, basic part), replacing 100 nF. The saved E73 datasheet doesn't show the module carrying the regulator's (REG0) output capacitor on VDD, and the same footprint takes the larger value at no routing cost. This qualifies the earlier claim that the module contains the VDD capacitor.
+  - **U2's exposed-pad paste** shrinks 0.15 mm per side, to 68% coverage, as in TI's example stencil (BQ24073 datasheet p.41). A new `paste_margin` fixup does it.
+  - **Stitching under the module.**
+    - `stitch()` now allows GND vias under U1's body, which is what its datasheet wants under a module, and adds a 1.6 mm candidate grid under and within 3 mm of it.
+    - It also tests candidates against the pours filled without island removal. Under the module the top pour is islands between the far-layer tracks, and a via is what connects an island; the refill after keeps only the islands that got one.
+    - The routed boards were restitched with `route.py --restitch`.
+  - **RF band on the module side: tried, then dropped.** A rule area keeping tracks off B.Cu under the module's RF end would have moved LED_B (right half) and KEY_R0C4's escape (left half). Neither Freerouting's completion passes nor a hand route could reconnect those nets around it: the pad's only other ways out are blocked by the inner pad column and neighbouring escapes. Those traces stay, and are accepted in the review.
+  - **Post-routing repairs.**
+    - `route.py --ripup-drc` removes only the copper in DRC errors, for completion passes to redo; here those passes left gaps.
+    - `scripts/routing/joins.py` swaps hand-specified segments from `hardware/routing_joins.json`. They are the few short edits the LED pad move needed and the router couldn't make, and they are what the final boards got.
+  - **Panel.**
+    - The side tab moved into the antenna keep-out's stretch of edge and narrowed to 2 mm. Its mouse bites at y 39.4–42.4 stay clear of copper and leave 0.95 mm of board to the ear's case hole (third review M1). `panel_outline.py` checks that every mouse bite leaves ≥ 0.8 mm to any hole. Before, KiKit's refill cut the only link of a 21 mm² piece of the right half's top pour and island removal dropped it.
+    - `scripts/checks/panel_fills.py` (run by `fab/build.sh`) checks that the panel's GND pours equal the halves' apart from the mouse bites. It allows at most 1 mm² of extra copper per layer, and none inside the antenna keep-out.
+  - **J1's legs are hand-soldered after delivery.** The pin-in-paste apertures equal the pads and fill the barrels only partly, and overprinting isn't safe 0.23 mm from the SMD pins. Supersedes "Hand soldering is not needed" in the first-review entry.

@@ -1,0 +1,33 @@
+{
+  "_doc": "Track edits applied by scripts/routing/joins.py after routing. Each entry is [net, layer, x1, y1, x2, y2(, width)] in mm, board coordinates. They move copper away from the LED pads, which moved 0.15 mm outward when the lens hole became the datasheet's 2.1 mm (phases 4-6 second review M3); Freerouting's completion passes left these short gaps open.",
+  "left": {
+    "_why": "RESET_N's diagonal between LED1 pad 3 and the parallel KEY_T1 diagonal: shifted 0.035 mm away from the pad and narrowed to 0.15 mm, leaving >= 0.15 mm to both.",
+    "remove": [
+      ["RESET_N", "B.Cu", 225.566, 83.6, 223.91, 83.6],
+      ["RESET_N", "B.Cu", 223.91, 83.6, 218.14, 77.831],
+      ["RESET_N", "B.Cu", 218.14, 77.831, 218.14, 74.4]
+    ],
+    "add": [
+      ["RESET_N", "B.Cu", 225.566, 83.6, 223.86, 83.6, 0.175],
+      ["RESET_N", "B.Cu", 223.86, 83.6, 218.14, 77.88, 0.15],
+      ["RESET_N", "B.Cu", 218.14, 77.88, 218.14, 74.4, 0.175]
+    ]
+  },
+  "right": {
+    "_why": "LED_R_K moved 0.135 mm east, clear of LED1 pad 3. VDD's diagonal can't pass between LED1 pad 4 and the parallel GND diagonal, so VDD turns as an L and that GND segment goes: the pours on both layers connect its ends.",
+    "remove": [
+      ["LED_R_K", "B.Cu", 35.224, 78.285, 35.395, 78.456],
+      ["LED_R_K", "B.Cu", 35.395, 78.456, 35.395, 79.899],
+      ["LED_R_K", "B.Cu", 35.395, 79.899, 34.744, 80.55],
+      ["VDD", "B.Cu", 36.051, 80.331, 34.943, 81.439],
+      ["GND", "B.Cu", 31.007, 85.933, 36.641, 80.299]
+    ],
+    "add": [
+      ["LED_R_K", "B.Cu", 35.224, 78.285, 35.53, 78.591, 0.15],
+      ["LED_R_K", "B.Cu", 35.53, 78.591, 35.53, 79.9, 0.15],
+      ["LED_R_K", "B.Cu", 35.53, 79.9, 34.894, 80.55, 0.15],
+      ["VDD", "B.Cu", 36.051, 80.331, 36.051, 81.439, 0.15],
+      ["VDD", "B.Cu", 36.051, 81.439, 34.943, 81.439, 0.15]
+    ]
+  }
+}

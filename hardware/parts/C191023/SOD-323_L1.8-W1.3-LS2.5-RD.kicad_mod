@@ -1,0 +1,207 @@
+(footprint "SOD-323_L1.8-W1.3-LS2.5-RD"
+  (version 20241229)
+  (generator "urchin++ footprint_to_bottom")
+  (layer "B.Cu")
+  (property "Reference" "REF**"
+    (at 0 4 0)
+    (layer "B.SilkS")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15)
+      )
+      (justify mirror)
+    )
+  )
+  (property "Value" "SOD-323_L1.8-W1.3-LS2.5-RD"
+    (at 0 -4 0)
+    (layer "B.Fab")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15)
+      )
+      (justify mirror)
+    )
+  )
+  (property "Datasheet" ""
+    (at 0 0 0)
+    (layer "B.Fab")
+    (hide yes)
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15)
+      )
+      (justify mirror)
+    )
+  )
+  (property "Description" ""
+    (at 0 0 0)
+    (layer "B.Fab")
+    (hide yes)
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15)
+      )
+      (justify mirror)
+    )
+  )
+  (property "LCSC Part" "C191023"
+    (at 0 0 0)
+    (layer "B.Fab")
+    (hide yes)
+    (effects
+      (font
+        (size 1.27 1.27)
+        (thickness 0.15)
+      )
+      (justify mirror)
+    )
+  )
+  (attr smd)
+  (fp_line
+    (start -0.85 -0.73)
+    (end 0.9 -0.73)
+    (stroke
+      (width 0.15)
+      (type solid)
+    )
+    (layer "B.SilkS")
+  )
+  (fp_line
+    (start -0.85 0.73)
+    (end 0.9 0.73)
+    (stroke
+      (width 0.15)
+      (type solid)
+    )
+    (layer "B.SilkS")
+  )
+  (fp_line
+    (start -0.45 0.73)
+    (end -0.45 -0.73)
+    (stroke
+      (width 0.15)
+      (type solid)
+    )
+    (layer "B.SilkS")
+  )
+  (fp_line
+    (start 0.9 -0.73)
+    (end 0.9 -0.52)
+    (stroke
+      (width 0.15)
+      (type solid)
+    )
+    (layer "B.SilkS")
+  )
+  (fp_line
+    (start 0.9 0.73)
+    (end 0.9 0.53)
+    (stroke
+      (width 0.15)
+      (type solid)
+    )
+    (layer "B.SilkS")
+  )
+  (fp_circle
+    (center -1.23 -0.65)
+    (end -1.2 -0.65)
+    (stroke
+      (width 0.06)
+      (type solid)
+    )
+    (fill no)
+    (layer "B.SilkS")
+  )
+  (fp_poly
+    (pts
+      (xy -0.775005 -0.802538)
+      (xy -0.775005 -0.450139)
+      (xy -1.079779 -0.450139)
+      (xy -1.079779 -0.802538)
+      (xy -0.775005 -0.802538)
+    )
+    (stroke
+      (width 0)
+      (type solid)
+    )
+    (fill yes)
+    (layer "B.SilkS")
+  )
+  (fp_poly
+    (pts
+      (xy -0.775005 0.80231)
+      (xy -0.775005 0.449885)
+      (xy -1.079779 0.449885)
+      (xy -1.079779 0.80231)
+      (xy -0.775005 0.80231)
+    )
+    (stroke
+      (width 0)
+      (type solid)
+    )
+    (fill yes)
+    (layer "B.SilkS")
+  )
+  (fp_line
+    (start -0.82 -0.65)
+    (end -0.82 0.65)
+    (stroke
+      (width 0.05)
+      (type solid)
+    )
+    (layer "B.CrtYd")
+  )
+  (fp_line
+    (start -0.82 0.65)
+    (end 0.88 0.65)
+    (stroke
+      (width 0.05)
+      (type solid)
+    )
+    (layer "B.CrtYd")
+  )
+  (fp_line
+    (start 0.88 -0.65)
+    (end -0.82 -0.65)
+    (stroke
+      (width 0.05)
+      (type solid)
+    )
+    (layer "B.CrtYd")
+  )
+  (fp_line
+    (start 0.88 0.65)
+    (end 0.88 -0.65)
+    (stroke
+      (width 0.05)
+      (type solid)
+    )
+    (layer "B.CrtYd")
+  )
+  (pad "1" smd rect
+    (at -1.17 0)
+    (size 1 0.7)
+    (layers "B.Cu" "B.Mask" "B.Paste")
+  )
+  (pad "2" smd rect
+    (at 1.17 0)
+    (size 1 0.7)
+    (layers "B.Cu" "B.Mask" "B.Paste")
+  )
+  (embedded_fonts no)
+  (model "${KIPRJMOD}/../../parts/C191023/SOD-323_L1.8-W1.3-LS2.5-RD.step"
+    (offset
+      (xyz 0 0 0)
+    )
+    (scale
+      (xyz 1 1 1)
+    )
+    (rotate
+      (xyz 0 0 0)
+    )
+  )
+)

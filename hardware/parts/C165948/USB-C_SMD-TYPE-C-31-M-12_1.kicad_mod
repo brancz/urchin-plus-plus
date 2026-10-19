@@ -181,28 +181,28 @@
     (at 4.33 1.71)
     (size 1.2 2)
     (drill oval 0.799998 1.499997)
-    (layers "*.Cu" "*.Mask")
+    (layers "*.Cu" "*.Mask" "B.Paste")
     (remove_unused_layers no)
   )
   (pad "2" thru_hole oval
     (at 4.33 -2.47)
     (size 1.2 1.8)
     (drill oval 0.799998 1.199998)
-    (layers "*.Cu" "*.Mask")
+    (layers "*.Cu" "*.Mask" "B.Paste")
     (remove_unused_layers no)
   )
   (pad "3" thru_hole oval
     (at -4.33 -2.47)
     (size 1.2 1.8)
     (drill oval 0.799998 1.199998)
-    (layers "*.Cu" "*.Mask")
+    (layers "*.Cu" "*.Mask" "B.Paste")
     (remove_unused_layers no)
   )
   (pad "4" thru_hole oval
     (at -4.33 1.71)
     (size 1.2 2)
     (drill oval 0.799998 1.499997)
-    (layers "*.Cu" "*.Mask")
+    (layers "*.Cu" "*.Mask" "B.Paste")
     (remove_unused_layers no)
   )
   (pad "A1B12" smd custom
@@ -352,7 +352,7 @@
   (embedded_fonts no)
   (model "${KIPRJMOD}/../../parts/C165948/USB-C_SMD-TYPE-C-31-M-12_1.step"
     (offset
-      (xyz 0 0 0)
+      (xyz 0 -2.49 0)
     )
     (scale
       (xyz 1 1 1)

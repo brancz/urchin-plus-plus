@@ -7,8 +7,10 @@
   "footprint": "SW-TH_MSK12C02.kicad_mod",
   "side": "bottom",
   "footprint_changes": [
+    "3D model offset set to [0, -0.49, 0]",
     "unnumbered 0.9 mm plated hole without annular ring made non-plated",
     "unnumbered 0.9 mm plated hole without annular ring made non-plated",
+    "attribute through_hole -> smd (no plated through-hole pads)",
     "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
   ],
   "fixups_source": null,
@@ -41,7 +43,7 @@
       "signal": "T3"
     }
   ],
-  "fetched_utc": "2026-10-18T12:27:48Z",
+  "fetched_utc": "2026-10-18T13:25:19Z",
   "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
   "kicad_cli": "9.0.9"
 }

@@ -1,0 +1,87 @@
+{
+ "board": "hardware/layouts/right/right.kicad_pcb",
+ "date": "2026-10-18",
+ "command": "scripts/routing/route.py hardware/layouts/right/right.kicad_pcb WORK --variants 13 --threads 1 --completions 0 (then scripts/routing/widen.py)",
+ "chosen": "attempt-13",
+ "variant": {
+  "signal": 0.127,
+  "power": 0.3,
+  "clearance": 0.175
+ },
+ "threads": 1,
+ "unrouted": 0,
+ "tracks": 749,
+ "vias": 242,
+ "stitching_vias": 162,
+ "neckdowns_widened_to_0.127": 13,
+ "edge_gnd_stubs_dropped": 3,
+ "widened_to_0.15": 412,
+ "kept_below_0.15": 16,
+ "attempts_unrouted_vias": [
+  [
+   3,
+   256,
+   "attempt-3"
+  ],
+  [
+   4,
+   241,
+   "attempt-2"
+  ],
+  [
+   4,
+   254,
+   "attempt-1"
+  ],
+  [
+   5,
+   254,
+   "attempt-5"
+  ],
+  [
+   5,
+   260,
+   "attempt-6"
+  ],
+  [
+   5,
+   266,
+   "attempt-4"
+  ],
+  [
+   6,
+   243,
+   "attempt-7"
+  ],
+  [
+   6,
+   246,
+   "attempt-0"
+  ],
+  [
+   11,
+   243,
+   "attempt-10 (threads 1)"
+  ],
+  [
+   0,
+   242,
+   "attempt-13 (threads 1)"
+  ]
+ ],
+ "note": "Variants 0-7 (clearance 0.17 mm) left 3-6 connections unrouted. Of the 0.175/0.18 mm variants, 13 routed completely in KiCad's count; variant 10 claimed 0 unrouted but its session missed 11 connections.",
+ "after_second_review": {
+  "steps": [
+   "scripts/placement/place.py, scripts/ato_build.sh (LED footprint: 2.1 mm hole, pads at x +-1.70; C1 4.7 uF; U2 paste)",
+   "scripts/routing/joins.py BOARD --half right (hardware/routing_joins.json)",
+   "scripts/routing/route.py BOARD --restitch (twice: before and after islands counted)",
+   "scripts/routing/widen.py BOARD"
+  ],
+  "joins_segments_added": 5,
+  "stitching_vias_added": 10,
+  "vias": 252,
+  "gnd_vias": 180,
+  "unrouted": 0,
+  "note": "route.py --ripup-drc and --complete-only were tried first; the completion passes left gaps, so the final boards are the routed ones with only the joins applied."
+ }
+}

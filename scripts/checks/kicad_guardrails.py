@@ -30,6 +30,7 @@ Boards, together with the .kicad_pro and fp-lib-table next to them:
 """
 
 import argparse
+import collections
 import json
 import sys
 from pathlib import Path
@@ -117,6 +118,10 @@ def check_pcb(path, max_format, prebuild=False):
         return problems  # a newer format has other syntax; the rest would be noise
 
     problems += schema_problems(root, "kicad_pcb", "board")
+    seen = collections.Counter(n[1] for _p, n in sexp.walk(root) if sexp.head(n) == "uuid")
+    dupes = sum(c - 1 for c in seen.values() if c > 1)
+    if dupes:
+        problems.append("%d duplicated item UUIDs (run scripts/placement/unique_uuids.py)" % dupes)
     lib_layer = library_layers(path)
     if lib_layer is None:
         problems.append("no fp-lib-table next to the board; can't check footprint sides")

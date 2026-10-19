@@ -284,6 +284,7 @@
     (at 0 0)
     (size 0.005 0.005)
     (layers "B.Cu" "B.Mask" "B.Paste")
+    (solder_paste_margin -0.15)
     (options
       (clearance outline)
       (anchor circle)

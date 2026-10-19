@@ -7,6 +7,7 @@
   "footprint": "WIRELM-SMD_E73-2G4M08S1C.kicad_mod",
   "side": "bottom",
   "footprint_changes": [
+    "3D model offset set to [0, -1.985, 0]",
     "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
   ],
   "fixups_source": null,
@@ -273,7 +274,7 @@
       "signal": "VDDH"
     }
   ],
-  "fetched_utc": "2026-10-18T12:27:38Z",
+  "fetched_utc": "2026-10-18T13:25:15Z",
   "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
   "kicad_cli": "9.0.9"
 }

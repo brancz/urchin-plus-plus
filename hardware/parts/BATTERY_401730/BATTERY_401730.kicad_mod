@@ -6,7 +6,6 @@
   (property "Reference" "BT**"
     (at 0 0 0)
     (layer "F.SilkS")
-    (uuid "feffaf01-87d2-5888-955a-90d6a1271ca7")
     (effects
       (font
         (size 1.27 1.27)
@@ -17,7 +16,6 @@
   (property "Value" "BATTERY_401730"
     (at 0 0 0)
     (layer "F.Fab")
-    (uuid "6de54aed-b130-5aca-986a-b1299846da69")
     (effects
       (font
         (size 1.27 1.27)
@@ -29,7 +27,6 @@
     (at 0 0 0)
     (layer "F.Fab")
     (hide yes)
-    (uuid "8ebb868d-5420-53ea-a947-25864bc7bc57")
     (effects
       (font
         (size 1.27 1.27)
@@ -41,7 +38,6 @@
     (at 0 0 0)
     (layer "F.Fab")
     (hide yes)
-    (uuid "cfb7e51b-2f7d-5c86-b17c-29b4bef8441c")
     (effects
       (font
         (size 1.27 1.27)
@@ -54,41 +50,37 @@
     (start -8.5 -15)
     (end 8.5 -15)
     (stroke
-      (width 0.12)
+      (width 0.15)
       (type default)
     )
     (layer "F.SilkS")
-    (uuid "dd9cce90-4595-52a2-aace-bc78a7690246")
   )
   (fp_line
     (start -8.5 15)
     (end -8.5 -15)
     (stroke
-      (width 0.12)
+      (width 0.15)
       (type default)
     )
     (layer "F.SilkS")
-    (uuid "165f7858-6540-5c68-9126-66b33f363c6e")
   )
   (fp_line
     (start 8.5 -15)
     (end 8.5 15)
     (stroke
-      (width 0.12)
+      (width 0.15)
       (type default)
     )
     (layer "F.SilkS")
-    (uuid "ac907a0f-ee6e-5034-9600-4e8bf5bb5775")
   )
   (fp_line
     (start 8.5 15)
     (end -8.5 15)
     (stroke
-      (width 0.12)
+      (width 0.15)
       (type default)
     )
     (layer "F.SilkS")
-    (uuid "4509fd08-fc9f-5bcd-a94c-3ea550018f3e")
   )
   (fp_line
     (start -8.75 -15.25)
@@ -98,7 +90,6 @@
       (type default)
     )
     (layer "F.CrtYd")
-    (uuid "1ed1fb62-2f20-587d-903f-72db279e7d5e")
   )
   (fp_line
     (start -8.75 15.25)
@@ -108,7 +99,6 @@
       (type default)
     )
     (layer "F.CrtYd")
-    (uuid "37b53807-3d65-5ed1-bb48-dbfbbfd9bde0")
   )
   (fp_line
     (start 8.75 -15.25)
@@ -118,7 +108,6 @@
       (type default)
     )
     (layer "F.CrtYd")
-    (uuid "70fd92e4-7c95-5789-aadc-5f0fa30e9faf")
   )
   (fp_line
     (start 8.75 15.25)
@@ -128,16 +117,14 @@
       (type default)
     )
     (layer "F.CrtYd")
-    (uuid "82a6ac0d-753c-5dda-84fe-5dd7c9414fe6")
   )
   (fp_text user "401730"
     (at 0 0 0)
     (layer "F.SilkS")
-    (uuid "d5d857b8-1a72-578e-aa10-7aa949509df8")
     (effects
       (font
-        (size 0.8 0.8)
-        (thickness 0.12)
+        (size 1 1)
+        (thickness 0.15)
       )
     )
   )

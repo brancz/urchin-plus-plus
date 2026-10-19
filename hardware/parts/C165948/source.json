@@ -7,6 +7,11 @@
   "footprint": "USB-C_SMD-TYPE-C-31-M-12_1.kicad_mod",
   "side": "bottom",
   "footprint_changes": [
+    "pad 1 gets solder paste (pin-in-paste)",
+    "pad 2 gets solder paste (pin-in-paste)",
+    "pad 3 gets solder paste (pin-in-paste)",
+    "pad 4 gets solder paste (pin-in-paste)",
+    "3D model offset set to [0, -2.49, 0]",
     "pad A1B12: dropped (thermal_bridge_angle 90), which atopile doesn't keep",
     "pad A4B9: dropped (thermal_bridge_angle 90), which atopile doesn't keep",
     "pad B1A12: dropped (thermal_bridge_angle 90), which atopile doesn't keep",
@@ -16,7 +21,7 @@
     "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)",
     "dropped fp_line on B.SilkS duplicating one on B.CrtYd at ((4.47, -5.09), (-4.47, -5.09))"
   ],
-  "fixups_source": null,
+  "fixups_source": "Pin-in-paste for the four through-hole shell legs (pads 1-4): JLC's footprint has no paste on them, so reflow wouldn't solder them and the receptacle would hang on its 12 small SMD pads (phase 4-6 review M3).",
   "pin_names": null,
   "model": "USB-C_SMD-TYPE-C-31-M-12_1.step",
   "pins": [
@@ -101,7 +106,7 @@
       "signal": "VBUS"
     }
   ],
-  "fetched_utc": "2026-10-18T12:27:41Z",
+  "fetched_utc": "2026-10-18T16:14:35Z",
   "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
   "kicad_cli": "9.0.9"
 }

@@ -1,9 +1,13 @@
 """Edit library footprints at the S-expression level: datasheet fixups and atopile safety.
 
+model_fixups(node, spec)  set the 3D model's offset/rotate (hardware/parts.json "model")
 fixups(node, spec)   apply corrections taken from a part's datasheet (hardware/parts.json):
                        move_pads  {"1": [x, y], ...}   pad centre in footprint coordinates
                        add_npth   [[x, y, drill], ...] non-plated holes (e.g. reverse-mount LEDs)
-sanitize(node)       make unnumbered plated holes without copper (locating pegs) non-plated;
+                       paste_pads ["1", ...]          through-hole pads that get paste (pin-in-paste)
+                       paste_margin {"17": -0.15}     paste aperture grown (+) or shrunk (-) per side, mm
+sanitize(node)       make unnumbered plated holes without copper (locating pegs) non-plated, and
+                     mark a footprint with no plated through-hole pad as SMD;
                      remove what atopile would drop or merge anyway, where that is cosmetic:
                        pad sub-items atopile doesn't model (e.g. thermal_bridge_angle),
                        ${REFERENCE}/%R texts (atopile strips them),
@@ -40,6 +44,35 @@ def fixups(node, spec):
                      [A("size"), _num(d), _num(d)], [A("drill"), _num(d)], [A("layers"), "*.Cu", "*.Mask"],
                      [A("uuid"), str(uuid.uuid4())]])
         changes.append("non-plated hole %.2f mm added at (%s, %s)" % (d, x, y))
+    for name in spec.get("paste_pads") or []:
+        for pad in [p for p in sexp.children(node, "pad") if p[1] == name]:
+            layers = sexp.child(pad, "layers")
+            if "F.Paste" not in layers[1:]:
+                layers.append("F.Paste")
+                changes.append("pad %s gets solder paste (pin-in-paste)" % name)
+    for name, margin in sorted((spec.get("paste_margin") or {}).items()):
+        for pad in [p for p in sexp.children(node, "pad") if p[1] == name]:
+            for old in [c for c in pad[1:] if sexp.head(c) == "solder_paste_margin"]:
+                pad.remove(old)
+            pad.append([A("solder_paste_margin"), _num(margin)])
+            changes.append("pad %s paste aperture %+.2f mm per side" % (name, margin))
+    return changes
+
+
+def model_fixups(node, spec):
+    """Set the 3D model's offset/rotation (mm/degrees) on the footprint as stored, i.e. on the
+    bottom-side footprint for bottom parts. Checked by exporting STEP and comparing bodies."""
+    changes = []
+    if not spec:
+        return changes
+    m = sexp.child(node, "model")
+    if m is None:
+        raise ValueError("footprint has no 3D model to adjust")
+    for key in ("offset", "rotate"):
+        if key in spec:
+            xyz = sexp.child(sexp.child(m, key), "xyz")
+            xyz[1:4] = [_num(v) for v in spec[key]]
+            changes.append("3D model %s set to %s" % (key, spec[key]))
     return changes
 
 
@@ -76,6 +109,12 @@ def sanitize(node):
                 max(float(size[1]), float(size[2])) <= float(drill[1]):
             c[2] = A("np_thru_hole")
             changes.append("unnumbered %s mm plated hole without annular ring made non-plated" % drill[1])
+    attr = sexp.child(node, "attr")
+    pads = sexp.children(node, "pad")
+    if attr is not None and len(attr) > 1 and attr[1] == "through_hole" and pads and \
+            not any(p[2] == "thru_hole" for p in pads):
+        attr[1] = A("smd")  # only SMD pads and non-plated pegs: an SMD part (CPL exports may filter on it)
+        changes.append("attribute through_hole -> smd (no plated through-hole pads)")
     for t in [c for c in node[1:] if sexp.head(c) == "fp_text" and len(c) > 2 and c[2] in DUPLICATE_REF_TEXTS]:
         node.remove(t)
         changes.append("dropped fp_text %s (atopile strips duplicate designators)" % t[2])

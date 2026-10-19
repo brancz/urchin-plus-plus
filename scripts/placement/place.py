@@ -14,6 +14,9 @@
     a rule area MODULE_CORE on B.Cu, the module's side, forbidding tracks and vias, so
     the ground pour there stays whole (E73 datasheet p.8: under the module, route only
     on the far layer and keep ground on the module side).
+  - Under the USB-C receptacle's body (J1's courtyard), a rule area J1_SHELL on both
+    layers forbidding vias: the grounded metal shell sits on the solder mask, and a
+    tented via's rim is where mask is thinnest (phase 4-6 review L1). Tracks may pass.
   - The antenna keep-out: a board-level rule area named ANTENNA_KEEPOUT on both copper
     layers forbidding tracks, vias and copper pour (pads are allowed only so that the NPTH
     case holes in the old notch's ears pass; clearance.py rejects any copper pad in it),
@@ -23,7 +26,8 @@
     extended 5 mm past the board edge. Parts and the battery are kept out by
     scripts/checks/clearance.py.
 Unknown or missing footprints are errors. --check changes nothing and fails if any
-footprint is not where the geometry file and placement.json put it. Runs under KiCad's Python; Python 3.9.
+footprint is not where the geometry file and placement.json put it, or if any rule
+area's outline, layers or forbid settings differ. Runs under KiCad's Python; Python 3.9.
 """
 
 import argparse
@@ -40,6 +44,8 @@ KEEPOUT_NAME = "ANTENNA_KEEPOUT"
 KEEPOUT_LOCAL = (-9.4, 9.4, -15.98, -7.58)  # x0, x1, y0, y1 in U1's frame (mm)
 CORE_NAME = "MODULE_CORE"
 CORE_LOCAL = (-2.8, 2.8, -7.58, 3.4)        # inside the module's inner pad rows
+RETIRED = ("MODULE_RF",)                    # rule areas place.py drew before; removed when found
+SHELL_NAME = "J1_SHELL"                      # no vias under the USB-C receptacle's grounded shell
 
 
 def nm(v):
@@ -61,7 +67,8 @@ def half_parts(placement, half):
         if half == "left":
             out[ref] = dict(r)
         else:
-            out[ref] = dict(r, x=2 * placement["mirror_x"] - r["x"], rot=r.get("rot_right", (-r["rot"]) % 360))
+            out[ref] = dict(r, x=2 * placement["mirror_x"] - r["x"], y=r.get("y_right", r["y"]),
+                            rot=r.get("rot_right", (180 - r["rot"]) % 360))
     return out
 
 
@@ -72,6 +79,14 @@ def keepout_polygon(u1, box=KEEPOUT_LOCAL):
         dx, dy = rotate(lx, ly, u1["rot"])
         pts.append((u1["x"] + dx, u1["y"] + dy))
     return pts
+
+
+def shell_polygon(fp):
+    """J1's bottom courtyard as a rectangle (board coordinates, nm)."""
+    fp.BuildCourtyardCaches()
+    bb = fp.GetCourtyard(pcbnew.B_CrtYd).BBox()
+    return [(bb.GetLeft(), bb.GetTop()), (bb.GetRight(), bb.GetTop()), (bb.GetRight(), bb.GetBottom()),
+            (bb.GetLeft(), bb.GetBottom())]
 
 
 def main():
@@ -98,7 +113,7 @@ def main():
     # Take every wrapper before changing anything: after the first edit KiCad 9's SWIG can
     # hand back untyped objects from the board's item lists.
     footprints = list(board.GetFootprints())
-    zones = [z for z in board.Zones() if z.GetIsRuleArea() and z.GetZoneName() in (KEEPOUT_NAME, CORE_NAME)]
+    zones = [z for z in board.Zones() if z.GetIsRuleArea() and z.GetZoneName() in (KEEPOUT_NAME, CORE_NAME, SHELL_NAME) + RETIRED]
     edges = [d for d in board.GetDrawings() if d.GetLayer() == pcbnew.Edge_Cuts]
     if not args.check:
         for item in zones + edges:
@@ -127,12 +142,28 @@ def main():
     for ref in sorted(set(targets) - seen):
         problems.append("%s: placed but not on the board" % ref)
     if args.check:
+        shell = [z for z in zones if z.GetZoneName() == SHELL_NAME]
+        j1 = next(fp for fp in footprints if fp.GetReference() == "J1")
+        if len(shell) != 1 or not (shell[0].GetDoNotAllowVias() and not shell[0].GetDoNotAllowTracks()):
+            problems.append("%s rule area missing or its settings changed" % SHELL_NAME)
+        elif sorted(shell_polygon(j1)) != sorted((o.x, o.y) for o in [shell[0].Outline().COutline(0).CPoint(i)
+                                                for i in range(shell[0].Outline().COutline(0).PointCount())]):
+            problems.append("%s outline differs from J1's courtyard" % SHELL_NAME)
+        if any(z.GetZoneName() in RETIRED for z in zones):
+            problems.append("retired rule area %s still on the board" % ", ".join(RETIRED))
         for name, box in ((KEEPOUT_NAME, KEEPOUT_LOCAL), (CORE_NAME, CORE_LOCAL)):
             mine = [z for z in zones if z.GetZoneName() == name]
             if len(mine) != 1:
                 problems.append("%d %s rule areas, expected 1" % (len(mine), name))
                 continue
-            o = mine[0].Outline().COutline(0)
+            z = mine[0]
+            want_layers = (pcbnew.F_Cu, pcbnew.B_Cu) if name == KEEPOUT_NAME else (pcbnew.B_Cu,)
+            have_layers = tuple(l for l in (pcbnew.F_Cu, pcbnew.B_Cu) if z.GetLayerSet().Contains(l))
+            pour = z.GetDoNotAllowCopperPour() if name == KEEPOUT_NAME else not z.GetDoNotAllowCopperPour()
+            if have_layers != want_layers or not (z.GetIsRuleArea() and z.GetDoNotAllowTracks() and
+                                                   z.GetDoNotAllowVias() and pour):
+                problems.append("%s rule-area settings changed (layers, tracks, vias, pour)" % name)
+            o = z.Outline().COutline(0)
             got = sorted((o.CPoint(i).x, o.CPoint(i).y) for i in range(o.PointCount()))
             if got != sorted((nm(x), nm(y)) for x, y in keepout_polygon(parts["U1"], box)):
                 problems.append("%s outline differs from the one drawn from U1" % name)
@@ -188,9 +219,24 @@ def main():
         c.Outline().Append(nm(x), nm(y))
     board.Add(c)
 
+    sh = pcbnew.ZONE(board)
+    sh.SetIsRuleArea(True)
+    sh.SetZoneName(SHELL_NAME)
+    sh.SetLayerSet(pcbnew.LSET().AddLayer(pcbnew.F_Cu).AddLayer(pcbnew.B_Cu))
+    sh.SetDoNotAllowTracks(False)
+    sh.SetDoNotAllowVias(True)
+    sh.SetDoNotAllowPads(False)
+    sh.SetDoNotAllowCopperPour(False)
+    sh.SetDoNotAllowFootprints(False)
+    sh.Outline().NewOutline()
+    for x, y in shell_polygon(next(fp for fp in footprints if fp.GetReference() == "J1")):
+        sh.Outline().Append(x, y)
+    board.Add(sh)
+
     board.Save(args.board)
-    print("placed %d footprints on %s (%s), outline %d primitives, %s, %s" % (
-        len(seen), args.board, args.half, len(geo["outline"]) + len(geo["closures"]), KEEPOUT_NAME, CORE_NAME))
+    print("placed %d footprints on %s (%s), outline %d primitives, rule areas %s" % (
+        len(seen), args.board, args.half, len(geo["outline"]) + len(geo["closures"]),
+        ", ".join((KEEPOUT_NAME, CORE_NAME, SHELL_NAME))))
     sys.stdout.flush()
     os._exit(0)  # KiCad 9's SWIG objects segfault in destructors at exit
 

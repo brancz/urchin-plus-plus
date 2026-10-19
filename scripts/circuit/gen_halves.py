@@ -18,8 +18,9 @@ gets its own GPIO map, chosen from geometry:
     rows cost a little more (they need a via to escape), and so do the pads next to
     the antenna end.
 Excluded GPIOs: P0.18 (reset), P0.09/P0.10 (NFC pins; free as GPIOs only after a
-UICR change), and P1.11, P1.10, P1.06 (module pins 1, 2, 42, within 1.5 mm of the
-antenna section; keeps key traces off the antenna end). Positions come from hardware/geometry/urchin.json (keys) and
+UICR change), and the pads next to the antenna section where their traces would run
+along its end: P1.11, P1.10, P1.06 (pins 1, 2, 42) on the left half, P1.06 on the right
+half (there pins 1 and 2 face the keys; see EXCLUDED_BY_HALF). Positions come from hardware/geometry/urchin.json (keys) and
 hardware/placement.json (module, LEDs' resistors, sense diodes). --check fails
 if the generated files differ from the committed ones. Python 3.9.
 """
@@ -36,8 +37,13 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from lib import sexp  # noqa: E402
 
 HW = ROOT / "hardware"
-EXCLUDED = {"P0_18", "P0_09", "P0_10",   # reset; NFC pins (GPIO only after a UICR change)
-            "P1_11", "P1_10", "P1_06"}   # the pads nearest the antenna end (pins 1, 2, 42)
+EXCLUDED = {"P0_18", "P0_09", "P0_10"}   # reset; NFC pins (GPIO only after a UICR change)
+# The pads nearest the antenna end (pins 1, 2 and 42) stay free where their traces would
+# run along the antenna end. On the right half pins 1 and 2 face the keys, so their
+# traces leave sideways, away from the antenna, ~4 mm from its end where the ground pour
+# runs anyway; that half needs them because its other side (pins 26-43) faces the inner
+# edge, which the switch and USB-C crowd.
+EXCLUDED_BY_HALF = {"left": {"P1_11", "P1_10", "P1_06"}, "right": {"P1_06"}}
 INNER_PENALTY = 1.5      # mm: inner-row module pads need a via or a squeeze to escape
 ANTENNA_PENALTY = 3.0    # mm: pads within 2 mm of the module's first pad row by the antenna
 FUNCTIONS = {  # core signal -> part whose position is the target
@@ -157,12 +163,13 @@ def half_parts(placement, half):
         if half == "left":
             parts[ref] = dict(r)
         else:
-            parts[ref] = dict(r, x=round(2 * placement["mirror_x"] - r["x"], 6),
-                              rot=r.get("rot_right", (-r["rot"]) % 360))
+            parts[ref] = dict(r, x=round(2 * placement["mirror_x"] - r["x"], 6), y=r.get("y_right", r["y"]),
+                              rot=r.get("rot_right", (180 - r["rot"]) % 360))
     return parts
 
 
 def assign(half, geo, parts, pins, key_pads):
+    pins = {n: v for n, v in pins.items() if n not in EXCLUDED_BY_HALF[half]}
     u1 = parts["U1"]
     pin_xy = {}
     for name, (num, lx, ly) in pins.items():

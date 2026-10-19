@@ -1,10 +1,10 @@
 {
-  "lcsc": "C8598",
-  "manufacturer": "CJ",
-  "mpn": "B5819W SL",
-  "datasheet_url": "https://lcsc.com/product-detail/Schottky-Barrier-Diodes-SBD_B5819W-SL_C8598.html",
-  "symbol": "B5819W_C8598.kicad_sym",
-  "footprint": "SOD-123_L2.7-W1.6-LS3.7-RD-1.kicad_mod",
+  "lcsc": "C191023",
+  "manufacturer": "Hottech",
+  "mpn": "1N5819WS",
+  "datasheet_url": "https://lcsc.com/product-detail/Others_B5819WS_C191023.html",
+  "symbol": "1N5819WS.kicad_sym",
+  "footprint": "SOD-323_L1.8-W1.3-LS2.5-RD.kicad_mod",
   "side": "bottom",
   "footprint_changes": [
     "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
@@ -14,7 +14,7 @@
     "1": "K",
     "2": "A"
   },
-  "model": "SOD-123_L2.7-W1.6-LS3.7-RD-1.step",
+  "model": "SOD-323_L1.8-W1.3-LS2.5-RD.step",
   "pins": [
     {
       "pin": "2",
@@ -27,7 +27,7 @@
       "signal": "K"
     }
   ],
-  "fetched_utc": "2026-10-18T12:27:45Z",
+  "fetched_utc": "2026-10-18T12:48:30Z",
   "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
   "kicad_cli": "9.0.9"
 }

@@ -1,0 +1,19 @@
+{
+ "board": "hardware/layouts/left/left.kicad_pcb",
+ "half": "left",
+ "errors": [],
+ "excused": {
+  "inherited from the original: the tenting puck's bottom courtyard overlaps key socket courtyards (rule 1 geometry; ARCHITECTURE.md 2026-10-18)": 5,
+  "inherited from the original: hotswap socket pads of SW5/SW17 (left) and SW22/SW27/SW32 (right) overhang the outline by up to 0.4 mm (rule 1; the router trims them)": 2
+ },
+ "warnings": {
+  "connection_width": 1,
+  "missing_courtyard": 7,
+  "silk_edge_clearance": 5,
+  "starved_thermal": 1,
+  "silk_over_copper": 72,
+  "silk_overlap": 50
+ },
+ "unconnected": 0,
+ "unrouted_ok": false
+}

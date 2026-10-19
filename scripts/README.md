@@ -23,6 +23,26 @@ Every generator and check, runnable headless; CI runs the same scripts.
 | `roundtrip/edit_board.py`, `pcb_ops.py`, `autoroute_smoke.py` | `$KICAD_PY` | pcbnew operations used by the round-trip |
 | `roundtrip/kicad10_probe.sh KICAD10_APP [OUT]` | bash | Evidence that atopile can't rebuild a board KiCad 10 saved |
 | `roundtrip/upstream_checks.sh` | bash | Evidence for the atopile part-server and end-of-life facts |
+| `parts/custom_parts.py` | `$KICAD_PY` | Parts without an LCSC number: battery, dock and SWD pads; battery outline, steel discs, rubber feet |
+| `parts/bom_check.py` | python3 | Live JLC stock for every part, datasheet present, per-half quantities match atopile's BOM |
+| `parts/footprint_report.py OUT` | python3 | Pad tables and SVGs of every assembled footprint, for review against the datasheets |
+| `circuit/gen_halves.py [--check]` | python3 | Per-half GPIO assignment from geometry → `hardware/halves.ato`, `hardware/pinmap.json` |
+| `placement/place.py BOARD --half H [--check]` | `$KICAD_PY` | Positions from the geometry file and `hardware/placement.json`; outline; rule areas: antenna keep-out, module core, no vias under J1's shell |
+| `placement/board_setup.py [--check]` | python3 | JLC design rules and net classes in each half's `.kicad_pro` |
+| `placement/silk.py BOARD [--check]` | `$KICAD_PY` | Bottom designators mirrored, 1.0 mm text with a 0.15 mm stroke; small passives' designators hidden |
+| `placement/unique_uuids.py BOARD [--check]` | python3 | Give every board item its own UUID |
+| `routing/route.py BOARD WORK` | `$KICAD_PY` | Freerouting (up to 24 width and clearance variants, several at a time, each checked with KiCad's connectivity), exact positions restored, neck-downs widened, GND pour on both layers, module ground zone and stitching vias; `--ripup`, `--ripup-nets`, `--ripup-drc`, `--complete-only`, `--restitch` |
+| `routing/joins.py BOARD --half H` | `$KICAD_PY` | Hand-specified track edits from `hardware/routing_joins.json` where the router can't reconnect a short gap |
+| `routing/widen.py BOARD [--to 0.15]` | `$KICAD_PY` | Widen thin tracks to 0.15 mm wherever KiCad's DRC allows (the last step of `route.py`) |
+| `routing/preroutes.py` | `$KICAD_PY` (module) | Scripted critical routes: the USB-C receptacle's paired pins |
+| `checks/connectivity.py BOARD --half H` | `$KICAD_PY` | Every pad on its datasheet-intended net; LCSC number per designator; module GPIO table |
+| `checks/clearance.py BOARD --half H` | `$KICAD_PY` | Part spacing, holes, edge, tenting puck, rule 2 sides, antenna keep-out (rule 6) |
+| `checks/drc.py BOARD --half H` | python3 | KiCad DRC (zones refilled) with the allow-list in `hardware/drc_allow.json` |
+| `checks/hardware_all.sh [--out DIR] [ato args]` | bash | All of the above for both halves, after `ato_build.sh` (CI) |
+| `render/placement_views.sh BOARD OUT`, `render/copper_views.sh BOARD OUT`, `render/svg_to_png.py` | bash/uv | 2D layer views for reports |
+| `checks/panel_outline.py PANEL LEFT RIGHT` | `$KICAD_PY` | Each half's outline in the panel, apart from the tabs, within 2 µm (rule 1) |
+| `checks/panel_fills.py PANEL LEFT RIGHT` | `$KICAD_PY` | The panel's GND pours equal the halves' apart from the mouse bites (no copper dropped by KiKit's refill) |
+| `fab/build.sh [OUT]` | bash | Panel (KiKit, `hardware/panel.json`, `fab/panel_layout.py`; rules from `fab/panel_project.py`), panel outline and pour checks, panel DRC, Gerbers, BOM and CPL (`fab/jlc_assembly.py`), renders, STEP |
 | `lib/` | — | Shared helpers: S-expression reader/writer, `toolchain.env` reader |
 
 Scripts that import `pcbnew` must stay Python 3.9-compatible (KiCad's bundled Python on macOS). Shell scripts must parse under macOS's bash 3.2. CI checks both.

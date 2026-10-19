@@ -1,5 +1,5 @@
 {
- "_doc": "Electronics placement for the LEFT half, in the original board's coordinates (mm; KiCad rotation, degrees counter-clockwise). The right half is the mirror image: x' = 2 * mirror_x - x, rotation' = -rotation (mod 360) unless the part gives rot_right. Keys, the tenting puck and the case holes are not listed here: they come from hardware/geometry/urchin.json. side is the board side of the part; every assembled part is on the bottom (CLAUDE.md rule 2). Used by scripts/circuit/gen_halves.py (GPIO assignment by distance) and the phase 3 placement script.",
+ "_doc": "Electronics placement for the LEFT half, in the original board's coordinates (mm; KiCad rotation, degrees counter-clockwise). The right half is the mirror image: x' = 2 * mirror_x - x, rotation' = 180 - rotation (mod 360), which mirrors the pin order of two-terminal parts, unless the part gives rot_right (and y_right) (parts whose function points along their local y axis: the module, USB-C, slide switch; and parts with text that must stay readable). Keys, the tenting puck and the case holes are not listed here: they come from hardware/geometry/urchin.json. side is the board side of the part; every assembled part is on the bottom (CLAUDE.md rule 2). Used by scripts/circuit/gen_halves.py (GPIO assignment by distance) and the phase 3 placement script.",
  "mirror_x": 128.397,
  "parts": {
   "U1": {
@@ -7,21 +7,24 @@
    "y": 50.83,
    "rot": 0,
    "side": "bottom",
-   "note": "antenna end (local -y) on the top edge of the old nice!nano notch, y = 39.846"
+   "note": "antenna end (local -y) on the top edge of the old nice!nano notch, y = 39.846",
+   "rot_right": 0
   },
   "SW35": {
    "x": 236.8,
    "y": 62.6,
    "rot": 270,
    "side": "bottom",
-   "note": "slide switch, lever through the inner edge"
+   "note": "slide switch, lever through the inner edge",
+   "rot_right": 90
   },
   "J1": {
    "x": 235.12,
    "y": 72.3,
    "rot": 270,
    "side": "bottom",
-   "note": "USB-C at the inner edge, shell 1.0 mm past it"
+   "note": "USB-C at the inner edge, shell 1.0 mm past it",
+   "rot_right": 90
   },
   "U2": {
    "x": 226.8,
@@ -30,7 +33,7 @@
    "side": "bottom"
   },
   "U3": {
-   "x": 229.2,
+   "x": 228.2,
    "y": 74.0,
    "rot": 0,
    "side": "bottom"
@@ -38,14 +41,16 @@
   "C1": {
    "x": 229.18,
    "y": 60.3,
-   "rot": 90,
-   "side": "bottom"
+   "rot": 270,
+   "side": "bottom",
+   "note": "VDD pad toward module pin 19"
   },
   "C6": {
-   "x": 226.64,
-   "y": 60.4,
-   "rot": 90,
-   "side": "bottom"
+   "x": 232.6,
+   "y": 63.35,
+   "rot": 180,
+   "side": "bottom",
+   "note": "VDDH bulk next to the switch's common pin (the module has its own VDDH decoupling)"
   },
   "C5": {
    "x": 231.0,
@@ -108,28 +113,33 @@
    "side": "bottom"
   },
   "D4": {
-   "x": 223.5,
-   "y": 60.0,
+   "x": 234.3,
+   "y": 82.2,
    "rot": 0,
-   "side": "bottom"
+   "side": "bottom",
+   "note": "CHG sense diode next to R6 and the charge LED"
   },
   "D5": {
-   "x": 223.5,
-   "y": 61.9,
+   "x": 234.3,
+   "y": 83.8,
    "rot": 0,
-   "side": "bottom"
+   "side": "bottom",
+   "note": "PGOOD sense diode next to R7"
   },
   "R6": {
    "x": 230.6,
    "y": 79.3,
    "rot": 0,
-   "side": "bottom"
+   "side": "bottom",
+   "y_right": 80.7,
+   "note": "right half: R6 and R7 swap rows, because the charge LED turned 180 degrees has its red and green pads the other way up"
   },
   "R7": {
    "x": 230.6,
    "y": 80.7,
    "rot": 0,
-   "side": "bottom"
+   "side": "bottom",
+   "y_right": 79.3
   },
   "LED2": {
    "x": 234.4,
@@ -175,21 +185,24 @@
    "y": 80.6,
    "rot": 0,
    "side": "top",
-   "note": "battery wire pads, below the cell"
+   "note": "battery wire pads, below the cell",
+   "rot_right": 0
   },
   "TP2": {
    "x": 215.6,
    "y": 74.4,
    "rot": 0,
    "side": "bottom",
-   "note": "SWD pads"
+   "note": "SWD pads",
+   "rot_right": 0
   },
   "TP1": {
    "x": 178.0,
    "y": 85.0,
    "rot": 0,
    "side": "bottom",
-   "note": "dock contacts, outside the tenting puck"
+   "note": "dock contacts, outside the tenting puck",
+   "rot_right": 0
   },
   "D2": {
    "x": 180.0,
@@ -204,57 +217,64 @@
    "side": "bottom"
   },
   "BT2": {
-   "x": 230.1,
+   "x": 229.7,
    "y": 62.0,
    "rot": 0,
    "side": "top",
-   "note": "401730 cell outline; protection board end toward BT1"
+   "note": "401730 cell outline; protection board end toward BT1",
+   "rot_right": 0
   },
   "MK1": {
    "x": 165.0,
    "y": 86.0,
    "rot": 0,
    "side": "bottom",
-   "note": "steel disc"
+   "note": "steel disc",
+   "rot_right": 0
   },
   "MK2": {
    "x": 191.0,
    "y": 86.5,
    "rot": 0,
    "side": "bottom",
-   "note": "steel disc"
+   "note": "steel disc",
+   "rot_right": 0
   },
   "MK3": {
    "x": 141.7,
    "y": 31.2,
    "rot": 0,
    "side": "bottom",
-   "note": "rubber foot"
+   "note": "rubber foot",
+   "rot_right": 0
   },
   "MK4": {
    "x": 134.7,
    "y": 83.2,
    "rot": 0,
    "side": "bottom",
-   "note": "rubber foot"
+   "note": "rubber foot",
+   "rot_right": 0
   },
   "MK5": {
    "x": 215.7,
    "y": 39.2,
    "rot": 0,
    "side": "bottom",
-   "note": "rubber foot"
+   "note": "rubber foot",
+   "rot_right": 0
   },
   "MK6": {
    "x": 223.7,
    "y": 100.2,
    "rot": 0,
    "side": "bottom",
-   "note": "rubber foot"
+   "note": "rubber foot",
+   "rot_right": 0
   },
   "R11": {
-   "x": 228.6,
-   "y": 76.6,
+   "x": 227.6,
+   "y": 76.9,
    "rot": 0,
    "side": "bottom",
    "note": "VBUS pull-down, below U3 (its VBUS pin)"

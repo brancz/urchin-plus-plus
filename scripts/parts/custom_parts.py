@@ -20,7 +20,8 @@
 All are excluded from the BOM and position files. Bottom-side parts are written as
 bottom-side library footprints (scripts/parts/footprint_to_bottom.py), then
 sanitized like imported parts (scripts/lib/footprint.py). UUIDs are derived from
-the part name, so reruns are byte-identical. KiCad's Python; Python 3.9.
+the part name (KiCad's UUID generator is seeded), and item UUIDs are left out, so
+reruns are byte-identical. KiCad's Python; Python 3.9.
 """
 
 import argparse
@@ -30,7 +31,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import uuid
 from pathlib import Path
 
 import pcbnew
@@ -39,6 +39,8 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 from lib import footprint as fplib  # noqa: E402
 from lib import sexp  # noqa: E402
+
+SILK = 0.15  # mm, JLC's minimum silkscreen line width
 
 PARTS = {
     "BAT_PADS": dict(side="top", prefix="BT", doc="Battery wire pads (hand-soldered).",
@@ -105,13 +107,13 @@ def footprint(name, spec):
         t = pcbnew.PCB_TEXT(fp)
         t.SetText(text)
         t.SetLayer(pcbnew.F_SilkS)
-        t.SetTextSize(pcbnew.VECTOR2I(mm(0.8), mm(0.8)))
-        t.SetTextThickness(mm(0.12))
+        t.SetTextSize(pcbnew.VECTOR2I(mm(1.0), mm(1.0)))  # JLC's legible minimum: 1.0 mm, 0.15 mm stroke
+        t.SetTextThickness(mm(0.15))
         t.SetFPRelativePosition(pcbnew.VECTOR2I(mm(x), mm(y)))
         fp.Add(t)
     body = spec.get("body")
     if body and body[0] == "circle":
-        for layer, d, width in ((pcbnew.F_CrtYd, body[1] + 0.5, 0.05), (pcbnew.F_SilkS, body[1], 0.12)):
+        for layer, d, width in ((pcbnew.F_CrtYd, body[1] + 0.5, 0.05), (pcbnew.F_SilkS, body[1], SILK)):
             c = pcbnew.PCB_SHAPE(fp)
             c.SetShape(pcbnew.SHAPE_T_CIRCLE)
             c.SetCenter(pcbnew.VECTOR2I(0, 0))
@@ -125,12 +127,12 @@ def footprint(name, spec):
             s.SetStart(pcbnew.VECTOR2I(mm(a[0]), mm(a[1])))
             s.SetEnd(pcbnew.VECTOR2I(mm(b[0]), mm(b[1])))
             s.SetLayer(pcbnew.F_SilkS)
-            s.SetWidth(mm(0.12))
+            s.SetWidth(mm(SILK))
             fp.Add(s)
         return fp
     if body:  # rectangle centred on the origin: courtyard 0.25 mm outside the silkscreen outline
         rects = [(pcbnew.F_CrtYd, body[1] / 2 + 0.25, body[2] / 2 + 0.25, 0.05),
-                 (pcbnew.F_SilkS, body[1] / 2, body[2] / 2, 0.12)]
+                 (pcbnew.F_SilkS, body[1] / 2, body[2] / 2, SILK)]
     else:
         xs = [x + s * w / 2 for _n, _s, x, _y, _sh, w, _h in spec["pads"] for s in (-1, 1)]
         ys = [y + s * h / 2 for _n, _s, _x, y, _sh, _w, h in spec["pads"] for s in (-1, 1)]
@@ -198,9 +200,8 @@ def main():
         f = parts / name / (name + ".kicad_mod")
         node = sexp.load(f)
         fplib.sanitize(node)  # e.g. pcbnew's default thermal_bridge_angle, which atopile drops
-        n = iter(range(10 ** 6))
-        f.write_text(re.sub(r'\(uuid "[0-9a-f-]+"\)', lambda m: '(uuid "%s")' % uuid.uuid5(
-            uuid.NAMESPACE_URL, "urchin++/%s/%d" % (name, next(n))), "\n".join(sexp.dump_lines(node)) + "\n"))
+        # no item UUIDs: atopile would copy them onto every instance of the part
+        f.write_text(re.sub(r'\n\s*\(uuid "[0-9a-f-]+"\)', "", "\n".join(sexp.dump_lines(node)) + "\n"))
         print("%-10s %s" % (name, spec["side"]))
 
 

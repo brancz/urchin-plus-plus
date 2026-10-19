@@ -18,8 +18,8 @@ original's, unchanged except for the format upgrade KiCad's writer applies:
   HOLE_M2_3_5  swoop:M2_hole_3.5mm / chocolad:M2_hole_3.5mm (identical pads)
                Case holes are made non-plated, same drill: several sit 0.25 mm from
                the board edge, and plating them serves no purpose (no net).
-UUIDs are derived from the part name and item index, so reruns reproduce the
-committed files byte for byte (CI checks that against a fresh copy of the original).
+Item UUIDs are left out (atopile would copy them onto every instance), so reruns
+reproduce the committed files byte for byte (CI checks that against a fresh copy of the original).
 Two cosmetic changes keep atopile from mangling them (it matches footprint items
 by geometry only and drops what it doesn't model, reports/phase0/): of two items
 with identical geometry on different layers only one is kept (courtyard over fab;
@@ -32,7 +32,6 @@ Runs under KiCad's Python (pcbnew); Python 3.9.
 import argparse
 import os
 import re
-import uuid
 import shutil
 import subprocess
 import sys
@@ -152,9 +151,9 @@ def write_part(parts_dir, name, fp, prefix, doc, pins=None, exclude=True, prefer
     os.mkdir(lib)
     pcbnew.PCB_IO_KICAD_SEXPR().FootprintSave(lib, fp)
     text = open(os.path.join(lib, fp_name + ".kicad_mod"), encoding="utf-8").read()
-    counter = iter(range(10 ** 6))
-    text = re.sub(r'\(uuid "[0-9a-f-]+"\)',
-                  lambda m: '(uuid "%s")' % uuid.uuid5(uuid.NAMESPACE_URL, "urchin++/%s/%d" % (name, next(counter))), text)
+    # No item UUIDs: atopile copies them onto every instance, and 17 keys sharing pad UUIDs
+    # make KiCad's DRC name the wrong footprint (phase 3 review). KiCad assigns them on load.
+    text = re.sub(r'\n\s*\(uuid "[0-9a-f-]+"\)', "", text)
     (out / (fp_name + ".kicad_mod")).write_text(text, encoding="utf-8")
     pin_sym = PIN.format(name=name, a=pins[0], b=pins[1]) if pins else ""
     (out / (name + ".kicad_sym")).write_text(SYMBOL.format(name=name, prefix=prefix, pins=pin_sym))

@@ -210,4 +210,18 @@
 		(options "")
 		(descr "atopile: part lib: C25091")
 	)
+	(lib
+		(name "C191023")
+		(type "KiCad")
+		(uri "${KIPRJMOD}/../../parts/C191023")
+		(options "")
+		(descr "atopile: part lib: C191023")
+	)
+	(lib
+		(name "C23733")
+		(type "KiCad")
+		(uri "${KIPRJMOD}/../../parts/C23733")
+		(options "")
+		(descr "atopile: part lib: C23733")
+	)
 )

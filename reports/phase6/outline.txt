@@ -1,0 +1,4 @@
+panel outline L: 2974 samples, 562 skipped at tabs, worst 0.0015 mm at (244.60, 51.45)
+panel outline R: 2975 samples, 560 skipped at tabs, worst 0.0015 mm at (52.08, 51.63)
+panel mouse bites: closest other hole 0.95 mm of board away (H8_L, bite at (259.20, 51.22))
+panel outline: OK

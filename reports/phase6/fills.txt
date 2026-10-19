@@ -1,0 +1,9 @@
+panel fills L F.Cu: 0.367 mm² extra, 0.0000 mm² inside the keep-out
+panel fills L F.Cu: 0.001 mm² of the half's pour missing away from the mouse bites
+panel fills L B.Cu: 0.368 mm² extra, 0.0000 mm² inside the keep-out
+panel fills L B.Cu: 0.001 mm² of the half's pour missing away from the mouse bites
+panel fills R F.Cu: 0.367 mm² extra, 0.0000 mm² inside the keep-out
+panel fills R F.Cu: 0.001 mm² of the half's pour missing away from the mouse bites
+panel fills R B.Cu: 0.367 mm² extra, 0.0000 mm² inside the keep-out
+panel fills R B.Cu: 0.001 mm² of the half's pour missing away from the mouse bites
+panel fills: OK

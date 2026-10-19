@@ -10,13 +10,18 @@ A part's envelope on a side is its courtyard plus its copper pads on that side
     (rule 2);
   - parts on the same side keep 0.25 mm between envelopes (JLC assembly spacing),
     except the mechanical parts whose overlaps the original already has;
-  - each envelope keeps 0.3 mm from every hole edge (any side) and from the outline,
-    except the parts that are meant to reach past the edge (USB-C shell, switch lever);
+  - each envelope keeps 0.3 mm from every hole edge (any side) and from the outline;
+    for the parts meant to reach past the edge (USB-C shell, switch lever) only their
+    copper pads must keep 0.3 mm inside;
   - bottom parts stay outside the tenting puck's courtyard (the puck must sit flat),
     and keys' socket pads count as obstacles;
-  - the antenna keep-out (ANTENNA_KEEPOUT, drawn by place.py): no copper pad, track,
-    via or zone fill of any net on any layer, no envelope of any part but U1, and
-    not the battery, all with 0 mm tolerance; NPTH holes without copper are allowed;
+  - the antenna keep-out (ANTENNA_KEEPOUT, drawn by place.py; its layers and forbid
+    settings are checked too): no copper pad, track, via or zone fill (measured as
+    intersection area after a fresh fill) of any net on any layer, no part but U1 and
+    no key reaching into it, and the battery at least 3 mm away; NPTH holes without
+    copper are allowed;
+  - a footprint's own non-plated holes keep 0.25 mm from its own copper (KiCad's DRC
+    doesn't check that);
   - the battery's top envelope keeps 0.25 mm from every other top item and hole.
 --spots R lists free bottom positions for a circle of radius R (feet, discs).
 Exit 1 on any violation. Runs under KiCad's Python; Python 3.9.
@@ -40,6 +45,8 @@ TOP_OK = ("SW", "BT", "H")   # keys, the battery (pads BT1, outline BT2), puck a
 # Through-hole joints under the battery: J1's shell legs (1.01 mm) and SW35's pegs (0.55 mm) are
 # shorter than the 1.6 mm board, so nothing protrudes; the cell sits on 1 mm foam tape over them.
 UNDER_BATTERY = {"J1", "SW35"}
+BATTERY_KEEPOUT_GAP = 3.0  # mm between the cell and the antenna keep-out
+OWN_HOLE_GAP = 0.25        # mm, a footprint's copper to its own non-plated hole (JLC hole-to-copper)
 MECHANICAL = ("SW", "H")     # the original's own parts: overlaps among them are inherited
 
 
@@ -92,17 +99,42 @@ def inside(p, poly):
     return c
 
 
+def _orient(a, b, c):
+    v = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+    return 0 if abs(v) < 1e-12 else (1 if v > 0 else -1)
+
+
+def segs_cross(a, b, c, d):
+    """Do segments a-b and c-d touch or cross?"""
+    o1, o2, o3, o4 = _orient(a, b, c), _orient(a, b, d), _orient(c, d, a), _orient(c, d, b)
+    if o1 != o2 and o3 != o4:
+        return True
+    on = lambda p, q, r: min(p[0], r[0]) - 1e-12 <= q[0] <= max(p[0], r[0]) + 1e-12 and \
+        min(p[1], r[1]) - 1e-12 <= q[1] <= max(p[1], r[1]) + 1e-12
+    return (o1 == 0 and on(a, c, b)) or (o2 == 0 and on(a, d, b)) or (o3 == 0 and on(c, a, d)) or (o4 == 0 and on(c, b, d))
+
+
+def edges_of(P):
+    """Edges of a polygon, or the single segment of a two-point path."""
+    if len(P) == 2:
+        return [(P[0], P[1])]
+    return [(P[i - 1], P[i]) for i in range(len(P))]
+
+
 def poly_dist(A, B):
-    """Distance between two polygons (0 if they overlap)."""
+    """Distance between two polygons (or a segment and a polygon); 0 if they touch or overlap."""
     if not A or not B:
         return float("inf")
-    if any(inside(p, B) for p in A) or any(inside(p, A) for p in B):
+    EA, EB = edges_of(A), edges_of(B)
+    if any(segs_cross(a, b, c, d) for a, b in EA for c, d in EB):
+        return 0.0
+    if (len(B) > 2 and inside(A[0], B)) or (len(A) > 2 and inside(B[0], A)):
         return 0.0
     d = float("inf")
-    for P, Q in ((A, B), (B, A)):
+    for P, EQ in ((A, EB), (B, EA)):
         for p in P:
-            for i in range(len(Q)):
-                d = min(d, seg_dist(p, Q[i], Q[i - 1]))
+            for a, b in EQ:
+                d = min(d, seg_dist(p, a, b))
     return d
 
 
@@ -143,6 +175,7 @@ def main():
     ap.add_argument("--spots", type=float)
     args = ap.parse_args()
     board = pcbnew.LoadBoard(args.board)
+    pcbnew.ZONE_FILLER(board).Fill(board.Zones())  # check fresh fills, not whatever was saved
     problems, notes = [], []
 
     edge_segs = []
@@ -165,6 +198,10 @@ def main():
         ko = []
     else:
         ko = poly_points(keepout.Outline())
+        layers = [l for l in (pcbnew.F_Cu, pcbnew.B_Cu) if keepout.GetLayerSet().Contains(l)]
+        if len(layers) != 2 or not (keepout.GetDoNotAllowTracks() and keepout.GetDoNotAllowVias()
+                                    and keepout.GetDoNotAllowCopperPour()):
+            problems.append("ANTENNA_KEEPOUT must forbid tracks, vias and pour on F.Cu and B.Cu")
 
     env = {}
     for fp in board.GetFootprints():
@@ -207,14 +244,50 @@ def main():
             d = env_dist(e, [circle_poly(c, r)])
             if d < HOLE_GAP:
                 problems.append("%s (%s) is %.2f mm from a hole of %s at (%.2f, %.2f), need %.2f" % (ref, side, d, href, c[0], c[1], HOLE_GAP))
-        if ref not in PAST_EDGE:
-            d = min(seg_dist(p, a, b) for poly in e for p in poly for a, b in edge_segs)
-            outside = any(not inside(p, edge_poly) for poly in e for p in poly)
+        edge_e = e
+        if ref in PAST_EDGE:  # the body may reach past the edge; the copper may not
+            fp = board.FindFootprintByReference(ref)
+            cu = pcbnew.B_Cu if side == "bottom" else pcbnew.F_Cu
+            edge_e = []
+            for pad in fp.Pads():
+                if pad.IsOnLayer(cu) and pad.GetAttribute() != pcbnew.PAD_ATTRIB_NPTH:
+                    sps = pcbnew.SHAPE_POLY_SET()
+                    pad.TransformShapeToPolygon(sps, cu, 0, pcbnew.FromMM(0.005), pcbnew.ERROR_INSIDE)
+                    edge_e += [o for o in outlines(sps) if o]
+        if edge_e:
+            d = min(seg_dist(p, a, b) for poly in edge_e for p in poly for a, b in edge_segs)
+            outside = any(not inside(p, edge_poly) for poly in edge_e for p in poly)
             if outside or d < EDGE_GAP:
                 problems.append("%s (%s) is %s the board edge (%.2f mm), need %.2f inside" % (
                     ref, side, "past" if outside else "close to", d, EDGE_GAP))
         if ko and ref != "U1" and env_dist(e, [ko]) == 0:
             problems.append("%s (%s) is inside the antenna keep-out (rule 6)" % (ref, side))
+        if ko and ref == "BT2" and env_dist(e, [ko]) < BATTERY_KEEPOUT_GAP:
+            problems.append("the battery is %.2f mm from the antenna keep-out, need %.1f" % (env_dist(e, [ko]), BATTERY_KEEPOUT_GAP))
+
+    # Keys (mechanical) may come near the keep-out but not into it.
+    for (ref, side), e in env.items():
+        if ko and mech(ref) and ref.startswith("SW") and env_dist(e, [ko]) == 0:
+            problems.append("%s (%s) reaches into the antenna keep-out (rule 6)" % (ref, side))
+
+    # A part's own copper against its own holes (KiCad's DRC skips these): hole-to-copper 0.25 mm.
+    for fp in board.GetFootprints():
+        own = [p for p in fp.Pads() if p.GetAttribute() == pcbnew.PAD_ATTRIB_NPTH]
+        for h in own:
+            hc = (mm(h.GetPosition().x), mm(h.GetPosition().y))
+            hr = mm(max(h.GetDrillSize().x, h.GetDrillSize().y)) / 2
+            for p in fp.Pads():
+                if p.GetAttribute() == pcbnew.PAD_ATTRIB_NPTH:
+                    continue
+                for layer in (pcbnew.F_Cu, pcbnew.B_Cu):
+                    if p.IsOnLayer(layer):
+                        sps = pcbnew.SHAPE_POLY_SET()
+                        p.TransformShapeToPolygon(sps, layer, 0, pcbnew.FromMM(0.005), pcbnew.ERROR_INSIDE)
+                        d = min(poly_dist(o, circle_poly(hc, hr, 48)) for o in outlines(sps))
+                        if d < OWN_HOLE_GAP:
+                            problems.append("%s pad %s is %.3f mm from its own %.2f mm hole, need %.2f" % (
+                                fp.GetReference(), p.GetNumber(), d, 2 * hr, OWN_HOLE_GAP))
+                        break
 
     puck = board.FindFootprintByReference("H1")
     if puck is not None:
@@ -233,19 +306,24 @@ def main():
                     if p.IsOnLayer(layer):
                         sps = pcbnew.SHAPE_POLY_SET()
                         p.TransformShapeToPolygon(sps, layer, 0, pcbnew.FromMM(0.005), pcbnew.ERROR_INSIDE)
-                        if poly_dist(poly_points(sps), ko) == 0:
+                        if any(poly_dist(o, ko) == 0 for o in outlines(sps)):
                             problems.append("pad %s.%s copper inside the antenna keep-out" % (fp.GetReference(), p.GetNumber()))
         for t in board.GetTracks():
             pts = [(mm(t.GetStart().x), mm(t.GetStart().y)), (mm(t.GetEnd().x), mm(t.GetEnd().y))]
             if any(inside(p, ko) for p in pts) or poly_dist(pts, ko) < mm(t.GetWidth()) / 2:
                 problems.append("%s on %s inside the antenna keep-out" % (t.GetClass(), t.GetNetname()))
+        ko_sps = pcbnew.SHAPE_POLY_SET(keepout.Outline())
         for z in board.Zones():
             if z.GetIsRuleArea():
                 continue
             for layer in (pcbnew.F_Cu, pcbnew.B_Cu):
                 if z.IsOnLayer(layer) and z.HasFilledPolysForLayer(layer):
-                    if poly_dist(poly_points(z.GetFilledPolysList(layer)), ko) == 0:
-                        problems.append("zone %s fill on %s inside the antenna keep-out" % (z.GetNetname(), board.GetLayerName(layer)))
+                    inter = pcbnew.SHAPE_POLY_SET(z.GetFilledPolysList(layer))
+                    inter.BooleanIntersection(ko_sps)
+                    area = inter.Area() / 1e12  # nm^2 -> mm^2
+                    if area > 1e-4:
+                        problems.append("zone %s fill on %s covers %.4f mm^2 of the antenna keep-out" % (
+                            z.GetNetname(), board.GetLayerName(layer), area))
 
     spots = []
     if args.spots:

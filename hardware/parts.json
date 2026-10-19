@@ -50,17 +50,48 @@
         "42": "P1_06",
         "43": "P0_10"
       },
-      "pin_names_source": "E73-2G4M08S1C datasheet pp.6-7 pin table (module pin -> nRF52840 ball/function); AIx pins named by GPIO: AIN0..7 = P0.02, P0.03, P0.04, P0.05, P0.28, P0.29, P0.30, P0.31. Pin 26 RST = P0.18/RESET, 41/43 NF1/NF2 = P0.09/P0.10 (NFC), 11/13 XL1/XL2 = P0.00/P0.01."
+      "pin_names_source": "E73-2G4M08S1C datasheet pp.6-7 pin table (module pin -> nRF52840 ball/function); AIx pins named by GPIO: AIN0..7 = P0.02, P0.03, P0.04, P0.05, P0.28, P0.29, P0.30, P0.31. Pin 26 RST = P0.18/RESET, 41/43 NF1/NF2 = P0.09/P0.10 (NFC), 11/13 XL1/XL2 = P0.00/P0.01.",
+      "model": {
+        "offset": [
+          0,
+          -1.985,
+          0
+        ],
+        "source": "STEP body is centred (13 x 18 mm); the footprint origin is 1.985 mm from the body centre. Checked by exporting STEP: body spans y 39.85-57.85 on the left half, matching the courtyard."
+      }
     },
     {
       "lcsc": "C15220",
       "qty": 1,
-      "role": "Li-ion charger with power path (TI BQ24073RGTR)"
+      "role": "Li-ion charger with power path (TI BQ24073RGTR)",
+      "fixups": {
+        "source": "docs/datasheets/C15220_BQ24073RGTR.pdf p.41, 'Example Stencil Design': 68% solder coverage on the 1.7 mm centre pad. The exposed pad's (17) paste aperture is shrunk 0.15 mm per side to 1.40 x 1.40 mm, 68% of the pad; EasyEDA's footprint pastes 100%, which can float a 0.5 mm-pitch QFN (phases 4-6 second review L2).",
+        "paste_margin": {
+          "17": -0.15
+        }
+      }
     },
     {
       "lcsc": "C165948",
       "qty": 1,
-      "role": "USB-C receptacle, USB 2.0 (HRO TYPE-C-31-M-12)"
+      "role": "USB-C receptacle, USB 2.0 (HRO TYPE-C-31-M-12)",
+      "model": {
+        "offset": [
+          0,
+          -2.49,
+          0
+        ],
+        "source": "Moves the receptacle's front face onto the courtyard front (local y -5.09, the drawing's 6.27 mm from the locating pegs). Checked in an exported STEP."
+      },
+      "fixups": {
+        "source": "Pin-in-paste for the four through-hole shell legs (pads 1-4): JLC's footprint has no paste on them, so reflow wouldn't solder them and the receptacle would hang on its 12 small SMD pads (phase 4-6 review M3).",
+        "paste_pads": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ]
+      }
     },
     {
       "lcsc": "C7519",
@@ -77,14 +108,14 @@
       "pin_names_source": "ST USBLC6-2 datasheet, pin configuration: 1/6 I/O1, 2 GND, 3/4 I/O2, 5 VBUS"
     },
     {
-      "lcsc": "C8598",
+      "lcsc": "C191023",
       "qty": 4,
-      "role": "Schottky diodes: USB VBUS and dock 5V into the charger input (D1, D2), and CHG/PGOOD sense into GPIOs (D4, D5) (B5819W)",
+      "role": "Schottky diodes: USB VBUS and dock 5V into the charger input (D1, D2), CHG/PGOOD sense into GPIOs (D4, D5) (1N5819WS, SOD-323)",
       "pin_names": {
         "1": "K",
         "2": "A"
       },
-      "pin_names_source": "SOD-123: pin 1 is the cathode (band); EasyEDA calls it 'neg'"
+      "pin_names_source": "1N5819WS datasheet p.1: SOD-323, cathode at the band ('-'); checked against the footprint's silkscreen bar"
     },
     {
       "lcsc": "C123790",
@@ -106,7 +137,15 @@
         "3": "T3",
         "4": "SHELL"
       },
-      "pin_names_source": "MSK12C02 drawing: 2 is the common terminal, 1 and 3 the throws, 4 the shell tabs"
+      "pin_names_source": "MSK12C02 drawing: 2 is the common terminal, 1 and 3 the throws, 4 the shell tabs",
+      "model": {
+        "offset": [
+          0,
+          -0.49,
+          0
+        ],
+        "source": "Moves the lever tip onto the courtyard's lever end. Checked in an exported STEP."
+      }
     },
     {
       "lcsc": "C720477",
@@ -123,22 +162,22 @@
       "qty": 2,
       "role": "reverse-mount RGB LEDs, common anode: status (GPIO) and charge (CHG/PGOOD) (MHT151RGBCT)",
       "fixups": {
-        "source": "docs/datasheets/C409782_MHT151RGBCT.pdf p.2, 'Recommended Solder Pad (Reverse Type)': 0.8 x 0.7 mm pads, 2.3 mm between pad rows, 2.1 mm hole. EasyEDA's footprint has the pads 0.2 mm closer together and no hole.",
+        "source": "docs/datasheets/C409782_MHT151RGBCT.pdf p.2: the lens is 1.4 x 1.25 mm (diagonal 1.88 mm), and 'Recommended Solder Pad (Reverse Type)' has a 2.1 mm hole and 0.8 x 0.7 mm pads 2.3 mm apart, which puts the pad corners 0.12 mm from the hole. The hole is the datasheet's 2.1 mm; the pads sit 0.15 mm further out (centres at x +-1.70) so they keep 0.265 mm from the hole (JLC hole-to-copper 0.25 mm) and still overlap the LED's end terminals by 0.3 mm (phases 4-6 second review M3; the earlier 1.8 mm hole left the lens diagonal no room). EasyEDA's footprint has the pads closer together and no hole.",
         "move_pads": {
           "1": [
-            1.55,
+            1.7,
             0.55
           ],
           "2": [
-            1.55,
+            1.7,
             -0.55
           ],
           "3": [
-            -1.55,
+            -1.7,
             -0.55
           ],
           "4": [
-            -1.55,
+            -1.7,
             0.55
           ]
         },
@@ -156,7 +195,20 @@
         "3": "G",
         "4": "R"
       },
-      "pin_names_source": "MHT151RGBCT datasheet p.2 polarity: 1 common anode, 2 blue, 3 green, 4 red (EasyEDA names all three cathodes 'neg', which would short them)"
+      "pin_names_source": "MHT151RGBCT datasheet p.2 polarity: 1 common anode, 2 blue, 3 green, 4 red (EasyEDA names all three cathodes 'neg', which would short them)",
+      "model": {
+        "offset": [
+          0,
+          0,
+          1.0
+        ],
+        "rotate": [
+          180,
+          0,
+          0
+        ],
+        "source": "Reverse mount: the body hangs below the board with the lens up into the hole (EasyEDA's model is normal-mount). Checked in an exported STEP: body z -1.09..0."
+      }
     },
     {
       "lcsc": "C25744",
@@ -184,9 +236,9 @@
       "role": "220R: status LED green and blue (higher forward voltage than red)"
     },
     {
-      "lcsc": "C1525",
+      "lcsc": "C23733",
       "qty": 1,
-      "role": "100nF 0402: VDD"
+      "role": "4.7uF 10V 0402: VDD, the module regulator's output (the E73 datasheet doesn't say the module carries the nRF52840's 4.7 uF REG0 capacitor itself; phases 4-6 second review L3)"
     },
     {
       "lcsc": "C15849",

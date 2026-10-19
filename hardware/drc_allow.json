@@ -1,7 +1,11 @@
 {
- "_doc": "DRC errors that are excused, each with its reason (scripts/checks/drc.py). A rule excuses an error of its type only when every footprint involved matches one of its designator patterns (board edges always match). Keep this list short; every entry is in the phase report.",
+ "_doc": "DRC errors that are excused, each with its reason (scripts/checks/drc.py). A rule excuses an error of its type on the listed halves only when every footprint involved matches one of its designator patterns (board edges always match) and, with \"require\", at least one matches that. Keep this list short; every entry is in the phase report.",
  "rules": [
-  {"type": "courtyards_overlap", "refs": ["H1", "SW*"], "reason": "inherited from the original: the tenting puck's bottom courtyard overlaps key socket courtyards (rule 1 geometry; ARCHITECTURE.md 2026-10-18)"},
-  {"type": "copper_edge_clearance", "refs": ["SW*"], "reason": "inherited from the original: hotswap socket pads overhang the outline by up to 0.4 mm (rule 1; the router trims them)"}
+  {"type": "courtyards_overlap", "refs": ["H1", "SW[1-9]", "SW[12][0-9]", "SW3[0-4]"], "require": ["H1"],
+   "reason": "inherited from the original: the tenting puck's bottom courtyard overlaps key socket courtyards (rule 1 geometry; ARCHITECTURE.md 2026-10-18)"},
+  {"type": "copper_edge_clearance", "refs": ["SW5", "SW17"], "halves": ["left"],
+   "reason": "inherited from the original: hotswap socket pads of SW5/SW17 (left) and SW22/SW27/SW32 (right) overhang the outline by up to 0.4 mm (rule 1; the router trims them)"},
+  {"type": "copper_edge_clearance", "refs": ["SW22", "SW27", "SW32"], "halves": ["right"],
+   "reason": "inherited from the original: hotswap socket pads of SW5/SW17 (left) and SW22/SW27/SW32 (right) overhang the outline by up to 0.4 mm (rule 1; the router trims them)"}
  ]
 }

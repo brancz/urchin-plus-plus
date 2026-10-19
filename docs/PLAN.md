@@ -68,7 +68,7 @@ Phases 7 and 8 can run in parallel with waiting for JLC delivery.
 
 ### Phase 9 — Bring-up (human, with agent guidance)
 1. Visual check of the delivered boards.
-2. Without a battery: power from USB, use a multimeter to check the charger output voltage and polarity at the battery pads, then VDDH and 3V3.
+2. Without a battery: power from USB and use a multimeter. Check the polarity at the battery pads; without a cell the charger's battery detection makes BAT switch on and off, so the reading wanders. Then, with the power switch on, check VDDH (about 4.4 V, the charger's system output) and VDD (1.8 V on a blank module; 3.0–3.3 V once the bootloader sets REGOUT0).
 3. Flash the bootloader over SWD with a probe that follows the target voltage (e.g. J-Link; the module's I/O is at 1.8 V until the bootloader sets REGOUT0); unlock APPROTECT if needed.
 4. Flash ZMK over USB; test every key.
 5. Connect the battery; test pairing, battery reporting, LEDs, power switch.
@@ -83,11 +83,11 @@ Update this section whenever a phase moves.
 |---|---|---|
 | 0 Toolchain proof | done (2026-10-18) | KiCad 10 failed the atopile round-trip, so KiCad 9.0.9 per the fallback. The 12-step round-trip passes locally and in CI (run 39119942514). Two reviewer rounds dispositioned in `reports/phase0/review.md`. Decisions in ARCHITECTURE.md (local atomic parts, bottom-side library footprints, all-or-nothing `ato_build.sh`). |
 | 1 Geometry | done (2026-10-18) | Zero deviation against the original, checked in CI from a fetched copy. Evidence in `reports/phase1/`. |
-| 2 Circuit and parts | done (2026-10-18) | Both halves build; connectivity checked against a datasheet netlist; BOM in stock (`reports/phase2/`). Gate 1 passed under the owner's standing instruction to continue to a JLC-ready bundle; review in `reports/phase2/review.md`. |
-| 3 Placement | done (2026-10-18) | Placement, antenna keep-out, clearance and DRC checks pass on both halves (`reports/phase3/`). Gate 2 under the same instruction; review in `reports/phase3/review.md`. |
-| 4 Routing | not started | |
-| 5 Validation | not started | |
-| 6 Fab outputs | not started | |
+| 2 Circuit and parts | done (2026-10-18) | Both halves build; connectivity checked against a datasheet netlist; BOM in stock (`reports/phase2/`). Review findings fixed or dispositioned in `reports/phase2/review.md`. Gate 1 passed under the owner's standing instruction to continue to a JLC-ready bundle. |
+| 3 Placement | done (2026-10-18) | Placement, antenna keep-out, clearance and DRC checks pass on both halves (`reports/phase3/`). Review findings fixed or dispositioned in `reports/phase3/review.md`. Gate 2 passed under the owner's standing instruction. |
+| 4 Routing | done (2026-10-18) | Both halves fully routed with 0 DRC errors. Freerouting runs with scripted pre-processing (inset boundary, via spacing, 24 width and clearance variants) and scripted USB-C joins. After import: GND pour on both layers, a solid module ground zone, and stitching vias, including under the module. Rule areas keep copper off the antenna and the module's core, and vias from under the USB-C shell. Repairs after the second review: `route.py --ripup-drc`, `scripts/routing/joins.py`, `route.py --restitch`. Evidence in `reports/phase4/`. |
+| 5 Validation | done (2026-10-18) | Every verification layer is green or dispositioned in `reports/phase5/README.md`. STEP fit (dock) and firmware build belong to phases 7 and 8. Two reviewer passes for phases 4–6; every finding is fixed or dispositioned in `reports/phase5/review.md`. |
+| 6 Fab outputs | done (2026-10-18) | JLC bundle from `scripts/fab/build.sh` (also the CI artifact `jlc-bundle`): framed panel of both halves, Gerbers, BOM, CPL, renders, STEP. Upload checklist in `reports/phase6/README.md`. 🛑 **Gate 3 (order approval) is the owner's**: nothing has been uploaded or ordered. |
 | 7 Dock | not started | |
 | 8 Firmware | not started | |
 | 9 Bring-up | not started | |

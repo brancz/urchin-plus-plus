@@ -7,10 +7,11 @@
   "footprint": "QFN-16_L3.0-W3.0-P0.50-TL-EP1.7.kicad_mod",
   "side": "bottom",
   "footprint_changes": [
+    "pad 17 paste aperture -0.15 mm per side",
     "pad 17: dropped (thermal_bridge_angle 90), which atopile doesn't keep",
     "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
   ],
-  "fixups_source": null,
+  "fixups_source": "docs/datasheets/C15220_BQ24073RGTR.pdf p.41, 'Example Stencil Design': 68% solder coverage on the 1.7 mm centre pad. The exposed pad's (17) paste aperture is shrunk 0.15 mm per side to 1.40 x 1.40 mm, 68% of the pad; EasyEDA's footprint pastes 100%, which can float a 0.5 mm-pitch QFN (phases 4-6 second review L2).",
   "pin_names": null,
   "model": "QFN-16_L3.0-W3.0-P0.50-EP1.7.step",
   "pins": [
@@ -100,7 +101,7 @@
       "signal": "n_PGOOD_"
     }
   ],
-  "fetched_utc": "2026-10-18T12:27:39Z",
+  "fetched_utc": "2026-10-18T18:05:27Z",
   "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
   "kicad_cli": "9.0.9"
 }

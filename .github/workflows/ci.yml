@@ -98,6 +98,20 @@ jobs:
       - name: Hardware build and checks
         run: scripts/checks/hardware_all.sh --out ci-out/reports/hardware --frozen
 
+      - name: JLC bundle (panel, Gerbers, BOM, CPL, panel DRC)
+        env:
+          RENDER: "0"
+        run: scripts/fab/build.sh ci-out/fab
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: jlc-bundle
+          path: |
+            ci-out/fab/jlc
+            ci-out/fab/panel/drc.md
+            ci-out/fab/step
+          if-no-files-found: error
+
       - name: BOM stock check (live JLC data; informational, JLC may block CI)
         continue-on-error: true
         run: python3 scripts/parts/bom_check.py --json ci-out/reports/bom-stock.json --md ci-out/reports/bom.md

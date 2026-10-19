@@ -1,9 +1,10 @@
 # Original Urchin checkout (read-only) and throwaway experiments
 reference/
+/reference
 scratch/
 
 # Generated fabrication outputs; release builds are attached to git tags
-fab/
+/fab/
 
 # atopile build outputs (layouts/ is tracked, build/ is regenerated)
 build/

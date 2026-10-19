@@ -1,0 +1,12 @@
+{
+  "board": "hardware/layouts/right/right.kicad_pcb",
+  "half": "right",
+  "checked": {
+    "switch": 17,
+    "pads": 129,
+    "puck": 1,
+    "case hole": 7,
+    "edges": 29
+  },
+  "problems": []
+}

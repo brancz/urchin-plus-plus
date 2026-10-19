@@ -45,7 +45,7 @@ EXPECTED = {
     "J1": {"A1B12": "GND", "B1A12": "GND", "A4B9": "VBUS", "B4A9": "VBUS", "A5": "CC1", "B5": "CC2",
            "A6": "USB_DP", "B6": "USB_DP", "A7": "USB_DN", "B7": "USB_DN", "A8": OPEN, "B8": OPEN,
            "1": "GND", "2": "GND", "3": "GND", "4": "GND"},
-    # B5819W, SMF6.0A: pad 1 cathode, pad 2 anode
+    # 1N5819WS, SMF6.0A: pad 1 cathode, pad 2 anode
     "D1": {"1": "VIN", "2": "VBUS"},
     "D2": {"1": "VIN", "2": "DOCK_5V"},
     "D3": {"1": "DOCK_5V", "2": "GND"},
@@ -76,14 +76,14 @@ E73_GPIO = {1: "P1_11", 2: "P1_10", 3: "P0_03", 4: "P0_28", 6: "P1_13", 7: "P0_0
 NEVER_GPIO = {"P0_18", "P0_09", "P0_10"}  # reset; NFC
 # designator -> LCSC part (value and package), from the BOM intent in docs/ARCHITECTURE.md
 LCSC = {"U1": "C356849", "U2": "C15220", "U3": "C7519", "J1": "C165948",
-        "D1": "C8598", "D2": "C8598", "D4": "C8598", "D5": "C8598", "D3": "C123790",
+        "D1": "C191023", "D2": "C191023", "D4": "C191023", "D5": "C191023", "D3": "C123790",
         "SW35": "C431540", "SW36": "C720477", "LED1": "C409782", "LED2": "C409782",
         "R1": "C25744", "R11": "C25744",                                  # 10 k
         "R2": "C25905", "R3": "C25905", "R4": "C25905", "R5": "C25905",  # 5.1 k
         "R6": "C11702", "R7": "C11702",                                   # 1 k
         "R8": "C25117",                                                   # 470 R
         "R9": "C25091", "R10": "C25091",                                  # 220 R
-        "C1": "C1525",                                                    # 100 nF
+        "C1": "C23733",                                                   # 4.7 uF
         "C2": "C15849",                                                   # 1 uF 50 V
         "C5": "C19666",                                                   # 4.7 uF
         "C3": "C19702", "C4": "C19702", "C6": "C19702"}                   # 10 uF

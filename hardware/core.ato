@@ -10,7 +10,7 @@ from "parts/C356849/C356849.ato" import C356849_package
 from "parts/C15220/C15220.ato" import C15220_package
 from "parts/C165948/C165948.ato" import C165948_package
 from "parts/C7519/C7519.ato" import C7519_package
-from "parts/C8598/C8598.ato" import C8598_package
+from "parts/C191023/C191023.ato" import C191023_package
 from "parts/C123790/C123790.ato" import C123790_package
 from "parts/C431540/C431540.ato" import C431540_package
 from "parts/C720477/C720477.ato" import C720477_package
@@ -20,7 +20,7 @@ from "parts/C25905/C25905.ato" import C25905_package
 from "parts/C11702/C11702.ato" import C11702_package
 from "parts/C25117/C25117.ato" import C25117_package
 from "parts/C25091/C25091.ato" import C25091_package
-from "parts/C1525/C1525.ato" import C1525_package
+from "parts/C23733/C23733.ato" import C23733_package
 from "parts/C15849/C15849.ato" import C15849_package
 from "parts/C19666/C19666.ato" import C19666_package
 from "parts/C19702/C19702.ato" import C19702_package
@@ -115,7 +115,7 @@ module Core:
     trait c_vddh has_designator<designator="C6">
     c_vddh.1 ~ vddh
     c_vddh.2 ~ gnd
-    c_vdd = new C1525_package     # 100 nF on VDD
+    c_vdd = new C23733_package    # 4.7 uF on VDD (the module regulator's output)
     trait c_vdd has_designator<designator="C1">
     c_vdd.1 ~ vdd
     c_vdd.2 ~ gnd
@@ -160,7 +160,7 @@ module Core:
     r_vbus.2 ~ gnd
 
     # ---- Charger input: USB and dock, each through a Schottky -----------------------
-    d_usb = new C8598_package
+    d_usb = new C191023_package
     trait d_usb has_designator<designator="D1">
     d_usb.A ~ vbus
     d_usb.K ~ vin
@@ -175,7 +175,7 @@ module Core:
     tvs.K ~ dock_5v
     tvs.A ~ gnd
 
-    d_dock = new C8598_package
+    d_dock = new C191023_package
     trait d_dock has_designator<designator="D2">
     d_dock.A ~ dock_5v
     d_dock.K ~ vin
@@ -257,11 +257,11 @@ module Core:
     # CHG and PGOOD to GPIOs through Schottky diodes: the GPIO (pulled up to VDD) reads low
     # (pin low + ~0.25 V) when the pin pulls low; the LED's input-side voltage never reaches
     # the GPIO.
-    d_chg = new C8598_package
+    d_chg = new C191023_package
     trait d_chg has_designator<designator="D4">
     d_chg.K ~ chg_n
     d_chg.A ~ chg_sense
-    d_pg = new C8598_package
+    d_pg = new C191023_package
     trait d_pg has_designator<designator="D5">
     d_pg.K ~ pgood_n
     d_pg.A ~ pgood_sense

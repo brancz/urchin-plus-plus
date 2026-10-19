@@ -8,8 +8,10 @@ kicad-cli reads the rules from it for DRC; Freerouting gets them via the DSN exp
 
 JLCPCB 2-layer, 1 oz, standard process (jlcpcb.com/capabilities, checked 2026-10-18),
 with margin where it costs nothing:
-  trace / space             0.127 mm min      -> 0.15 mm min, 0.2 mm default
-  via                       0.3 mm drill, 0.15 mm annular ring -> 0.3 / 0.6 mm
+  trace / space             0.127 mm min      -> 0.127 mm min trace (router neck-downs at
+                                                 pads only), 0.15 mm min space, 0.15-0.3 mm tracks
+  via                       0.3 mm drill, 0.15 mm annular ring -> 0.3 / 0.7 mm (0.2 mm ring;
+                                                 keeps via holes 0.5 mm apart at 0.15 mm clearance)
   PTH / NPTH hole           0.3 mm min (vias) / 0.5 mm hole-to-hole
   hole to copper            0.25 mm
   copper to board edge      0.3 mm (routed edge)
@@ -31,7 +33,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 RULES = {
     "min_clearance": 0.15,
-    "min_track_width": 0.15,
+    "min_track_width": 0.127,
     "min_connection": 0.15,
     "min_via_annular_width": 0.15,
     "min_via_diameter": 0.6,
@@ -77,7 +79,7 @@ def netclass(name, track, clearance, **extra):
     d = {"name": name, "bus_width": 12, "clearance": clearance, "diff_pair_gap": 0.15, "diff_pair_via_gap": 0.25,
          "diff_pair_width": 0.2, "line_style": 0, "microvia_diameter": 0.3, "microvia_drill": 0.1, "pcb_color":
          "rgba(0, 0, 0, 0.000)", "priority": 2147483647 if name == "Default" else 0, "schematic_color":
-         "rgba(0, 0, 0, 0.000)", "track_width": track, "via_diameter": 0.6, "via_drill": 0.3, "wire_width": 6}
+         "rgba(0, 0, 0, 0.000)", "track_width": track, "via_diameter": 0.7, "via_drill": 0.3, "wire_width": 6}
     d.update(extra)
     return d
 
@@ -93,7 +95,7 @@ def project(half):
                 "rule_severities": SEVERITIES,
                 "rules": RULES,
                 "track_widths": [0.0, 0.2, 0.3, 0.4, 0.6],
-                "via_dimensions": [{"diameter": 0.0, "drill": 0.0}, {"diameter": 0.6, "drill": 0.3}],
+                "via_dimensions": [{"diameter": 0.0, "drill": 0.0}, {"diameter": 0.7, "drill": 0.3}],
                 "diff_pair_dimensions": [{"gap": 0.0, "via_gap": 0.0, "width": 0.0}],
                 "zones_allow_external_fillets": False,
             },
