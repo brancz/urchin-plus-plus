@@ -137,8 +137,12 @@ def check_pcb(path, max_format, prebuild=False):
                 want = lib_layer(c[1])
                 have = sexp.child(c, "layer")[1]
                 if want is None:
-                    if not prebuild:  # before a build the part may have been swapped; the build replaces it
-                        problems.append("footprint %s: library footprint %s not found via fp-lib-table" % (ref, c[1]))
+                    # Before a build an atopile part may have been swapped, and the build replaces it. A
+                    # footprint without an atopile address isn't an atopile part: the build would delete it.
+                    ours = any(len(p) > 1 and p[1] == "atopile_address" for p in sexp.children(c, "property"))
+                    if not prebuild or not ours:
+                        problems.append("footprint %s: library footprint %s not found via fp-lib-table%s" % (
+                            ref, c[1], "" if ours else "; it isn't an atopile component, so atopile deletes it"))
                 elif want != have:
                     problems.append("footprint %s is on %s but its library footprint %s is on %s; atopile would "
                                     "flip it on every build. Use a %s-side library footprint."
