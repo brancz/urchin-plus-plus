@@ -8,7 +8,7 @@ Date: 2026-10-24. Sources are in `firmware/` (overview and first-flash procedure
 |---|---|---|
 | CI builds firmware for both halves | `scripts/firmware/build.sh` builds the left half (split central, ZMK Studio), the right half, and a settings-reset image per half in ZMK's pinned build image. | CI job `firmware`, artifact `firmware` |
 | CI builds the bootloader | `scripts/firmware/build_bootloader.sh` builds the Adafruit nRF52 bootloader 0.11.0 for urchin++ in the same image. | same artifact |
-| Artifacts attached to the run | `actions/upload-artifact` in the `firmware` job | CI run linked in `docs/PLAN.md` |
+| Artifacts attached to the run | CI run 40096653403 (commit aab083e): all jobs green; artifact `firmware` holds the six images and the frozen manifest, every file byte-identical to the local build on Apple Silicon | `gh run view 40096653403` |
 
 ## What is built
 
