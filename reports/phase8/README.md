@@ -14,9 +14,9 @@ Date: 2026-10-24. Sources are in `firmware/` (overview and first-flash procedure
 
 | Image | Flash | RAM | Use |
 |---|---|---|---|
-| `urchin_pp_left.uf2` | 256 KB of 792 KB | 71 KB of 256 KB | left half: keys, BLE to host and right half, USB HID, ZMK Studio over USB, status LED, battery |
+| `urchin_pp_left.uf2` | 257 KB of 792 KB | 71 KB of 256 KB | left half: keys, BLE to host and right half, USB HID, ZMK Studio over USB, status LED, battery |
 | `urchin_pp_right.uf2` | 188 KB | 39 KB | right half (BLE peripheral) |
-| `settings_reset_{left,right}.uf2` | 66 / 54 KB | 18 / 13 KB | clears pairings, for re-pairing the halves |
+| `settings_reset_{left,right}.uf2` | 58 / 53 KB | — | clears pairings, for re-pairing the halves (built without the user config) |
 | `urchin_pp_bootloader-0.11.0_s140_6.1.1.hex` | bootloader 31.7 KB of 38 KB | — | MBR, SoftDevice S140 6.1.1 and the bootloader: the one-time flash over SWD |
 | `update-urchin_pp_bootloader-0.11.0_nosd.uf2` | — | — | bootloader updates over UF2 |
 

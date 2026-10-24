@@ -213,3 +213,4 @@ Append entries as `YYYY-MM-DD: decision — reason`.
   - **The bootloader build is reproducible** (`SOURCE_DATE_EPOCH`).
   - **lvgl and hal_stm32 come from ZMK's pins.**
   - **The SWD probe:** one whose I/O follows VTref down to 1.8 V (e.g. a J-Link), not a Raspberry Pi Pico.
+- 2026-10-24: Both halves' battery levels (owner's choice). The left half fetches the right half's level, offers it to the host as a second Battery Service, and its LED blinks both levels (`firmware/config/urchin_pp_left.conf`). macOS shows only the first Battery Service, so the Mac still displays the left half; the second is there for an app or script. The settings-reset images build without the user config, which is meant for the real firmware.

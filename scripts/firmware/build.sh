@@ -44,17 +44,18 @@ west update --narrow --fetch-opt=--filter=tree:0
 west zephyr-export >/dev/null
 west manifest --freeze --active-only >"$OUT/west-manifest-frozen.yml"
 
-build() {  # NAME BOARD [west build args...] [-- cmake args...]
-  local name="$1" board="$2"
-  shift 2
+build() {  # NAME BOARD CONFIG_DIR [west build args...] [-- cmake args...]
+  local name="$1" board="$2" config="$3"
+  shift 3
   echo "== $name ($board)"
   west build -p -s "$WS/zmk/app" -d "$WS/build/$name" -b "$board" "$@" \
-    -DZMK_CONFIG="$ROOT/firmware/config" -DZMK_EXTRA_MODULES="$ROOT/firmware"
+    -DZMK_CONFIG="$config" -DZMK_EXTRA_MODULES="$ROOT/firmware"
   cp "$WS/build/$name/zephyr/zmk.uf2" "$OUT/$name.uf2"
 }
-build urchin_pp_left urchin_pp_left -S studio-rpc-usb-uart -- -DCONFIG_ZMK_STUDIO=y
-build urchin_pp_right urchin_pp_right --
-# settings_reset runs without Bluetooth; the LED widget has nothing to show there
-build settings_reset_left urchin_pp_left -- -DSHIELD=settings_reset -DCONFIG_RGBLED_WIDGET=n
-build settings_reset_right urchin_pp_right -- -DSHIELD=settings_reset -DCONFIG_RGBLED_WIDGET=n
+build urchin_pp_left urchin_pp_left "$ROOT/firmware/config" -S studio-rpc-usb-uart -- -DCONFIG_ZMK_STUDIO=y
+build urchin_pp_right urchin_pp_right "$ROOT/firmware/config" --
+# settings_reset brings its own keymap and runs without Bluetooth: none of the user config applies
+mkdir -p "$WS/no-config"
+build settings_reset_left urchin_pp_left "$WS/no-config" -- -DSHIELD=settings_reset
+build settings_reset_right urchin_pp_right "$WS/no-config" -- -DSHIELD=settings_reset
 ls -la "$OUT"

@@ -6,7 +6,7 @@ ZMK firmware and the UF2 bootloader for urchin++ (phase 8).
 |---|---|
 | `boards/urchin_pp/` | The ZMK board: `urchin_pp_left` (split central) and `urchin_pp_right`, Zephyr 4.1 board format. `urchin_pp.dtsi` holds what both halves share. The `*-pins.dtsi` and `*-layouts.dtsi` files are generated from `hardware/pinmap.json` and `hardware/geometry/urchin.json` by `scripts/firmware/gen_board.py`. |
 | `drivers/`, `dts/bindings/` | `urchin,battery-power-aware`, the battery level ZMK reports (below) |
-| `config/` | User config: `urchin_pp.keymap` (ported from brancz/urchin-zmk-firmware), `urchin_pp.conf`, and `west.yml` pinning ZMK, Zephyr and zmk-rgbled-widget to commits |
+| `config/` | User config: `urchin_pp.keymap` (ported from brancz/urchin-zmk-firmware), `urchin_pp.conf` (both halves), `urchin_pp_left.conf` (the left half only), and `west.yml` pinning ZMK, Zephyr and zmk-rgbled-widget to commits |
 | `bootloader/urchin_pp/` | Board definition for the Adafruit nRF52 bootloader |
 | `zephyr/module.yml`, `CMakeLists.txt`, `Kconfig` | Make this directory a Zephyr module (ZMK_EXTRA_MODULES) |
 
@@ -49,7 +49,8 @@ After that, double-tap the reset button (or use `&bootloader`) to get the `URCHI
 
 ## Behaviour
 
-- **Status LED** (zmk-rgbled-widget): it blinks the battery level on start (green, yellow, red) and the connection state on profile changes.
+- **Status LED** (zmk-rgbled-widget): it blinks the battery level on start (green, yellow, red) and the connection state on profile changes. The left half blinks its own level, then the right half's (`&ind_bat` too).
+- **Battery levels on the host:** the left half reports both halves, its own as the first Battery Service and the right half's as a second. macOS (and most hosts) shows only the first; a Bluetooth app or script can read both.
 - **Charge LED:** wired to the charger, no firmware: amber while charging, green when charged.
 - **Battery level reported to the host.** The charger feeds the system from its input whenever input power is present, so VDDH reads its regulated 4.4 V instead of the cell. `urchin,battery-power-aware` reads the charger's PGOOD and CHG outputs at every sample and reports:
   - on battery: the measured level;
