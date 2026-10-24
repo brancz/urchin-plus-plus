@@ -1,6 +1,6 @@
 # Phase 7: cases and dock
 
-Status: **done (2026-10-24).** Cases, battery covers, dock tray and dock PCB; two reviewer passes, every finding fixed or dispositioned in `review.md`; CI run 40118268118 green, with the artifacts `dock-jlc-bundle` and `printed-parts`. Design decisions are in `docs/ARCHITECTURE.md` ("Case", "Dock", and the decision log of 2026-10-24). The parts and the hardware to buy are listed in `mech/README.md`.
+Status: **done (2026-10-24).** Cases, battery covers, dock tray and dock PCB; two reviewer passes, every finding fixed or dispositioned in `review.md`; CI run 40118268118 green, with the artifacts `dock-jlc-bundle` and `printed-parts`. Design decisions are in `docs/ARCHITECTURE.md` ("Case", "Dock", and the decision log of 2026-10-24). The parts and the hardware to buy are listed in `mech/README.md`. After the phase closed, the hardware was changed to parts sold in Germany (ARCHITECTURE.md, "Hardware bought in Germany"): the cover's posts and nylon nuts replace the standoffs, M5 washers replace the steel discs, and the checks model the largest 401730 cell sold. That change had its own reviewer pass (`review.md`, "Hardware change"); the case rows below are from its rebuild, and the phase's CI run above predates them.
 
 ## Cases and battery covers
 
@@ -15,20 +15,23 @@ CI runs steps 1 to 3 without renders (job `mech`, artifact `printed-parts`). Sin
 
 | Check | Result | Evidence |
 |---|---|---|
-| Fit: each printed part and each piece of hardware against the routed half's STEP | 46 checks (of the 81 in `checks.json`; the rest are the dock's), 0 failed. There is no overlap anywhere. Every gap is at least 0.25 mm, except where parts are meant to touch: the PCB on its standoffs, and the cover on the case and on its standoffs. (The PCB counts as touching everywhere, so the lips over it are checked in `hardware` instead.) Closest: case to the module's 3D model 0.289 mm; a standoff (modelled as a 4 mm hex) to the SW17 keycap 0.315 mm; cover to the SW17 keycap 0.8 mm; the thumb screw's washer and head to the SW17 keycap 1.24 mm. | `checks.json` → `fit` |
+| Fit: each printed part and each piece of hardware against the routed half's STEP | 46 checks (of the 81 in `checks.json`; the rest are the dock's), 0 failed. There is no overlap anywhere. Every gap is at least 0.25 mm, except where parts are meant to touch: the PCB on its standoffs and under the cover's posts, the cover's skirt over the case's wall (0.2 mm apart), and the nuts on the cover. (The PCB counts as touching everywhere, so the lips over it are checked in `hardware` instead.) Closest: each cover post next to a keycap, grown by the cover's play on its screws (0.36 mm), to that keycap (SW5, SW17, SW18, SW33) 0.261 mm, nominally 0.625 mm; case to the module's 3D model 0.289 mm; the nylon nut (a flat toward the keycap, grown by its screw's play, 0.16 mm) to the SW17 and SW33 keycaps 0.467 mm; the thumb screw's washer and head to the SW17 keycap 1.24 mm. The battery (the largest 401730 sold, 32.5 × 17.5 × 4.5 mm on 1 mm foam) keeps more than 0.3 mm from every printed part. | `checks.json` → `fit` |
 | Bed: every STL fits the A1 mini (180 × 180 × 180 mm) | 4 of 4 (6 of 6 with the tray) | `checks.json` → `bed` |
-| Hardware: thread engagement and screw tips | M2 × 5 in the heat-set insert: 3.0 mm thread engaged, tip 0.9 mm above the hole's bottom. Nylon M2 × 8 and M2 × 3 in the 6 mm standoff: 3.0 and 2.2 mm of thread, 0.8 mm between the tips. The lower screw head sits 0.2 mm inside the case's underside. | `checks.json` → `hardware` |
+| Hardware: thread engagement and screw tips | M2 × 5 in the heat-set insert: 3.0 mm thread engaged, tip 0.9 mm above the hole's bottom. Nylon M2 × 16 from below through the PCB and the cover's post: the nut on the roof has its full 1.6 mm of thread on it, and the tip stands 1.8 mm above the nut (1.64 mm with a board 0.16 mm thick). The screw head sits 0.2 mm inside the case's underside. | `checks.json` → `hardware` |
 | Lips over the board's outer edge | Underside at 7.0 mm, on a layer boundary, 0.2 mm over the PCB and 0.04 mm over one 0.16 mm too thick. A board goes in tilted up to 11° (2° if 0.16 mm thick), pushed against the outer wall. Each lip stays 0.35 mm over the edge by RSS (0.2 mm worst case) with the board's play in its case (0.4 mm inward, solved) and JLC's ±0.2 mm outline | `checks.json` → `hardware` (rows `lip*`) |
-| No metal in the antenna keep-out | The nearest metal is the thumb screw, washer and insert, 34.4 mm away. The steel discs are 47.3 mm away. | `checks.json` → `hardware` |
+| No metal in the antenna keep-out | The nearest metal is the thumb screw, washer and insert, 34.4 mm away. The steel washers are 47.3 mm away. | `checks.json` → `hardware` |
+| The largest cell on the board | Centred on BT2's outline, its end on the outline's antenna-side end: 3.75 mm from the antenna keep-out (3 mm required). It reaches 0.4 mm over the ends of the wire pads (BT1), riding on its 1 mm foam 0.2 mm above a 28 AWG wire's solder joint, and over 21 % of each LED's light hole (at most half allowed). | `checks.json` → `hardware` |
 | Insertion: the board can drop into its case | J1 (USB-C) and SW35 (power switch) reach past the cavity, and both drop through full-height openings in the wall | `checks.json` → `insertion` |
-| Slicing (0.20 mm Standard, Bambu PLA Basic, no supports) | Each case: 27 min, 18.2 g. Each cover: 8 min, 3.2 g. The slicer gave no warnings. | `slice.json` |
+| Slicing (0.20 mm Standard, Bambu PLA Basic, no supports) | Each case: 27 min, 18.2 g. Each cover: 9 min, 3.4 g. The cases print without warnings. The covers get one, `not_support_traditional_timelapse`: Bambu Studio's "traditional timelapse may cause surface imperfections", which matters only with timelapse recording on in traditional mode (print them without it, or in smooth mode). | `slice.json` |
 
 The modelled parts are what the STEP lacks:
 
 | Part | Model |
 |---|---|
 | Hotswap sockets | B.CrtYd outline, 1.85 mm tall |
-| Battery | courtyard, 5 mm tall |
+| Battery | 17.5 × 32.5 mm, centred on BT2's outline from its antenna-side end, 5.5 mm tall (a 4.5 mm cell on 1 mm foam) |
+| Cover posts, for the keycaps | Each post grown by the cover's play on its screws: a nylon M2 at its smallest diameter (1.886 mm) in the PCB's 2.2 mm hole and the post's 2.3 mm bore |
+| Nylon nuts | A hexagon, 4 mm across flats, with a flat toward the nearest keycap, grown by its screw's play in the PCB's hole |
 | Switch bodies | 15 × 15 mm, 5 mm tall |
 | Keycaps | 17.5 × 16.5 mm, from 2 to 8 mm above the PCB |
 
@@ -39,7 +42,7 @@ Found and fixed while checking:
 - **Screws in the 3.8 mm holes between keys collided with the switches.** These holes sit 2.1 mm from a switch body, under a keycap's edge. No head or washer that could bear on a 3.8 mm hole fits there.
   - Now only the hole whose washer clears every keycap takes a screw: the one by the thumb keys.
   - Two lips on the outer wall hold that edge down.
-- **The cover's top screw was too long.** An M2 × 4 would have met the M2 × 8 inside the 6 mm standoff. It is now an M2 × 3, and the stack check would catch this.
+- **The cover's top screw was too long.** An M2 × 4 would have met the M2 × 8 inside the 6 mm standoff. It became an M2 × 3, and the stack check would catch this. (Since replaced: one M2 × 16 through the cover's post into a nut.)
 - **The board couldn't drop into the case.** The power switch's actuator reaches past the board's edge, and the wall above its slot blocked it. The slot is now open to the top of the wall, and the insertion check covers this.
 
 None of these needed a change to the keyboard PCB.
@@ -133,4 +136,4 @@ Renders (`render/`): `tray-{iso,top,under}.png` (the tray with the dock PCB), `d
 
 None of this needed a change to the keyboard PCB.
 
-What only a print can tell: the magnets' pull through the 0.6 mm skin (two N52 10 × 3 mm per half against the pins' 3 to 3.5 N), how hard a half is to lift out by the finger notches, and the pins' real free height (measure it, `mech/README.md`).
+What only a print can tell: the magnets' pull through the 0.6 mm skin on the case's M5 washers (two N52 10 × 3 mm per half against the pins' 3 to 3.5 N; dock step 6 checks it), how hard a half is to lift out by the finger notches, and the pins' real free height (measure it, `mech/README.md`).

@@ -32,7 +32,7 @@ A new module has no bootloader. Flash it once over SWD, then everything else goe
 
 1. Use an SWD probe whose I/O follows the target voltage (VTref), e.g. a J-Link. A blank module runs VDD at 1.8 V until the bootloader sets it to 3.3 V, and a fixed-3.3 V probe such as a Raspberry Pi Pico can't drive or read 1.8 V reliably.
 2. Power the half from USB or its battery, with the power switch on: the switch sits between the charger and the module, so with it off the module has no supply even on USB. The probe doesn't power the board.
-3. Connect to TP2, labelled on the silkscreen: G = GND, RS = reset, CK = SWDCLK, IO = SWDIO, V = VDD (to the probe's VTref).
+3. Connect to TP2, labelled on the silkscreen: G = GND, RS = reset, CK = SWDCLK, IO = SWDIO, V = VDD (to the probe's VTref). TP2 is five bare pads on the bottom, 2.54 mm apart: solder a 5-pin header or short wires on for the flash (`docs/SETUP.md`), and remove them before the board goes into its case.
 4. Flash the bootloader with SoftDevice (pyOCD, version in `toolchain.env`):
 
    ```sh

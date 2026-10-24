@@ -7,7 +7,8 @@
 Everything the CAD in mech/ needs comes from the routed boards, never from hand-typed
 numbers: the board outline, the case holes, the tenting puck, the charging pads, the steel
 disc and rubber foot positions, the parts that need openings (USB-C, power switch, reset
-button), the antenna keep-out, the battery's courtyard and the key positions.
+button), the antenna keep-out, the battery's outline and courtyard, its wire pads and the key
+positions.
 Features are found by footprint name, because the two halves use different references.
 
 Coordinates are KiCad's: millimetres, y pointing down, in each board's own frame.
@@ -64,6 +65,15 @@ def body_diameter(fp):
     return r(2 * min(radii))
 
 
+def silk_bbox(fp):
+    """(x0, y0, x1, y1) of the line centres on a footprint's silkscreen: a part's outline."""
+    layer = pcbnew.B_SilkS if fp.IsFlipped() else pcbnew.F_SilkS
+    pts = [pt(q) for g in fp.GraphicalItems() if isinstance(g, pcbnew.PCB_SHAPE) and g.GetLayer() == layer
+           and g.GetShape() == pcbnew.SHAPE_T_SEGMENT
+           for q in (g.GetStart(), g.GetEnd())]
+    return [min(x for x, _ in pts), min(y for _, y in pts), max(x for x, _ in pts), max(y for _, y in pts)]
+
+
 def holes(fp):
     return [{"x": pt(p.GetPosition())[0], "y": pt(p.GetPosition())[1], "d": r(mm(p.GetDrillSize().x))}
             for p in fp.Pads() if p.GetDrillSize().x > 0]
@@ -91,7 +101,8 @@ def extract(side):
         "outline": outline,
         "cutouts": cutouts,
         "case_holes": [], "puck": None, "dock_pads": None, "steel_discs": [], "feet": [],
-        "usb": None, "power_switch": None, "reset": None, "battery": None, "leds": [], "keys": [],
+        "usb": None, "power_switch": None, "reset": None, "battery": None, "battery_pads": None,
+        "leds": [], "keys": [],
         "rule_areas": {},
         # Every physical part on the bottom (markers excluded): what the case's standoffs and
         # floor must stay clear of.
@@ -133,7 +144,13 @@ def extract(side):
         elif name.startswith("SW-SMD_L3.9"):
             data["reset"] = footprint(fp)
         elif name.startswith("BATTERY_"):
-            data["battery"] = footprint(fp)
+            data["battery"] = footprint(fp, outline=silk_bbox(fp))
+        elif name == "BAT_PADS":
+            # The cell's wire pads, beside the end of its outline.
+            data["battery_pads"] = footprint(fp, pads=[
+                {"number": p.GetNumber(), "x": pt(p.GetPosition())[0], "y": pt(p.GetPosition())[1],
+                 "w": r(mm(p.GetSize().x)), "h": r(mm(p.GetSize().y))}
+                for p in sorted(fp.Pads(), key=lambda p: p.GetNumber())])
         elif name.startswith("LED-ARRAY"):
             data["leds"].append(footprint(fp, holes=holes(fp)))
         elif "Choc" in name:
@@ -148,7 +165,8 @@ def extract(side):
             o = z.Outline().Outline(0)
             data["rule_areas"][z.GetZoneName()] = [pt(o.CPoint(i)) for i in range(o.PointCount())]
 
-    missing = [k for k in ("puck", "dock_pads", "usb", "power_switch", "reset", "battery") if not data[k]]
+    missing = [k for k in ("puck", "dock_pads", "usb", "power_switch", "reset", "battery", "battery_pads")
+               if not data[k]]
     if missing or len(data["keys"]) != 17 or len(data["steel_discs"]) != 2 or len(data["feet"]) != 4 \
             or len(data["case_holes"]) != 7 or "ANTENNA_KEEPOUT" not in data["rule_areas"]:
         sys.exit("board_data: %s: missing features %s, or wrong counts (keys %d, discs %d, feet %d, holes %d)"

@@ -64,8 +64,10 @@ def build(args):
         for name, shape in checks.hardware(board):
             report["fit"] += checks.fit(name, shape, board_parts + above + printed,
                                         touching=("pcb", f"case_{side}", f"cover_{side}"))
+        for name, shape in checks.moved_posts(board):
+            report["fit"] += checks.fit(name, shape, board_parts + above, touching=("pcb",))
         report["hardware"] += [dict(r, side=side) for r in checks.screw_stacks(board) + checks.antenna_metal(board)
-                               + checks.lip_rows(board)]
+                               + checks.cell_rows(board) + checks.lip_rows(board)]
         report["insertion"] += [dict(r, side=side) for r in checks.insertion(board, board_parts)]
 
         if args.no_render:

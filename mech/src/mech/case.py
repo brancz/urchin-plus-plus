@@ -4,7 +4,7 @@ are generated separately, never mirrored."""
 
 import math
 
-from build123d import (Align, Axis, Box, Circle, Cylinder, Face, Kind, Pos, RectangleRounded,
+from build123d import (Align, Axis, Box, Circle, Cone, Cylinder, Face, Kind, Pos, RectangleRounded,
                        Vector, Wire, chamfer, extrude, offset)
 
 from . import params as P
@@ -150,7 +150,7 @@ def case(board: Board):
             if screwed(board, h):
                 part -= cyl(x, y, P.INSERT_D, P.Z_PCB_BOTTOM - P.INSERT_DEPTH, P.Z_PCB_BOTTOM + 0.1)
         else:
-            # Battery cover hole: nylon screw from the underside into the cover's standoff.
+            # Battery cover hole: a nylon screw from the underside, up through the cover's post.
             part -= cyl(x, y, P.SCREW_CLEAR_D, -0.1, P.Z_PCB_BOTTOM + 0.1)
             part -= cyl(x, y, P.HEAD_D, -0.1, P.HEAD_DEPTH)
 
@@ -176,7 +176,8 @@ def case(board: Board):
     part -= prism(dock_window(board), -0.1, P.FLOOR + 0.1)
     part -= cyl(px, py, 2 * (pk["radius"] + P.PUCK_CLEAR), -0.1, P.FLOOR + 0.1)
 
-    # Underside: steel discs flush for the dock magnets, seats for the rubber feet.
+    # Underside: recesses for the steel washers the dock's magnets pull on, seats for the
+    # rubber feet.
     for m in board["steel_discs"]:
         part -= cyl(*xy((m["x"], m["y"])), P.DISC_D + 0.3, -0.1, P.DISC_T)
     for m in board["feet"]:
@@ -220,13 +221,19 @@ def cover(board: Board):
     part = prism(region, P.Z_ROOF_BOTTOM, P.Z_ROOF_BOTTOM + P.ROOF_T)
     ring = offset(board.outline(), P.FIT + P.WALL, kind=Kind.ARC) - offset(board.outline(), P.FIT, kind=Kind.ARC)
     skirt = region & ring
-    part += prism(skirt, P.Z_WALL_TOP, P.Z_ROOF_BOTTOM + 0.01)
+    # The skirt stops short of the wall's top: the posts, not the skirt, set the cover's height.
+    part += prism(skirt, P.Z_WALL_TOP + P.SKIRT_LIFT, P.Z_ROOF_BOTTOM + 0.01)
     # The skirt continues the case wall upwards, so it needs the same USB-C opening.
     part -= usb_opening(board, P.Z_WALL_TOP - 0.1, P.Z_ROOF_BOTTOM)
     for h in cover_holes(board):
+        # A post down to the PCB at each hole, up to the roof's top: the screw from below
+        # clamps the PCB between it and the case's standoff, and the nut sits on its top.
         x, y = xy((h["x"], h["y"]))
-        part -= cyl(x, y, P.SCREW_CLEAR_D, P.Z_ROOF_BOTTOM - 0.1, P.Z_ROOF_BOTTOM + P.ROOF_T + 0.1)
-        part -= cyl(x, y, P.HEAD_D, P.Z_ROOF_BOTTOM + P.ROOF_T - P.COVER_HEAD_DEPTH, P.Z_ROOF_BOTTOM + P.ROOF_T + 0.1)
+        part += cyl(x, y, P.COVER_POST_D, P.Z_PCB_TOP, P.Z_ROOF_BOTTOM + P.ROOF_T)
+        part -= cyl(x, y, P.COVER_BORE_D, P.Z_PCB_TOP - 0.1, P.Z_ROOF_BOTTOM + P.ROOF_T + 0.1)
+        c = P.COVER_BORE_CHAMFER
+        part -= Pos(x, y, P.Z_PCB_TOP - 0.01) * Cone(P.COVER_BORE_D / 2 + c + 0.01, P.COVER_BORE_D / 2, c + 0.01,
+                                                     align=(Align.CENTER, Align.CENTER, Align.MIN))
     for led in board["leds"]:
         for h in led["holes"]:
             x, y = xy((h["x"], h["y"]))

@@ -1,12 +1,14 @@
 """Fit checks between the printed parts and the real board (kicad-cli's STEP export of the
 routed half, with every 3D model), plus what the STEP lacks: the hotswap sockets, the
 battery, the switches and the keycaps, modelled from the board data. Also the hardware: the
-screws, washers and standoffs as solids, their thread engagement, no metal in the antenna
-keep-out, and the lips over the board's outer edge."""
+screws, washers and nuts as solids, their thread engagement, no metal in the antenna
+keep-out, the cover's posts where its play can put them, the largest cell against the board,
+and the lips over the board's outer edge."""
 
 import math
 
-from build123d import Align, Box, Kind, Pos, Rectangle, Vector, import_step, offset
+from build123d import (Align, Box, Circle, Kind, Pos, Rectangle, RegularPolygon, Vector, Vertex, import_step,
+                       offset)
 
 from . import params as P
 from .board import Board, polygon_face, rect_face, rotated_rect_face, xy
@@ -29,9 +31,20 @@ def board_parts(board: Board, step_path):
     for k in board["keys"]:
         parts.append((f"{k['ref']} socket", prism(polygon_face(k["socket"]), P.Z_PCB_BOTTOM - P.SOCKET_H, P.Z_PCB_BOTTOM)))
         # A keycap pressed down (Choc: 3 mm travel) reaches this low; up to its top.
-    bt = board["battery"]["courtyard"]
-    parts.append(("battery", prism(rect_face(bt, -0.25), P.Z_PCB_TOP, P.Z_PCB_TOP + P.BATTERY_H)))
+    parts.append(("battery", prism(rect_face(cell_box(board)), P.Z_PCB_TOP, P.Z_PCB_TOP + P.FOAM_T + P.CELL[2])))
     return parts
+
+
+def cell_box(board: Board):
+    """(x0, y0, x1, y1), KiCad frame, of the largest cell (P.CELL) where mech/README.md puts it:
+    centred on the battery's outline (BT2), its antenna-side end on the outline's end, its extra
+    length toward the wire pads (BT1)."""
+    x0, y0, x1, y1 = board["battery"]["outline"]
+    w, length, _ = P.CELL
+    cx = (x0 + x1) / 2
+    if board["battery_pads"]["y"] > (y0 + y1) / 2:
+        return (cx - w / 2, y0, cx + w / 2, y0 + length)
+    return (cx - w / 2, y1 - length, cx + w / 2, y1)
 
 
 def model_ref(board: Board, shape, i):
@@ -58,7 +71,8 @@ def keycaps(board: Board):
 
 def fit(part_name, part, others, touching=()):
     """Interference volume and minimum gap of a printed part against each board part.
-    `touching` names parts the printed part is meant to touch (the PCB on its standoffs)."""
+    `touching` names parts the printed part is meant to touch (the PCB on its standoffs and
+    under the cover's posts)."""
     rows = []
     for name, other in others:
         # Only the printed part's material within MIN_GAP of the other part's bounding box can
@@ -118,7 +132,7 @@ def pcb_screws(board: Board):
 
 
 def hardware(board: Board):
-    """[(name, shape)] of the screw heads, washers and standoffs that sit beside board parts."""
+    """[(name, shape)] of the screw heads, washers and nuts that sit beside board parts."""
     out = []
     z = P.Z_PCB_TOP
     for ref, x, y in pcb_screws(board):
@@ -126,10 +140,66 @@ def hardware(board: Board):
         head_d, head_h = P.PCB_SCREW_HEAD
         out.append((f"{ref} washer and screw head",
                     cyl(x, y, washer_d, z, z + washer_t) + cyl(x, y, head_d, z + washer_t, z + washer_t + head_h)))
+    roof = P.Z_ROOF_BOTTOM + P.ROOF_T
     for h in cover_holes(board):
+        # The nut turned with a flat toward the keycap beside it (mech/README.md), grown by its
+        # screw's play in the PCB's hole: every place it can be.
         x, y = xy((h["x"], h["y"]))
-        out.append((f"{h['ref']} nylon standoff", cyl(x, y, P.STANDOFF_D, z, z + P.STANDOFF_LEN)))
+        play = screw_play(h)
+        hexagon = RegularPolygon(P.NUT[0] / 2, 6, rotation=toward_keycap(board, x, y) + 30).faces()[0]
+        nut = offset(Pos(x, y) * hexagon, play, kind=Kind.ARC)
+        out.append((f"{h['ref']} nylon nut and screw tip",
+                    prism(nut, roof, roof + P.NUT[1])
+                    + cyl(x, y, 2.0 + 2 * play, roof + P.NUT[1], P.HEAD_DEPTH + P.COVER_SCREW_L)))
     return out
+
+
+def screw_play(hole):
+    """How far a nylon M2 can sit off the centre of the PCB's hole."""
+    return (hole["d"] - P.M2_MIN_D) / 2
+
+
+def cover_play(hole):
+    """How far the cover's post at a hole can sit off the hole's centre: its screw off the PCB
+    hole's centre, and its bore off the screw."""
+    return screw_play(hole) + (P.COVER_BORE_D - P.M2_MIN_D) / 2
+
+
+def toward_keycap(board: Board, x, y):
+    """The direction (degrees, CAD frame) from (x, y) to the nearest keycap."""
+    p = Vertex(x, y, 0)
+    a, b = min((p.closest_points(f) for f in board.keycaps(0.0)), key=lambda ab: (ab[1] - ab[0]).length)
+    return math.degrees(math.atan2(b.Y - a.Y, b.X - a.X))
+
+
+def moved_posts(board: Board):
+    """[(name, shape)] of the cover's posts grown by the cover's play on its screws: every place
+    a post can be. The roof and skirt keep P.KEYCAP_MARGIN from the keycaps, more than the play."""
+    return [(f"{h['ref']} cover post, moved by its play",
+             cyl(*xy((h["x"], h["y"])), P.COVER_POST_D + 2 * cover_play(h), P.Z_PCB_TOP, P.Z_ROOF_BOTTOM + P.ROOF_T))
+            for h in cover_holes(board)]
+
+
+def cell_rows(board: Board):
+    """The largest cell (cell_box) against what its foam and the board leave room for: the
+    antenna keep-out, the wire pads it can reach over (it lies on its foam above their solder
+    joints), and the LEDs' light holes beside its end (at least half of each stays open)."""
+    x0, y0, x1, y1 = cell_box(board)
+    cell = rect_face((x0, y0, x1, y1))
+    keepout = polygon_face(board["rule_areas"]["ANTENNA_KEEPOUT"])
+    gap = keepout.distance_to(cell)
+    over_pads = max(min(y1, p["y"] + p["h"] / 2) - max(y0, p["y"] - p["h"] / 2)
+                    for p in board["battery_pads"]["pads"] if x0 < p["x"] + p["w"] / 2 and p["x"] - p["w"] / 2 < x1)
+    covered = {}
+    for led in board["leds"]:
+        for h in led["holes"]:
+            hole = Pos(*xy((h["x"], h["y"]))) * Circle(h["d"] / 2).faces()[0]
+            common = hole & cell
+            covered[led["ref"]] = round((common.area if common is not None else 0.0) / hole.area, 2)
+    return [{"stack": f"the largest cell ({' x '.join(f'{v:g}' for v in P.CELL)} mm) on the battery's outline",
+             "gap_to_antenna_keepout_mm": round(gap, 2), "over_wire_pads_mm": round(max(over_pads, 0.0), 2),
+             "above_solder_joints_mm": round(P.FOAM_T - P.JOINT_H, 2), "led_hole_covered": covered,
+             "ok": gap >= P.CELL_KEEPOUT_GAP and P.FOAM_T >= P.JOINT_H and all(v <= 0.5 for v in covered.values())}]
 
 
 def screw_stacks(board: Board):
@@ -143,17 +213,18 @@ def screw_stacks(board: Board):
         rows.append({"stack": f"M2 x {P.PCB_SCREW_L:g} into the heat-set insert ({', '.join(r for r, _, _ in pcb_screws(board))})",
                      "thread_mm": round(engaged, 2), "tip_to_hole_bottom_mm": round(to_bottom, 2),
                      "ok": engaged >= P.MIN_THREAD and to_bottom >= P.MIN_TIP_GAP})
-    lower_tip = P.HEAD_DEPTH + P.COVER_LOWER_SCREW_L
-    upper_tip = P.Z_ROOF_BOTTOM + P.ROOF_T - P.COVER_HEAD_DEPTH - P.COVER_UPPER_SCREW_L
-    lower = lower_tip - P.Z_PCB_TOP
-    upper = P.Z_ROOF_BOTTOM - upper_tip
-    rows.append({"stack": f"nylon M2 x {P.COVER_LOWER_SCREW_L:g} from below and M2 x {P.COVER_UPPER_SCREW_L:g} "
-                          f"from the cover, in the {P.STANDOFF_LEN:g} mm standoff",
-                 "lower_thread_mm": round(lower, 2), "upper_thread_mm": round(upper, 2),
-                 "tip_gap_mm": round(upper_tip - lower_tip, 2),
-                 "lower_head_above_underside_mm": round(P.HEAD_DEPTH - P.NYLON_HEAD_H, 2),
-                 "ok": min(lower, upper) >= P.MIN_THREAD and upper_tip - lower_tip >= P.MIN_TIP_GAP
-                       and P.HEAD_DEPTH - P.NYLON_HEAD_H >= 0})
+    # A nut needs its whole height engaged (DIN 934 sizes it for the screw's strength), not
+    # MIN_THREAD; the tip still has to clear it with a board PCB_T_TOL thick.
+    tip = P.HEAD_DEPTH + P.COVER_SCREW_L
+    nut_bottom = P.Z_ROOF_BOTTOM + P.ROOF_T
+    nut_top = nut_bottom + P.NUT[1]
+    rows.append({"stack": f"nylon M2 x {P.COVER_SCREW_L:g} from below, through the PCB and the cover's post, "
+                          "into a nylon nut on the roof",
+                 "nut_thread_mm": round(min(tip, nut_top) - nut_bottom, 2),
+                 "tip_above_nut_mm": round(tip - nut_top, 2),
+                 "tip_above_nut_thick_board_mm": round(tip - nut_top - P.PCB_T_TOL, 2),
+                 "head_above_underside_mm": round(P.HEAD_DEPTH - P.NYLON_HEAD_H, 2),
+                 "ok": tip - P.PCB_T_TOL >= nut_top and P.HEAD_DEPTH - P.NYLON_HEAD_H >= 0})
     return rows
 
 
@@ -199,11 +270,11 @@ def lip_rows(board: Board):
 
 
 def antenna_metal(board: Board):
-    """Metal hardware (steel screws and washers, brass inserts, steel discs) must stay out of
-    the antenna keep-out (CLAUDE.md rule 6)."""
+    """Metal hardware (steel screws and washers, brass inserts, the steel washers for the dock's
+    magnets) must stay out of the antenna keep-out (CLAUDE.md rule 6)."""
     keepout = polygon_face(board["rule_areas"]["ANTENNA_KEEPOUT"])
     metal = [(f"{ref} screw, washer and insert", x, y, P.WASHER[0]) for ref, x, y in pcb_screws(board)]
-    metal += [(f"{m['ref']} steel disc", *xy((m["x"], m["y"])), P.DISC_D) for m in board["steel_discs"]]
+    metal += [(f"{m['ref']} steel washer", *xy((m["x"], m["y"])), P.DISC_D) for m in board["steel_discs"]]
     rows = []
     for name, x, y, d in metal:
         gap = keepout.distance_to(Vector(x, y, 0)) - d / 2

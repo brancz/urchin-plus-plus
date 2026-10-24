@@ -56,28 +56,39 @@ MIN_LIP_TILT = 5.0           # degrees a nominal board can tilt in under the lip
 LIP_MIN_EDGE = 30.0          # the straight outer edge the lips sit on is at least this long
 
 # The three 2.2 mm holes around the controller (H6/H7/H8 on the left half, H2/H3/H4 on the
-# right) hold the PCB and the battery cover: an M2 x 8 nylon screw from the case's underside,
-# through the standoff and the PCB, into a 6 mm M2 nylon female-female standoff, and an M2 x 3
-# nylon screw from the cover's top into the standoff. Two of these holes are inside the
-# antenna keep-out, so all hardware there is nylon (CLAUDE.md rule 6: nothing conductive near
-# the antenna).
+# right) hold the PCB and the battery cover: an M2 x 16 nylon screw from the case's underside,
+# through the standoff, the PCB and a post printed on the cover, into an M2 nylon nut on the
+# cover's roof. Two of these holes are inside the antenna keep-out, so all hardware there is
+# nylon (CLAUDE.md rule 6: nothing conductive near the antenna). The posts replace bought
+# nylon standoffs: two of the holes are 2.6 mm from a keycap's edge, so a standoff could be at
+# most 4 mm across flats, and no shop in Germany sold one (2026-10-24; the narrowest were 5 mm).
+# The checks move each post by the cover's play on the screws, and each nut by its screw's play
+# in the PCB's hole, toward the keycap beside it.
 SCREW_CLEAR_D = 2.4
 HEAD_D = 4.4                 # M2 pan head (nylon: 4.0 mm) plus clearance
 HEAD_DEPTH = 1.8             # the head stays inside the underside, clear of the dock
 NYLON_HEAD_H = 1.6           # M2 nylon pan head: 1.3 to 1.6 mm tall
-STANDOFF_LEN = 6.0           # nylon M2 F-F standoff between the PCB and the cover
-STANDOFF_D = 4.62            # its hex across corners: up to 4 mm across flats
-COVER_LOWER_SCREW_L = 8.0
-COVER_UPPER_SCREW_L = 3.0
-MIN_THREAD = 2.0             # least thread engagement of any screw (5 turns of M2)
-MIN_TIP_GAP = 0.3            # between two screw tips in a standoff, or a tip and a hole's bottom
+M2_MIN_D = 1.886             # an M2 thread's smallest major diameter (6g)
+COVER_POST_LEN = 6.0         # the cover's post, from the PCB's top to the roof
+COVER_POST_D = 4.0           # 0.85 mm of wall (two lines) round the bore; 0.62 mm from the keycap
+COVER_BORE_D = 2.3           # the post's bore: prints about 2.2, a sliding fit that locates the
+                             # cover on the screws
+COVER_BORE_CHAMFER = 0.3     # lead-in at the bore's bottom, for the screw pushed up from below
+COVER_SCREW_L = 16.0         # nylon M2 x 16 pan head, DIN 7985 (no M2 x 14 in nylon)
+NUT = (4.62, 1.6)            # M2 nut, DIN 934: 4 mm across flats (4.62 across corners), 1.6 mm
+                             # tall; assembled with a flat toward the keycap beside it
+MIN_THREAD = 2.0             # least thread engagement of a screw in a printed part or an insert
+                             # (5 turns of M2); a full DIN 934 nut (0.8 d) is the standard instead
+MIN_TIP_GAP = 0.3            # between a screw's tip and a hole's bottom
 
 USB_OPENING_W = 13.0         # USB-C plug overmolds are up to about 12.4 mm wide
 RESET_HOLE_D = 2.5           # poke hole under the reset button (a pin or paper clip)
 DOCK_WINDOW_MARGIN = 1.5     # around the charging pads, for the dock's pins (the dock checks size it)
 PUCK_CLEAR = 0.75            # around the tenting puck's outline
-DISC_D = 10.0                # steel disc for the dock magnets (the board's MK1/MK2 marker)
-DISC_T = 1.0                 # recessed flush into the case's underside
+DISC_D = 10.0                # steel for the dock magnets (the board's MK1/MK2 marker): an M5 washer,
+                             # DIN 125 / ISO 7089, zinc-plated steel, 10 x 1 mm with a 5.3 mm hole
+DISC_T = 1.2                 # its recess in the case's underside: the washer is at most 1.1 mm
+                             # thick (ISO 7089), so it never stands proud; 6 layers
 FOOT_RECESS = 0.4            # shallow seat for each stick-on rubber foot
 FOOT_SEAT = 0.4              # the seat's diameter over the foot's
 
@@ -87,13 +98,23 @@ SWITCH_SCOOP_R = 8.0         # finger scoop on the outside of the wall at the po
 SWITCH_SCOOP_DEPTH = 1.2     # leaves 0.8 mm (two lines) of wall beside the slot
 
 # --- Battery cover --------------------------------------------------------------------------
-BATTERY_H = 4.0 + 1.0        # 401730 cell on 1 mm foam tape (docs/ARCHITECTURE.md)
+# The cells sold as 401730 are longer than the board's 17 x 30 mm outline (BT2): 32 x 17.5 x
+# 4.3 mm with their protection board (EEMB), or 32 x 17 x 4 +-0.5 mm. The checks model the
+# largest of both, centred on the outline with its antenna-side end on the outline's end (3.75
+# mm from the keep-out) and its extra length toward the wire pads (BT1): up to 0.4 mm over the
+# pads' ends, where it lies on its foam above their solder joints.
+CELL = (17.5, 32.5, 4.5)     # width, length, thickness
+FOAM_T = 1.0                 # the cell sits on 1 mm foam tape (docs/ARCHITECTURE.md)
+JOINT_H = 0.8                # a 28 AWG wire soldered flat on a pad, its insulation 0.8 mm across
+CELL_KEEPOUT_GAP = 3.0       # cell to the antenna keep-out, as scripts/checks/clearance.py
 ROOF_T = 1.6
-Z_ROOF_BOTTOM = Z_PCB_TOP + STANDOFF_LEN  # 1 mm above the cell
+Z_ROOF_BOTTOM = Z_PCB_TOP + COVER_POST_LEN  # 0.5 mm above the largest cell
+SKIRT_LIFT = LAYER_H         # the skirt ends this far above the wall's top, so the posts clamp
+                             # the PCB even when the board is PCB_T_TOL thin
 KEYCAP = (17.5, 16.5)        # Kailh Choc keycap (MBK) footprint
-KEYCAP_MARGIN = 0.8          # the cover stays this far from every keycap
+KEYCAP_MARGIN = 0.8          # the roof and skirt stay this far from every keycap (the posts and
+                             # nuts reach closer: see COVER_POST_D)
 COVER_BEYOND_HOLES = 5.0     # the cover ends this far beyond its outermost holes (along y)
-COVER_HEAD_DEPTH = 0.8       # counterbore for the M2 x 3 screws' heads in the roof
 LED_WINDOW_D = 3.0           # over the status and charge LEDs, which shine up through the PCB
 
 # --- Dock tray (docs/ARCHITECTURE.md, Dock) --------------------------------------------------
@@ -166,11 +187,12 @@ DOCK_TOL = {
     "pin tilt (1 degree over 6 mm)": 0.1,
 }
 
-# Magnets: an N52 10 x 3 mm disc under each steel disc, glued into a pocket from below. Two per
-# half outweigh the three pins (up to 3 x 1.2 N) with the half's weight on top.
+# Magnets: an N52 10 x 3 mm disc (or N45 10 x 5 mm) under each of the case's steel washers, glued
+# into a pocket from below. Two per half outweigh the three pins (up to 3 x 1.2 N) with the half's
+# weight on top.
 MAGNET = (10.0, 3.0)
 MAGNET_FIT = 0.2
-MAGNET_SKIN = 0.6            # printed floor between the magnet and the steel disc
+MAGNET_SKIN = 0.6            # printed floor between the magnet and the case's steel washer
 MAGNET_WALL = 0.8            # least printed wall around a magnet, inside the dock PCB's hole
 MAGNET_POCKET_H = 5.0        # deep enough for a 10 x 5 mm magnet too
 

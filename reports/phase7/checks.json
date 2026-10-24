@@ -47,21 +47,28 @@
    "part": "cover_left",
    "against": "pcb",
    "overlap_mm3": 0,
-   "gap_mm": 0.397,
+   "gap_mm": 0.005,
+   "ok": true
+  },
+  {
+   "part": "cover_left",
+   "against": "SW17 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 1.404,
    "ok": true
   },
   {
    "part": "cover_left",
    "against": "SW17 keycap",
    "overlap_mm3": 0,
-   "gap_mm": 0.8,
+   "gap_mm": 0.625,
    "ok": true
   },
   {
    "part": "cover_left",
    "against": "case_left",
    "overlap_mm3": 0,
-   "gap_mm": 0.0,
+   "gap_mm": 0.2,
    "ok": true
   },
   {
@@ -93,80 +100,73 @@
    "ok": true
   },
   {
-   "part": "H6 nylon standoff",
-   "against": "pcb",
-   "overlap_mm3": 0,
-   "gap_mm": 0.005,
-   "ok": true
-  },
-  {
-   "part": "H6 nylon standoff",
-   "against": "case_left",
-   "overlap_mm3": 0,
-   "gap_mm": 0.087,
-   "ok": true
-  },
-  {
-   "part": "H6 nylon standoff",
+   "part": "H6 nylon nut and screw tip",
    "against": "cover_left",
    "overlap_mm3": 0,
    "gap_mm": 0.0,
    "ok": true
   },
   {
-   "part": "H7 nylon standoff",
-   "against": "pcb",
-   "overlap_mm3": 0,
-   "gap_mm": 0.005,
-   "ok": true
-  },
-  {
-   "part": "H7 nylon standoff",
-   "against": "SW17 switch",
-   "overlap_mm3": 0,
-   "gap_mm": 1.069,
-   "ok": true
-  },
-  {
-   "part": "H7 nylon standoff",
+   "part": "H7 nylon nut and screw tip",
    "against": "SW17 keycap",
    "overlap_mm3": 0,
-   "gap_mm": 0.315,
+   "gap_mm": 0.467,
    "ok": true
   },
   {
-   "part": "H7 nylon standoff",
-   "against": "case_left",
-   "overlap_mm3": 0,
-   "gap_mm": 0.09,
-   "ok": true
-  },
-  {
-   "part": "H7 nylon standoff",
+   "part": "H7 nylon nut and screw tip",
    "against": "cover_left",
    "overlap_mm3": 0,
    "gap_mm": 0.0,
    "ok": true
   },
   {
-   "part": "H8 nylon standoff",
+   "part": "H8 nylon nut and screw tip",
+   "against": "cover_left",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "H6 cover post, moved by its play",
    "against": "pcb",
    "overlap_mm3": 0,
    "gap_mm": 0.005,
    "ok": true
   },
   {
-   "part": "H8 nylon standoff",
-   "against": "case_left",
+   "part": "H6 cover post, moved by its play",
+   "against": "SW5 keycap",
    "overlap_mm3": 0,
-   "gap_mm": 0.088,
+   "gap_mm": 0.261,
    "ok": true
   },
   {
-   "part": "H8 nylon standoff",
-   "against": "cover_left",
+   "part": "H7 cover post, moved by its play",
+   "against": "pcb",
    "overlap_mm3": 0,
-   "gap_mm": 0.0,
+   "gap_mm": 0.005,
+   "ok": true
+  },
+  {
+   "part": "H7 cover post, moved by its play",
+   "against": "SW17 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 1.013,
+   "ok": true
+  },
+  {
+   "part": "H7 cover post, moved by its play",
+   "against": "SW17 keycap",
+   "overlap_mm3": 0,
+   "gap_mm": 0.261,
+   "ok": true
+  },
+  {
+   "part": "H8 cover post, moved by its play",
+   "against": "pcb",
+   "overlap_mm3": 0,
+   "gap_mm": 0.005,
    "ok": true
   },
   {
@@ -201,21 +201,28 @@
    "part": "cover_right",
    "against": "pcb",
    "overlap_mm3": 0,
-   "gap_mm": 0.397,
+   "gap_mm": 0.005,
+   "ok": true
+  },
+  {
+   "part": "cover_right",
+   "against": "SW33 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 1.404,
    "ok": true
   },
   {
    "part": "cover_right",
    "against": "SW33 keycap",
    "overlap_mm3": 0,
-   "gap_mm": 0.8,
+   "gap_mm": 0.625,
    "ok": true
   },
   {
    "part": "cover_right",
    "against": "case_right",
    "overlap_mm3": 0,
-   "gap_mm": 0.0,
+   "gap_mm": 0.2,
    "ok": true
   },
   {
@@ -247,80 +254,73 @@
    "ok": true
   },
   {
-   "part": "H2 nylon standoff",
-   "against": "pcb",
-   "overlap_mm3": 0,
-   "gap_mm": 0.005,
-   "ok": true
-  },
-  {
-   "part": "H2 nylon standoff",
-   "against": "case_right",
-   "overlap_mm3": 0,
-   "gap_mm": 0.088,
-   "ok": true
-  },
-  {
-   "part": "H2 nylon standoff",
+   "part": "H2 nylon nut and screw tip",
    "against": "cover_right",
    "overlap_mm3": 0,
    "gap_mm": 0.0,
    "ok": true
   },
   {
-   "part": "H3 nylon standoff",
-   "against": "pcb",
-   "overlap_mm3": 0,
-   "gap_mm": 0.005,
-   "ok": true
-  },
-  {
-   "part": "H3 nylon standoff",
-   "against": "SW33 switch",
-   "overlap_mm3": 0,
-   "gap_mm": 1.069,
-   "ok": true
-  },
-  {
-   "part": "H3 nylon standoff",
+   "part": "H3 nylon nut and screw tip",
    "against": "SW33 keycap",
    "overlap_mm3": 0,
-   "gap_mm": 0.315,
+   "gap_mm": 0.467,
    "ok": true
   },
   {
-   "part": "H3 nylon standoff",
-   "against": "case_right",
-   "overlap_mm3": 0,
-   "gap_mm": 0.09,
-   "ok": true
-  },
-  {
-   "part": "H3 nylon standoff",
+   "part": "H3 nylon nut and screw tip",
    "against": "cover_right",
    "overlap_mm3": 0,
    "gap_mm": 0.0,
    "ok": true
   },
   {
-   "part": "H4 nylon standoff",
+   "part": "H4 nylon nut and screw tip",
+   "against": "cover_right",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "H2 cover post, moved by its play",
    "against": "pcb",
    "overlap_mm3": 0,
    "gap_mm": 0.005,
    "ok": true
   },
   {
-   "part": "H4 nylon standoff",
-   "against": "case_right",
+   "part": "H3 cover post, moved by its play",
+   "against": "pcb",
    "overlap_mm3": 0,
-   "gap_mm": 0.087,
+   "gap_mm": 0.005,
    "ok": true
   },
   {
-   "part": "H4 nylon standoff",
-   "against": "cover_right",
+   "part": "H3 cover post, moved by its play",
+   "against": "SW33 switch",
    "overlap_mm3": 0,
-   "gap_mm": 0.0,
+   "gap_mm": 1.013,
+   "ok": true
+  },
+  {
+   "part": "H3 cover post, moved by its play",
+   "against": "SW33 keycap",
+   "overlap_mm3": 0,
+   "gap_mm": 0.261,
+   "ok": true
+  },
+  {
+   "part": "H4 cover post, moved by its play",
+   "against": "pcb",
+   "overlap_mm3": 0,
+   "gap_mm": 0.005,
+   "ok": true
+  },
+  {
+   "part": "H4 cover post, moved by its play",
+   "against": "SW18 keycap",
+   "overlap_mm3": 0,
+   "gap_mm": 0.261,
    "ok": true
   },
   {
@@ -664,11 +664,11 @@
    "side": "left"
   },
   {
-   "stack": "nylon M2 x 8 from below and M2 x 3 from the cover, in the 6 mm standoff",
-   "lower_thread_mm": 3.0,
-   "upper_thread_mm": 2.2,
-   "tip_gap_mm": 0.8,
-   "lower_head_above_underside_mm": 0.2,
+   "stack": "nylon M2 x 16 from below, through the PCB and the cover's post, into a nylon nut on the roof",
+   "nut_thread_mm": 1.6,
+   "tip_above_nut_mm": 1.8,
+   "tip_above_nut_thick_board_mm": 1.64,
+   "head_above_underside_mm": 0.2,
    "ok": true,
    "side": "left"
   },
@@ -679,14 +679,26 @@
    "side": "left"
   },
   {
-   "metal": "MK1 steel disc",
+   "metal": "MK1 steel washer",
    "gap_to_antenna_keepout_mm": 64.98,
    "ok": true,
    "side": "left"
   },
   {
-   "metal": "MK2 steel disc",
+   "metal": "MK2 steel washer",
    "gap_to_antenna_keepout_mm": 47.3,
+   "ok": true,
+   "side": "left"
+  },
+  {
+   "stack": "the largest cell (17.5 x 32.5 x 4.5 mm) on the battery's outline",
+   "gap_to_antenna_keepout_mm": 3.75,
+   "over_wire_pads_mm": 0.4,
+   "above_solder_joints_mm": 0.2,
+   "led_hole_covered": {
+    "LED1": 0.21,
+    "LED2": 0.21
+   },
    "ok": true,
    "side": "left"
   },
@@ -730,11 +742,11 @@
    "side": "right"
   },
   {
-   "stack": "nylon M2 x 8 from below and M2 x 3 from the cover, in the 6 mm standoff",
-   "lower_thread_mm": 3.0,
-   "upper_thread_mm": 2.2,
-   "tip_gap_mm": 0.8,
-   "lower_head_above_underside_mm": 0.2,
+   "stack": "nylon M2 x 16 from below, through the PCB and the cover's post, into a nylon nut on the roof",
+   "nut_thread_mm": 1.6,
+   "tip_above_nut_mm": 1.8,
+   "tip_above_nut_thick_board_mm": 1.64,
+   "head_above_underside_mm": 0.2,
    "ok": true,
    "side": "right"
   },
@@ -745,14 +757,26 @@
    "side": "right"
   },
   {
-   "metal": "MK1 steel disc",
+   "metal": "MK1 steel washer",
    "gap_to_antenna_keepout_mm": 64.98,
    "ok": true,
    "side": "right"
   },
   {
-   "metal": "MK2 steel disc",
+   "metal": "MK2 steel washer",
    "gap_to_antenna_keepout_mm": 47.3,
+   "ok": true,
+   "side": "right"
+  },
+  {
+   "stack": "the largest cell (17.5 x 32.5 x 4.5 mm) on the battery's outline",
+   "gap_to_antenna_keepout_mm": 3.75,
+   "over_wire_pads_mm": 0.4,
+   "above_solder_joints_mm": 0.2,
+   "led_hole_covered": {
+    "LED1": 0.21,
+    "LED2": 0.21
+   },
    "ok": true,
    "side": "right"
   },

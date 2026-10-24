@@ -112,7 +112,7 @@ class Dock:
 
     @cached_property
     def magnets(self):
-        """[(x, y, ref, half)] under every steel disc."""
+        """[(x, y, ref, half)] under every steel washer (the boards' MK1/MK2 markers)."""
         return [(*self.at(b, dx, (m["x"], m["y"])), m["ref"], b.side) for b, dx in self.halves() for m in b["steel_discs"]]
 
     @property

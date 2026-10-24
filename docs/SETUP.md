@@ -66,11 +66,10 @@ scripts/roundtrip/run.sh                               # full toolchain proof, ~
 ## Hardware for bring-up
 
 - An SWD probe whose I/O follows the target's VTref down to 1.8 V: a blank module runs its I/O at 1.8 V until the bootloader sets 3.3 V, and a fixed-3.3 V probe such as a Raspberry Pi Pico can't drive or read it safely (decision log, 2026-10-18). A SEGGER J-Link fits: SEGGER lists the J-Link EDU Mini's target interface voltage as 1.8 V and 3.3 V, and its licence allows non-profit educational use only, so check that the model's terms fit. pyOCD drives a J-Link through SEGGER's "J-Link Software and Documentation Pack", which must be installed. Wiring and commands: `firmware/README.md`.
-- Jumper wires for the SWD pads
-- Multimeter
-- 3D printer or JLC's 3D printing service (PETG) for the dock tray
-- Neodymium disc magnets and thin steel discs (sizes chosen in phase 7)
-- Two protected LiPo cells (chosen in phase 3)
+- The J-Link EDU Mini's plug is a 1.27 mm 10-pin Cortex debug connector, so it needs a breakout to 2.54 mm pins (e.g. Adafruit 2743) and female-female jumper wires. The SWD pads (TP2) are bare surface-mount pads on the bottom, 2.54 mm apart: for the first flash, solder a 5-pin 2.54 mm header (or five short wires) to them for the jumpers, and remove it before the board goes into its case. A 2.54 mm pogo-pin clip works without soldering
+- Multimeter, calipers
+- 3D printer (the cases, covers and dock tray: `mech/README.md`)
+- Two protected 401730 LiPo cells (`mech/README.md`, "The cell"), and the hardware listed in `mech/README.md`
 
 ## Fallback: KiCad 9 (used 2026-10-17)
 
