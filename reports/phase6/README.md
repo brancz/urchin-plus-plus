@@ -86,6 +86,6 @@ Designators carry a side suffix (`U1_L`, `U1_R`), and nets an `L-`/`R-` prefix. 
 - [ ] J1 (USB-C): add solder to its four shell legs with an iron. Reflow wets them through the pin-in-paste apertures, but the barrels fill only partly, and the legs are what hold the receptacle against cable forces.
 - [ ] 34 Kailh Choc hotswap sockets (CPG135001S30), soldered on the bottom pads.
 - [ ] 2 × 401730 protected LiPo cells (4.0 × 17 × 30 mm, ~180 mAh): red to BT1 "+", black to "−". Check polarity with a meter first (bring-up step 2). Mount on 1 mm foam tape.
-- [ ] Rubber feet at MK3–MK6: 6 mm wide, at least 3.5 mm tall, at least 5 mm for use with a USB cable plugged in. Steel discs at MK1/MK2 when the dock exists (phase 7).
+- [ ] Rubber feet at MK3–MK6: 6 mm wide, at least 3.5 mm tall, at least 5 mm for use with a USB cable plugged in. Steel discs at MK1/MK2 when the dock exists (phase 7). (Superseded for the printed case: 6 × 2 mm bumpers go on the case's underside, and the steel discs into its recesses; see `mech/README.md`.)
 - [ ] Nylon M2 screws for the two case holes beside the antenna (left H6/H8, right H2/H4), if a case is used.
 - [ ] First flash over SWD (TP2) with a probe that follows the target voltage, e.g. J-Link with pyOCD. Then the UF2 bootloader and ZMK (phase 8).

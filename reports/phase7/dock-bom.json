@@ -1,0 +1,98 @@
+{
+  "checked_utc": "2026-10-24T16:12:04Z",
+  "panels": 5,
+  "parts": [
+    {
+      "lcsc": "C5221284",
+      "role": "SMD pogo pin, 6.0 mm free height (Yiyuan YTC1P-4020-01), 3 per half",
+      "qty_per_board": 6,
+      "needed": 30,
+      "checked_utc": "2026-10-24T16:12:04Z",
+      "mpn": "YTC1P-4020-01",
+      "manufacturer": "YIYUAN",
+      "package": "SMD,D=2mm",
+      "jlc_stock": 6413,
+      "library": "extended",
+      "datasheet": "docs/datasheets/C5221284_YTC1P-4020-01.pdf"
+    },
+    {
+      "lcsc": "C2927029",
+      "role": "USB-C receptacle, power only (DEALON USB-TYPE-C-009)",
+      "qty_per_board": 1,
+      "needed": 5,
+      "checked_utc": "2026-10-24T16:12:04Z",
+      "mpn": "USB-TYPE-C-009",
+      "manufacturer": "DEALON",
+      "package": "SMD",
+      "jlc_stock": 27565,
+      "library": "extended",
+      "datasheet": "docs/datasheets/C2927029_USB-TYPE-C-009.pdf"
+    },
+    {
+      "lcsc": "C75464",
+      "role": "Resettable fuse 0.5 A hold (Bourns MF-NSMF050-2)",
+      "qty_per_board": 1,
+      "needed": 5,
+      "checked_utc": "2026-10-24T16:12:04Z",
+      "mpn": "MF-NSMF050-2",
+      "manufacturer": "BOURNS",
+      "package": "1206",
+      "jlc_stock": 72279,
+      "library": "extended",
+      "datasheet": "docs/datasheets/C75464_MF-NSMF050-2.pdf"
+    },
+    {
+      "lcsc": "C123790",
+      "role": "5V TVS, 6.0 V standoff (MDD SMF6.0A)",
+      "qty_per_board": 1,
+      "needed": 5,
+      "checked_utc": "2026-10-24T16:12:04Z",
+      "mpn": "SMF6.0A",
+      "manufacturer": "MDD(Microdiode Semiconductor)",
+      "package": "SOD-123FL",
+      "jlc_stock": 114027,
+      "library": "extended",
+      "datasheet": "docs/datasheets/C123790_SMF6.0A.pdf"
+    },
+    {
+      "lcsc": "C25905",
+      "role": "5.1k CC pull-downs, one per CC pin",
+      "qty_per_board": 2,
+      "needed": 10,
+      "checked_utc": "2026-10-24T16:12:04Z",
+      "mpn": "0402WGF5101TCE",
+      "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+      "package": "0402",
+      "jlc_stock": 4234123,
+      "library": "basic",
+      "datasheet": "docs/datasheets/C25905_R0402_5k1.pdf"
+    },
+    {
+      "lcsc": "C2297",
+      "role": "Power LED, green 0805 (KENTO KT-0805G)",
+      "qty_per_board": 1,
+      "needed": 5,
+      "checked_utc": "2026-10-24T16:12:04Z",
+      "mpn": "KT-0805G",
+      "manufacturer": "Hubei KENTO Elec",
+      "package": "0805",
+      "jlc_stock": 2421049,
+      "library": "basic",
+      "datasheet": "docs/datasheets/C2297_KT-0805G.pdf"
+    },
+    {
+      "lcsc": "C25879",
+      "role": "2.2k LED resistor",
+      "qty_per_board": 1,
+      "needed": 5,
+      "checked_utc": "2026-10-24T16:12:04Z",
+      "mpn": "0402WGF2201TCE",
+      "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+      "package": "0402",
+      "jlc_stock": 3054921,
+      "library": "basic",
+      "datasheet": "docs/datasheets/C25879_R0402_2k2.pdf"
+    }
+  ],
+  "problems": []
+}

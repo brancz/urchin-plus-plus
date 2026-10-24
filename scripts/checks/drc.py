@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""KiCad DRC of a half with the documented exceptions (verification layer 2).
+"""KiCad DRC of a half, or the dock, with the documented exceptions (verification layer 2).
 
-    python3 scripts/checks/drc.py BOARD --half left|right|panel [--unrouted-ok] [--json OUT] [--md OUT]
+    python3 scripts/checks/drc.py BOARD --half left|right|panel|dock [--unrouted-ok] [--json OUT] [--md OUT]
 
 Runs `kicad-cli pcb drc` on a copy of the board with its zones refilled first
 (kicad-cli doesn't refill; needs $KICAD_PY), with the rules from the board's
@@ -11,6 +11,7 @@ footprint it involves matches one of its designators (fnmatch; board-edge items
 count as "Edge.Cuts"), and, if the rule has "require", at least one matches that.
 With --half panel (the KiKit panel, designators suffixed _L/_R) each designator is
 matched without its suffix, against the rules for the half the suffix names.
+--half dock is the dock board (phase 7); a rule applies to it only if its "halves" name it.
 Every other error fails. Warnings are listed by type and never fail; each type
 is dispositioned in the phase report. --unrouted-ok skips unconnected items
 (placement phase, before routing). Python 3.9; needs kicad-cli on PATH.
@@ -74,7 +75,7 @@ os._exit(0)
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("board")
-    ap.add_argument("--half", required=True, choices=("left", "right", "panel"))
+    ap.add_argument("--half", required=True, choices=("left", "right", "panel", "dock"))
     ap.add_argument("--unrouted-ok", action="store_true")
     ap.add_argument("--json")
     ap.add_argument("--md")

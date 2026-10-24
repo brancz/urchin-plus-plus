@@ -8,9 +8,11 @@ Lengths in millimetres. z = 0 is the case's underside.
 # --- Printing (Bambu Lab A1 mini, 0.4 mm nozzle, 0.2 mm layers) -------------------------
 BED = (180.0, 180.0, 180.0)  # build volume
 FIT = 0.4                    # clearance between a printed wall and the part it surrounds
+LAYER_H = 0.2                # layer height (0.20 mm Standard)
 
 # --- The board (docs/ARCHITECTURE.md, reports/phase3/README.md) --------------------------
 PCB_T = 1.6                  # also in mech/data/*.json ("thickness"); checked against it
+PCB_T_TOL = 0.16             # JLC: +-10 % on 1.6 mm
 BOTTOM_PARTS_H = 3.26        # tallest bottom part: the USB-C receptacle (the module is 3.0)
 SOCKET_H = 1.85              # Kailh Choc hotswap socket body, below the PCB
 SWITCH_BODY = 15.0           # Kailh Choc v1 housing, 15 x 15 mm at its widest
@@ -45,9 +47,12 @@ WASHER = (5.0, 0.3)          # M2 washer, DIN 125: 5 mm across, 0.3 mm thick
 # outer edge first, and the controller side screws down.
 LIP_COUNT = 2
 LIP_LEN = 10.0
-LIP_OVER = 0.6               # how far a lip reaches over the PCB
+LIP_OVER = 0.8               # how far a lip reaches over the PCB
 LIP_T = 0.8                  # 4 layers
-LIP_PLAY = 0.1               # between the PCB's top and the lip
+LIP_PLAY = 0.2               # between the PCB's top and the lip: one layer, so the lip's underside
+                             # is on a layer boundary, and a board 0.16 mm thick still fits
+MIN_LIP_HOLD = 0.3           # the lip stays this far over the board's edge (RSS of its play)
+MIN_LIP_TILT = 5.0           # degrees a nominal board can tilt in under the lips
 LIP_MIN_EDGE = 30.0          # the straight outer edge the lips sit on is at least this long
 
 # The three 2.2 mm holes around the controller (H6/H7/H8 on the left half, H2/H3/H4 on the
@@ -61,7 +66,7 @@ HEAD_D = 4.4                 # M2 pan head (nylon: 4.0 mm) plus clearance
 HEAD_DEPTH = 1.8             # the head stays inside the underside, clear of the dock
 NYLON_HEAD_H = 1.6           # M2 nylon pan head: 1.3 to 1.6 mm tall
 STANDOFF_LEN = 6.0           # nylon M2 F-F standoff between the PCB and the cover
-STANDOFF_D = 3.7             # its hex across corners (3.2 mm across flats)
+STANDOFF_D = 4.62            # its hex across corners: up to 4 mm across flats
 COVER_LOWER_SCREW_L = 8.0
 COVER_UPPER_SCREW_L = 3.0
 MIN_THREAD = 2.0             # least thread engagement of any screw (5 turns of M2)
@@ -69,16 +74,17 @@ MIN_TIP_GAP = 0.3            # between two screw tips in a standoff, or a tip an
 
 USB_OPENING_W = 13.0         # USB-C plug overmolds are up to about 12.4 mm wide
 RESET_HOLE_D = 2.5           # poke hole under the reset button (a pin or paper clip)
-DOCK_WINDOW_MARGIN = 1.0     # around the charging pads, for the dock's pins
+DOCK_WINDOW_MARGIN = 1.5     # around the charging pads, for the dock's pins (the dock checks size it)
 PUCK_CLEAR = 0.75            # around the tenting puck's outline
 DISC_D = 10.0                # steel disc for the dock magnets (the board's MK1/MK2 marker)
 DISC_T = 1.0                 # recessed flush into the case's underside
 FOOT_RECESS = 0.4            # shallow seat for each stick-on rubber foot
+FOOT_SEAT = 0.4              # the seat's diameter over the foot's
 
 SWITCH_H = 1.6              # MSK12C02 slide switch body below the PCB (its 3D model)
 SWITCH_SLOT_MARGIN = 1.5     # power switch slot, beyond the switch body at each end
 SWITCH_SCOOP_R = 8.0         # finger scoop on the outside of the wall at the power switch
-SWITCH_SCOOP_DEPTH = 1.6     # leaves 0.4 mm of wall beside the slot
+SWITCH_SCOOP_DEPTH = 1.2     # leaves 0.8 mm (two lines) of wall beside the slot
 
 # --- Battery cover --------------------------------------------------------------------------
 BATTERY_H = 4.0 + 1.0        # 401730 cell on 1 mm foam tape (docs/ARCHITECTURE.md)
@@ -87,5 +93,91 @@ Z_ROOF_BOTTOM = Z_PCB_TOP + STANDOFF_LEN  # 1 mm above the cell
 KEYCAP = (17.5, 16.5)        # Kailh Choc keycap (MBK) footprint
 KEYCAP_MARGIN = 0.8          # the cover stays this far from every keycap
 COVER_BEYOND_HOLES = 5.0     # the cover ends this far beyond its outermost holes (along y)
-COVER_HEAD_DEPTH = 0.8       # counterbore for the M2 x 4 screws' heads in the roof
+COVER_HEAD_DEPTH = 0.8       # counterbore for the M2 x 3 screws' heads in the roof
 LED_WINDOW_D = 3.0           # over the status and charge LEDs, which shine up through the PCB
+
+# --- Dock tray (docs/ARCHITECTURE.md, Dock) --------------------------------------------------
+# The halves sit side by side in their cases, inner edges facing, as in use. The tray prints
+# as two pieces split between the pockets; the dock PCB lies in a recess across both and its
+# screws hold them together.
+POCKET_CLEAR = 0.4           # case to pocket wall (see the pin landing terms for why not more)
+DIVIDER = 3.0                # wall between the pockets at the cases' inner edges
+TRAY_WALL = 3.0              # around the tray
+TRAY_EDGE_TOP = 1.0          # chamfers on the tray's outer edges
+TRAY_EDGE_BOTTOM = 0.4
+Z_DOCK = 7.0                 # pocket floor above the table: the cases' underside, the dock PCB's top
+FUNNEL = 1.2                 # 45° lead-in at the top of every pocket wall
+FINGER_NOTCH = (9.0, 1.0)    # radius, and height above the floor: a notch in each pocket's outer
+                             # wall, to get a finger to the case's side and tilt the half out
+SPLIT_GAP = 0.2              # between the two tray pieces
+RELIEF_DEPTH = 1.2           # hollow below the dock PCB under the receptacle's legs and the fuse
+FUSE_RELIEF = 2.0            # the hollow reaches this far past the fuse's centre
+
+DOCK_PCB_T = 1.6
+DOCK_PCB_CLEAR = 0.3         # recess around the dock PCB's outline (JLC routes it to +-0.2 mm)
+BOSS_CLEAR = 0.15            # the PCB's holes around the magnet bosses: these locate the bar,
+                             # one beside each half's pins
+BAR_RIM = 2.5                # dock PCB beyond the pin pads and magnet holes, for its traces
+BAR_END = 1.3                # dock PCB beyond the outermost pin pads
+TAB_HALF_W = 10.5            # the dock PCB's tab between the halves, for the USB-C and parts
+PARTS_CLEAR = 0.8            # dock PCB parts and screw heads to the pockets' outline
+DOCK_SCREW_DX = 8.3          # the two M2 screws, either side of the USB-C receptacle
+MIN_INSERT_WALL = 1.0        # printed wall beside a heat-set insert's 3.2 mm hole
+DOCK_SCREW_HEAD = (4.0, 1.6) # M2 x 5 pan head into an M2 x 3 heat-set insert below the PCB
+DOCK_SCREW_L = 5.0
+DOCK_PCB_ORIGIN = (150.0, 100.0)  # KiCad position of the tray's centre line and pad row
+
+# Pogo pins (C5221284, docs/datasheets/C5221284_YTC1P-4020-01.pdf): free 6.0 mm above the dock
+# PCB, 4.6 mm fully compressed; the half's pads are Z_PCB_BOTTOM (5.2 mm) above the floor.
+PIN_FREE = 6.0
+PIN_BOTTOM = 4.6
+PIN_PAD_D = 2.3              # the dock PCB's land
+PIN_FLANGE = (2.0, 0.5)
+PIN_BARREL = (1.54, 4.0)     # diameter, top above the PCB
+PIN_TIP_D = 0.9
+PIN_PAD_MARGIN = 0.15        # the tip's apex stays this far inside the half's pad
+MIN_COMPRESSION = 0.2        # the pins stay at least this far compressed (contact force)
+
+# Tolerances, each the most it can be off either way. The checks add them up both linearly (the
+# worst case) and as a root sum of squares (independent errors: the spread to expect).
+# The pin tip's height above the pocket floor:
+PIN_HEIGHT_TOL = {
+    "pin free height (+-0.15 in its 4020-01R sibling's datasheet, C48783831)": 0.15,
+    "pin on its solder joint": 0.05,
+    "dock PCB thickness (1.6 mm +-10 %)": 0.16,
+    "tray recess depth (print)": 0.1,
+}
+# The half's pads above the pocket floor:
+CASE_HEIGHT_TOL = {"case underside to the PCB's standoffs (print)": 0.15}
+# The pockets' straight walls reach above the tallest pin tip plus the case's bottom chamfer, so
+# a half is guided before the pins meet it.
+POCKET_DEPTH = 8.2
+# Where the pin lands on the half's pad and stands in the case's window. How far the case moves
+# and turns in its pocket, and the board in its case, is worked out from their outlines and
+# these clearances.
+POCKET_PLAY = POCKET_CLEAR + 0.2  # plus the pocket's and the case's outlines as printed
+BOARD_WALL_PLAY = FIT + 0.1       # PCB to the case's wall, plus the print
+BOARD_SCREW_PLAY = 0.4            # M2 in the PCB's 2.2 mm and the case's 2.4 mm holes (0.1 + 0.2),
+                                  # plus 0.1 for where the printer puts the hole
+DOCK_TOL = {
+    "dock PCB on the magnet bosses (its milled holes +-0.2 mm)": BOSS_CLEAR + 0.1,
+    "pocket to boss (one print)": 0.1,
+    "pin on its 2.3 mm land (2.0 mm flange)": (PIN_PAD_D - PIN_FLANGE[0]) / 2,
+    "pin tilt (1 degree over 6 mm)": 0.1,
+}
+
+# Magnets: an N52 10 x 3 mm disc under each steel disc, glued into a pocket from below. Two per
+# half outweigh the three pins (up to 3 x 1.2 N) with the half's weight on top.
+MAGNET = (10.0, 3.0)
+MAGNET_FIT = 0.2
+MAGNET_SKIN = 0.6            # printed floor between the magnet and the steel disc
+MAGNET_WALL = 0.8            # least printed wall around a magnet, inside the dock PCB's hole
+MAGNET_POCKET_H = 5.0        # deep enough for a 10 x 5 mm magnet too
+
+FOOT_H = 2.0                 # the case's rubber feet: 6 mm round bumpers, 2 mm tall
+FOOT_POCKET = 4.0            # the tray's hole under a foot, diameter over the foot's; it goes
+                             # through, so a taller foot fits too
+
+USB_BODY = (8.94, 6.8, 3.2)  # dock USB-C receptacle (C2927029): width, depth, height
+USB_AXIS = 1.68              # plug axis above the PCB (datasheet)
+USB_PLUG = (12.4, 6.5)       # a USB-C plug's overmold, width and height

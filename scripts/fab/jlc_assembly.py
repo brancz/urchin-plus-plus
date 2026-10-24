@@ -2,6 +2,7 @@
 """JLCPCB assembly files for the panel: BOM and CPL, with sanity checks (phase 6).
 
     "$KICAD_PY" scripts/fab/jlc_assembly.py PANEL.kicad_pcb OUT_DIR
+    "$KICAD_PY" scripts/fab/jlc_assembly.py --dock DOCK.kicad_pcb OUT_DIR      (phase 7)
 
 KiKit's `fab jlcpcb --assembly` needs a schematic, which atopile doesn't write, so the
 BOM and CPL come from the panel's footprints directly:
@@ -15,6 +16,8 @@ BOM and CPL come from the panel's footprints directly:
 Checks (exit 1 on failure): every footprint in the position file has an LCSC number;
 nothing assembled is on the top; per-side quantities equal hardware/parts.json for each
 half; every LCSC number in the BOM is in parts.json. Runs under KiCad's Python.
+With --dock, the dock board: dock-pcb/parts.json, quantities per board, and everything
+assembled on the top (the dock's single assembled side, docs/ARCHITECTURE.md "Dock").
 """
 
 import collections
@@ -34,10 +37,14 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def main():
-    panel_path, out = sys.argv[1], Path(sys.argv[2])
+    args = sys.argv[1:]
+    dock = args[:1] == ["--dock"]
+    panel_path, out = Path(args[-2]), Path(args[-1])
     out.mkdir(parents=True, exist_ok=True)
-    board = pcbnew.LoadBoard(panel_path)
-    parts = {p["lcsc"]: p for p in json.loads((ROOT / "hardware/parts.json").read_text())["parts"]}
+    board = pcbnew.LoadBoard(str(panel_path))
+    manifest = "dock-pcb/parts.json" if dock else "hardware/parts.json"
+    parts = {p["lcsc"]: p for p in json.loads((ROOT / manifest).read_text())["parts"]}
+    side, side_rule = ("T", "the dock is assembled on its top") if dock else ("B", "rule 2")
     problems = []
 
     # KiKit's panel fiducials and tooling holes are footprints too, but not components
@@ -52,18 +59,19 @@ def main():
             problems.append("%s is placed but has no LCSC number" % ref)
             continue
         if lcsc not in parts:
-            problems.append("%s carries %s, which hardware/parts.json doesn't list" % (ref, lcsc))
-        if layerToSide(fp.GetLayer()) != "B":
-            problems.append("%s is assembled on the top (rule 2)" % ref)
+            problems.append("%s carries %s, which %s doesn't list" % (ref, lcsc, manifest))
+        if layerToSide(fp.GetLayer()) != side:
+            problems.append("%s is assembled on the wrong side (%s)" % (ref, side_rule))
         if fp.IsExcludedFromBOM():
             problems.append("%s is in the position file but excluded from the BOM" % ref)
         value = fp.GetFieldText("Partnumber") if fp.HasFieldByName("Partnumber") else fp.GetValue()
         bom_rows[(lcsc, value, fp.GetFPID().GetLibItemName().wx_str())].append(ref)
-        per_half[(ref.rsplit("_", 1)[-1], lcsc)] += 1
+        per_half[("board" if dock else ref.rsplit("_", 1)[-1], lcsc)] += 1
     for lcsc, p in parts.items():
-        for side in ("L", "R"):
-            if per_half[(side, lcsc)] != p["qty"]:
-                problems.append("%s: %d on the %s half, parts.json says %d" % (lcsc, per_half[(side, lcsc)], side, p["qty"]))
+        for half in (("board",) if dock else ("L", "R")):
+            if per_half[(half, lcsc)] != p["qty"]:
+                problems.append("%s: %d on the %s, parts.json says %d" % (lcsc, per_half[(half, lcsc)],
+                                                                          "board" if dock else half + " half", p["qty"]))
 
     with open(out / "bom.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)

@@ -1,14 +1,16 @@
 """Fit checks between the printed parts and the real board (kicad-cli's STEP export of the
 routed half, with every 3D model), plus what the STEP lacks: the hotswap sockets, the
 battery, the switches and the keycaps, modelled from the board data. Also the hardware: the
-screws, washers and standoffs as solids, their thread engagement, and no metal in the
-antenna keep-out."""
+screws, washers and standoffs as solids, their thread engagement, no metal in the antenna
+keep-out, and the lips over the board's outer edge."""
+
+import math
 
 from build123d import Align, Box, Kind, Pos, Rectangle, Vector, import_step, offset
 
 from . import params as P
 from .board import Board, polygon_face, rect_face, rotated_rect_face, xy
-from .case import cover_holes, cyl, openings, prism, screwed
+from .case import cover_holes, cyl, openings, outer_edge, prism, screwed
 
 # kicad-cli puts the board's dielectric at z = 0 and seats bottom parts at z = -0.085 (the
 # copper and solder mask): that plane is the PCB's underside.
@@ -67,9 +69,10 @@ def fit(part_name, part, others, touching=()):
         window = Pos(ob.min.X - m, ob.min.Y - m, ob.min.Z - m) * Box(
             ob.size.X + 2 * m, ob.size.Y + 2 * m, ob.size.Z + 2 * m, align=Align.MIN)
         local = part & window
-        if not local.solids():
+        if local is None or not local.solids():  # None, not an empty shape, for a STEP part
             continue
-        overlap = (local & other).volume
+        common = local & other
+        overlap = common.volume if common is not None else 0.0
         gap = local.distance_to(other)
         ok = overlap <= VOLUME_EPS and (name in touching or gap >= MIN_GAP)
         rows.append({"part": part_name, "against": name, "overlap_mm3": round(overlap, 4),
@@ -151,6 +154,47 @@ def screw_stacks(board: Board):
                  "lower_head_above_underside_mm": round(P.HEAD_DEPTH - P.NYLON_HEAD_H, 2),
                  "ok": min(lower, upper) >= P.MIN_THREAD and upper_tip - lower_tip >= P.MIN_TIP_GAP
                        and P.HEAD_DEPTH - P.NYLON_HEAD_H >= 0})
+    return rows
+
+
+def lip_rows(board: Board):
+    """The lips over the board's outer edge: their underside on a layer boundary and clear of
+    a board PCB_T_TOL too thick; how far a board can tilt in under them, pushed against the
+    outer wall (about its bottom edge on the standoffs); and how far they stay over its edge
+    with the board's play in its case (play.Play) and JLC's +-0.2 mm outline."""
+    from .play import Play  # scipy: only when checking
+
+    z0 = P.Z_PCB_TOP + P.LIP_PLAY
+    layers = z0 / P.LAYER_H
+    over_thick = z0 - (P.Z_PCB_TOP + P.PCB_T_TOL)
+    room, reach = P.PCB_T + P.LIP_PLAY, P.FIT + P.LIP_OVER
+
+    def tilt(t):
+        """The largest angle (degrees) with t cos(a) + reach sin(a) <= room."""
+        r = math.hypot(t, reach)
+        if room >= r:
+            return 90.0
+        return round(math.degrees(math.atan2(reach, t) - math.acos(room / r)), 1) if room >= t else 0.0
+
+    rows = [{"stack": "lips over the board's outer edge", "underside_mm": round(z0, 2),
+             "on_layer_boundary": abs(layers - round(layers)) < 1e-6, "clear_of_thick_board_mm": round(over_thick, 2),
+             "tilt_deg": {"nominal board": tilt(P.PCB_T), "thick board": tilt(P.PCB_T + P.PCB_T_TOL)},
+             "ok": abs(layers - round(layers)) < 1e-6 and over_thick >= 0 and tilt(P.PCB_T) >= P.MIN_LIP_TILT}]
+    in_case = Play(board.outline(), P.BOARD_WALL_PLAY,
+                   pins=[(xy((h["x"], h["y"])), P.BOARD_SCREW_PLAY) for h in cover_holes(board)])
+    a, b, n = outer_edge(board)
+    along = (b - a).normalized()
+    outline_tol = 0.2
+    for i in range(P.LIP_COUNT):
+        c = a + (b - a) * ((i + 0.5) / P.LIP_COUNT)
+        ends = [c + along * s * P.LIP_LEN / 2 for s in (-1, 1)]
+        play = max(in_case.reach((q.X, q.Y), (-n.X, -n.Y)) for q in ends)
+        rss = P.LIP_OVER - math.hypot(play, outline_tol)
+        worst = P.LIP_OVER - play - outline_tol
+        rows.append({"stack": f"lip {i + 1} holds the board's edge", "over_mm": P.LIP_OVER,
+                     "board_play_inward_mm": round(play, 2), "outline_tol_mm": outline_tol,
+                     "holds_rss_mm": round(rss, 2), "holds_worst_case_mm": round(worst, 2),
+                     "ok": rss >= P.MIN_LIP_HOLD and worst > 0})
     return rows
 
 

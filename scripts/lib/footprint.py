@@ -6,11 +6,16 @@ fixups(node, spec)   apply corrections taken from a part's datasheet (hardware/p
                        add_npth   [[x, y, drill], ...] non-plated holes (e.g. reverse-mount LEDs)
                        paste_pads ["1", ...]          through-hole pads that get paste (pin-in-paste)
                        paste_margin {"17": -0.15}     paste aperture grown (+) or shrunk (-) per side, mm
+                       drop_graphics ["F.SilkS"]      remove the graphics on these layers (atopile 0.15.7
+                                                      crashes on a silkscreen of circles only)
+                       courtyard_rect [w, h]          replace the courtyard with a w x h rectangle centred
+                                                      on the origin (for a degenerate library courtyard)
 sanitize(node)       make unnumbered plated holes without copper (locating pegs) non-plated, and
                      mark a footprint with no plated through-hole pad as SMD;
                      remove what atopile would drop or merge anyway, where that is cosmetic:
                        pad sub-items atopile doesn't model (e.g. thermal_bridge_angle),
                        ${REFERENCE}/%R texts (atopile strips them),
+                       item UUIDs (atopile copies them onto every instance),
                        graphics that duplicate another item's geometry on another layer
                        (keep courtyard, then silkscreen, then fab).
                      Anything substantive atopile would drop (zones, curves, text boxes, groups,
@@ -50,6 +55,22 @@ def fixups(node, spec):
             if "F.Paste" not in layers[1:]:
                 layers.append("F.Paste")
                 changes.append("pad %s gets solder paste (pin-in-paste)" % name)
+    for layer in spec.get("drop_graphics") or []:
+        for g in [c for c in node[1:] if sexp.head(c) in ("fp_line", "fp_circle", "fp_arc", "fp_rect", "fp_poly")
+                  and (sexp.child(c, "layer") or [None, None])[1] == layer]:
+            node.remove(g)
+            changes.append("%s %s removed" % (sexp.head(g), layer))
+    if spec.get("courtyard_rect"):
+        w, h = spec["courtyard_rect"]
+        old = [c for c in node[1:] if sexp.head(c) in ("fp_line", "fp_circle", "fp_arc", "fp_rect", "fp_poly")
+               and str((sexp.child(c, "layer") or [None, ""])[1]).endswith(".CrtYd")]
+        layer = sexp.child(old[0], "layer")[1] if old else "F.CrtYd"
+        for g in old:
+            node.remove(g)
+        node.append([A("fp_rect"), [A("start"), _num(-w / 2), _num(-h / 2)], [A("end"), _num(w / 2), _num(h / 2)],
+                     [A("stroke"), [A("width"), _num(0.05)], [A("type"), A("solid")]], [A("fill"), A("no")],
+                     [A("layer"), layer], [A("uuid"), str(uuid.uuid4())]])
+        changes.append("courtyard (%d items) replaced with a %s x %s mm rectangle" % (len(old), w, h))
     for name, margin in sorted((spec.get("paste_margin") or {}).items()):
         for pad in [p for p in sexp.children(node, "pad") if p[1] == name]:
             for old in [c for c in pad[1:] if sexp.head(c) == "solder_paste_margin"]:
@@ -115,6 +136,17 @@ def sanitize(node):
             not any(p[2] == "thru_hole" for p in pads):
         attr[1] = A("smd")  # only SMD pads and non-plated pegs: an SMD part (CPL exports may filter on it)
         changes.append("attribute through_hole -> smd (no plated through-hole pads)")
+    # Item UUIDs: atopile copies them onto every instance, so a part used twice would put
+    # duplicate UUIDs on the board (kicad_guardrails.py refuses those). Bottom-side footprints
+    # lose them when pcbnew rewrites them; top-side ones lose them here.
+    stripped = 0
+    for c in node[1:]:
+        if isinstance(c, list):
+            for sub in [s for s in c[1:] if sexp.head(s) == "uuid"]:
+                c.remove(sub)
+                stripped += 1
+    if stripped:
+        changes.append("dropped %d item UUIDs (atopile would copy them onto every instance)" % stripped)
     for t in [c for c in node[1:] if sexp.head(c) == "fp_text" and len(c) > 2 and c[2] in DUPLICATE_REF_TEXTS]:
         node.remove(t)
         changes.append("dropped fp_text %s (atopile strips duplicate designators)" % t[2])

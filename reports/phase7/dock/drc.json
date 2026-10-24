@@ -1,0 +1,13 @@
+{
+ "board": "dock-pcb/layouts/dock/dock.kicad_pcb",
+ "half": "dock",
+ "errors": [],
+ "excused": {},
+ "warnings": {
+  "missing_courtyard": 2,
+  "silk_edge_clearance": 4,
+  "silk_over_copper": 5
+ },
+ "unconnected": 0,
+ "unrouted_ok": false
+}

@@ -1,7 +1,7 @@
 {
  "case_left": {
-  "prediction_s": 1629,
-  "weight_g": 18.26,
+  "prediction_s": 1630,
+  "weight_g": 18.23,
   "warnings": [],
   "ok": true,
   "machine": "Bambu Lab A1 mini 0.4 nozzle",
@@ -10,7 +10,7 @@
  },
  "case_right": {
   "prediction_s": 1626,
-  "weight_g": 18.27,
+  "weight_g": 18.23,
   "warnings": [],
   "ok": true,
   "machine": "Bambu Lab A1 mini 0.4 nozzle",
@@ -29,6 +29,24 @@
  "cover_right": {
   "prediction_s": 502,
   "weight_g": 3.21,
+  "warnings": [],
+  "ok": true,
+  "machine": "Bambu Lab A1 mini 0.4 nozzle",
+  "process": "0.20mm Standard @BBL A1M",
+  "filament": "Bambu PLA Basic @BBL A1M"
+ },
+ "tray_left": {
+  "prediction_s": 3413,
+  "weight_g": 39.38,
+  "warnings": [],
+  "ok": true,
+  "machine": "Bambu Lab A1 mini 0.4 nozzle",
+  "process": "0.20mm Standard @BBL A1M",
+  "filament": "Bambu PLA Basic @BBL A1M"
+ },
+ "tray_right": {
+  "prediction_s": 3409,
+  "weight_g": 39.36,
   "warnings": [],
   "ok": true,
   "machine": "Bambu Lab A1 mini 0.4 nozzle",

@@ -1,0 +1,99 @@
+#pragma experiment("TRAITS")
+#pragma experiment("INSTANCE_TRAITS")
+# The dock board (docs/ARCHITECTURE.md, "Dock"): USB-C in, a resettable fuse, a TVS and a
+# power LED, and three pogo pins per half that meet the halves' charging pads (GND, 5V, GND).
+# Parts were chosen in reports/phase7/dock-parts.md; positions come from the tray CAD
+# (dock-pcb/geometry.json, placed by scripts/dock/place.py).
+
+import has_net_name_suggestion
+import has_designator
+from "parts/C5221284/C5221284.ato" import C5221284_package
+from "parts/C2927029/C2927029.ato" import C2927029_package
+from "parts/C75464/C75464.ato" import C75464_package
+from "parts/C123790/C123790.ato" import C123790_package
+from "parts/C25905/C25905.ato" import C25905_package
+from "parts/C2297/C2297.ato" import C2297_package
+from "parts/C25879/C25879.ato" import C25879_package
+from "parts/HOLE_M2_3_5/HOLE_M2_3_5.ato" import HOLE_M2_3_5_package
+
+module Dock:
+    signal gnd
+    signal vbus        # USB-C VBUS, before the fuse
+    signal dock_5v     # after the fuse: the pins, the TVS and the LED
+    signal cc1
+    signal cc2
+    signal led_a
+
+    trait gnd has_net_name_suggestion<name="GND", level="EXPECTED">
+    trait vbus has_net_name_suggestion<name="VBUS", level="EXPECTED">
+    trait dock_5v has_net_name_suggestion<name="DOCK_5V", level="EXPECTED">
+    trait cc1 has_net_name_suggestion<name="CC1", level="EXPECTED">
+    trait cc2 has_net_name_suggestion<name="CC2", level="EXPECTED">
+    trait led_a has_net_name_suggestion<name="LED_A", level="EXPECTED">
+
+    # ---- USB-C, power only ------------------------------------------------------
+    usb = new C2927029_package
+    trait usb has_designator<designator="J1">
+    usb.VBUS ~ vbus
+    usb.GND ~ gnd
+    usb.EH ~ gnd       # shell
+    usb.CC1 ~ cc1
+    usb.CC2 ~ cc2
+
+    # 5.1 k on each CC pin: a USB-C sink, so any source turns on 5 V (each pin its own resistor)
+    r_cc1 = new C25905_package
+    trait r_cc1 has_designator<designator="R1">
+    r_cc1.1 ~ cc1
+    r_cc1.2 ~ gnd
+    r_cc2 = new C25905_package
+    trait r_cc2 has_designator<designator="R2">
+    r_cc2.1 ~ cc2
+    r_cc2.2 ~ gnd
+
+    # ---- protection -----------------------------------------------------------------
+    # The fuse trips on a short across the exposed pins (a coin, a paper clip). The TVS sits
+    # after it, so an overvoltage it clamps trips the fuse instead of burning the TVS.
+    fuse = new C75464_package
+    trait fuse has_designator<designator="F1">
+    fuse.1 ~ vbus
+    fuse.2 ~ dock_5v
+    tvs = new C123790_package
+    trait tvs has_designator<designator="D1">
+    tvs.C ~ dock_5v
+    tvs.A ~ gnd
+
+    # ---- power LED, about 1 mA (dim, for a bedside table) ------------------------------
+    r_led = new C25879_package
+    trait r_led has_designator<designator="R3">
+    r_led.1 ~ dock_5v
+    r_led.2 ~ led_a
+    led = new C2297_package
+    trait led has_designator<designator="LED1">
+    led.A ~ led_a
+    led.K ~ gnd
+
+    # ---- pogo pins: left half P1-P3, right half P4-P6, in pad order (GND, 5V, GND) -----
+    p1 = new C5221284_package
+    trait p1 has_designator<designator="P1">
+    p1.1 ~ gnd
+    p2 = new C5221284_package
+    trait p2 has_designator<designator="P2">
+    p2.1 ~ dock_5v
+    p3 = new C5221284_package
+    trait p3 has_designator<designator="P3">
+    p3.1 ~ gnd
+    p4 = new C5221284_package
+    trait p4 has_designator<designator="P4">
+    p4.1 ~ gnd
+    p5 = new C5221284_package
+    trait p5 has_designator<designator="P5">
+    p5.1 ~ dock_5v
+    p6 = new C5221284_package
+    trait p6 has_designator<designator="P6">
+    p6.1 ~ gnd
+
+    # ---- mounting: M2 screws into heat-set inserts in the tray -----------------------
+    h1 = new HOLE_M2_3_5_package
+    trait h1 has_designator<designator="H1">
+    h2 = new HOLE_M2_3_5_package
+    trait h2 has_designator<designator="H2">

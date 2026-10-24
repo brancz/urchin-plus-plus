@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Write each half's KiCad project file with JLCPCB design rules and net classes.
+"""Write each board's KiCad project file with JLCPCB design rules and net classes.
 
     python3 scripts/placement/board_setup.py [--check]
 
-Writes hardware/layouts/<half>/<half>.kicad_pro (atopile creates only the board).
+Writes hardware/layouts/<half>/<half>.kicad_pro and dock-pcb/layouts/dock/dock.kicad_pro
+(atopile creates only the board).
 kicad-cli reads the rules from it for DRC; Freerouting gets them via the DSN export.
 
 JLCPCB 2-layer, 1 oz, standard process (jlcpcb.com/capabilities, checked 2026-10-18),
@@ -73,6 +74,7 @@ SEVERITIES = {
     "hole_to_hole": "error",                # drill breakage risk at JLC (0.5 mm minimum)
 }
 POWER = ["VIN", "VSYS", "VDDH", "VBAT", "VBUS", "DOCK_5V", "GND"]
+BOARDS = [("hardware/layouts", "left"), ("hardware/layouts", "right"), ("dock-pcb/layouts", "dock")]
 
 
 def netclass(name, track, clearance, **extra):
@@ -135,8 +137,8 @@ def main():
     ap.add_argument("--check", action="store_true")
     args = ap.parse_args()
     bad = 0
-    for half in ("left", "right"):
-        path = ROOT / "hardware/layouts" / half / ("%s.kicad_pro" % half)
+    for layouts, half in BOARDS:
+        path = ROOT / layouts / half / ("%s.kicad_pro" % half)
         have = json.loads(path.read_text()) if path.exists() else {}
         if args.check:
             diff = differences(have, project(half)) if have else ["(missing)"]

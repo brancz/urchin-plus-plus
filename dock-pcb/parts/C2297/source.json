@@ -1,0 +1,31 @@
+{
+  "lcsc": "C2297",
+  "manufacturer": "KENTO",
+  "mpn": "KT-0805G",
+  "datasheet_url": "https://lcsc.com/product-detail/Light-Emitting-Diodes-LED_Green-0805-Highlighted_C2297.html",
+  "symbol": "0805G.kicad_sym",
+  "footprint": "LED0805-R-RD.kicad_mod",
+  "side": "top",
+  "footprint_changes": [
+    "dropped 26 item UUIDs (atopile would copy them onto every instance)",
+    "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
+  ],
+  "fixups_source": null,
+  "pin_names": null,
+  "model": "LED0805-RD.step",
+  "pins": [
+    {
+      "pin": "1",
+      "name": "A",
+      "signal": "A"
+    },
+    {
+      "pin": "2",
+      "name": "K",
+      "signal": "K"
+    }
+  ],
+  "fetched_utc": "2026-10-24T15:42:40Z",
+  "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
+  "kicad_cli": "9.0.9"
+}

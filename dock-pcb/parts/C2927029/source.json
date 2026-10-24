@@ -1,0 +1,60 @@
+{
+  "lcsc": "C2927029",
+  "manufacturer": "DEALON",
+  "mpn": "USB-TYPE-C-009",
+  "datasheet_url": "https://www.lcsc.com/datasheet/C2927029.pdf",
+  "symbol": "USB-TYPE-C-009.kicad_sym",
+  "footprint": "TYPE-C-SMD_TYPE-C-6P.kicad_mod",
+  "side": "top",
+  "footprint_changes": [
+    "pad 7 gets solder paste (pin-in-paste)",
+    "pad 7 gets solder paste (pin-in-paste)",
+    "pad 7 gets solder paste (pin-in-paste)",
+    "pad 7 gets solder paste (pin-in-paste)",
+    "dropped 58 item UUIDs (atopile would copy them onto every instance)",
+    "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
+  ],
+  "fixups_source": "Pin-in-paste for the four through-hole shell legs (pads 7): the EasyEDA footprint has no paste on them, so reflow wouldn't solder them and the receptacle would hang on its six SMD pads (the keyboard's C165948 got the same fix, phase 4-6 review M3).",
+  "pin_names": null,
+  "model": "TYPE-C-SMD_6P-L8.9-W6.8-H3.2-P1.00.step",
+  "pins": [
+    {
+      "pin": "A5",
+      "name": "CC1",
+      "signal": "CC1"
+    },
+    {
+      "pin": "B5",
+      "name": "CC2",
+      "signal": "CC2"
+    },
+    {
+      "pin": "7",
+      "name": "EH",
+      "signal": "EH"
+    },
+    {
+      "pin": "A12",
+      "name": "GND",
+      "signal": "GND"
+    },
+    {
+      "pin": "B12",
+      "name": "GND",
+      "signal": "GND"
+    },
+    {
+      "pin": "A9",
+      "name": "VBUS",
+      "signal": "VBUS"
+    },
+    {
+      "pin": "B9",
+      "name": "VBUS",
+      "signal": "VBUS"
+    }
+  ],
+  "fetched_utc": "2026-10-24T15:42:33Z",
+  "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
+  "kicad_cli": "9.0.9"
+}

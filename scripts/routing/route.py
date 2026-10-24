@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Route a half: rip up, Freerouting, import, ground pour on both layers (phase 4).
+"""Route a board (a half, or the dock): rip up, Freerouting, import, ground pour on both layers (phase 4).
 
     "$KICAD_PY" scripts/routing/route.py BOARD WORK_DIR [--passes 100] [--attempts 4 | --variants N...] [--jobs 6] [--threads 2]
     "$KICAD_PY" scripts/routing/route.py BOARD --ripup      # only remove tracks, vias, pours
@@ -9,7 +9,7 @@
     "$KICAD_PY" scripts/routing/route.py BOARD WORK_DIR --complete-only --widths 0.175 0.3 [--clearance 0.17]
                                                             # completion passes on a routed BOARD
 
-  1. Remove every track, via and GND pour; add the scripted critical routes
+  1. Remove every track, via and GND pour; on a half, add the scripted critical routes
      (scripts/routing/preroutes.py: the USB-C receptacle's paired pins), locked so the
      router keeps them; save that as WORK_DIR/ripped.kicad_pcb.
   2. Export a Specctra DSN (net classes and the keep-out rule areas come along from the
@@ -25,8 +25,9 @@
      VARIANTS[N]. Logs: WORK_DIR/attempt-N/.
   4. Finish every attempt on its own copy of the ripped board (one process each, KiCad 9's
      SWIG can't load many boards in one process): import the session and put every
-     footprint back at its exact position (the session rounds them to 0.1 um; rule 1); widen the router's
-     neck-downs at pads to JLC's 2-layer minimum, 0.127 mm (more would eat the clearance);
+     footprint back at its exact position (the session rounds them to 0.1 um; rule 1); drop the
+     router's segments shorter than 1 um; widen its neck-downs at pads to JLC's 2-layer minimum,
+     0.127 mm (more would eat the clearance);
      pour GND on F.Cu and B.Cu over the whole outline (0.3 mm clearance, 0.25 mm minimum
      width, thermal reliefs, islands removed; the keep-out rule areas forbid pour inside
      them), with a solid-connection GND zone under the module (its GND pads join the
@@ -46,7 +47,9 @@
      count again; keep it if it is better. Up to --completions passes.
   7. Save the best as BOARD, and widen its tracks to 0.15 mm wherever KiCad's DRC allows
      (scripts/routing/widen.py).
-GND is routed as a net too, so connectivity never depends on the pour alone.
+GND is routed as a net too, wherever Freerouting gets it to; the pour completes it (on the
+dock, the right half's GND pins hang on the pour alone). Connectivity is always counted with
+the zones filled.
 Prints a JSON summary. Runs under KiCad's Python; Python 3.9.
 """
 
@@ -109,8 +112,8 @@ def with_widths(dsn_text, signal, power, clearance=ROUTE_CLEARANCE):
         out = re.sub(r"\(width [0-9.]+\)", "(width %d)" % round(width * 1000), m.group(0), count=1)
         return re.sub(r"\(clearance [0-9.]+\)", "(clearance %d)" % round(clearance * 1000), out, count=1)
     out, n = re.subn(r"\(class (\S+) .*?\(rule.*?\)\s*\)", fix, dsn_text, flags=re.S)
-    if n < 3:
-        sys.exit("expected 3 net classes in the DSN, found %d" % n)
+    if n < 2:  # Default and Power; USB too on a half (the dock has no data pair)
+        sys.exit("expected at least 2 net classes in the DSN, found %d" % n)
     return out
 
 
@@ -122,7 +125,8 @@ def prepare(board_path, work):
     pours = [z for z in board.Zones() if not z.GetIsRuleArea() and z.GetZoneName() in POURS]
     for item in tracks + pours:
         board.Remove(item)
-    preroutes.add(board)
+    if preroutes.applies(board):
+        preroutes.add(board)
     ripped = os.path.join(work, "ripped.kicad_pcb")
     board.Save(ripped)
     for ext in (".kicad_pro", ".kicad_dru"):
@@ -267,6 +271,9 @@ def finish(ripped, ses, out):
         pos, rot = exact[fp.GetReference()]
         fp.SetPosition(pos)
         fp.SetOrientationDegrees(rot)
+    # Its stubs onto a pad it saw 0.1 um off (a locked pre-route already ends there).
+    for t in [t for t in board.GetTracks() if t.GetClass() == "PCB_TRACK" and t.GetLength() < nm(0.001)]:
+        board.Remove(t)
     widened = 0
     for t in board.GetTracks():
         if t.GetClass() == "PCB_TRACK" and t.GetWidth() < nm(MIN_WIDTH):

@@ -2,6 +2,7 @@
 """Check the BOM against live JLC stock and against the atopile build (CLAUDE.md rule 3).
 
     python3 scripts/parts/bom_check.py [--panels 5] [--json OUT] [--md OUT]
+    python3 scripts/parts/bom_check.py --dock [--panels 5] ...     the dock board (phase 7)
 
 For every part in hardware/parts.json (quantities are per half):
   - JLC assembly library stock, checked now, must cover qty x 2 halves x --panels
@@ -10,6 +11,8 @@ For every part in hardware/parts.json (quantities are per half):
   - the per-half quantity matches atopile's BOM of each half
     (hardware/build/builds/<half>/<half>.bom.csv, so run scripts/ato_build.sh first),
     and that BOM has no part that parts.json lacks.
+With --dock: dock-pcb/parts.json, quantities per dock board, stock for --panels boards, and
+atopile's BOM of the dock (dock-pcb/build/builds/dock/dock.bom.csv).
 The check time (UTC) goes into both outputs; the release BOM's notes cite it.
 Exits 1 on any problem. Stdlib only; read-only web requests. Python 3.9.
 """
@@ -26,8 +29,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import jlc  # noqa: E402
 
 
-def atopile_bom(half):
-    path = ROOT / ("hardware/build/builds/%s/%s.bom.csv" % (half, half))
+def atopile_bom(project, build):
+    path = ROOT / ("%s/build/builds/%s/%s.bom.csv" % (project, build, build))
     if not path.exists():
         return None
     out = {}
@@ -39,18 +42,20 @@ def atopile_bom(half):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--panels", type=int, default=5, help="panels to cover with stock (default 5)")
+    ap.add_argument("--panels", type=int, default=5, help="panels (dock boards) to cover with stock (default 5)")
+    ap.add_argument("--dock", action="store_true", help="the dock board instead of the halves")
     ap.add_argument("--json")
     ap.add_argument("--md")
     args = ap.parse_args()
 
-    parts = json.loads((ROOT / "hardware/parts.json").read_text())["parts"]
+    project, builds, per = ("dock-pcb", ("dock",), "board") if args.dock else ("hardware", ("left", "right"), "half")
+    parts = json.loads((ROOT / project / "parts.json").read_text())["parts"]
     now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     problems, rows = [], []
     for p in parts:
         lcsc, qty = p["lcsc"], p["qty"]
-        need = qty * 2 * args.panels
-        row = {"lcsc": lcsc, "role": p["role"], "qty_per_half": qty, "needed": need, "checked_utc": now}
+        need = qty * len(builds) * args.panels
+        row = {"lcsc": lcsc, "role": p["role"], "qty_per_" + per: qty, "needed": need, "checked_utc": now}
         c = jlc.jlc_part(lcsc)
         if c is None:
             problems.append("%s: not in the JLC assembly library" % lcsc)
@@ -66,10 +71,10 @@ def main():
         rows.append(row)
 
     listed = {p["lcsc"]: p["qty"] for p in parts}
-    for half in ("left", "right"):
-        bom = atopile_bom(half)
+    for half in builds:
+        bom = atopile_bom(project, half)
         if bom is None:
-            problems.append("%s: no atopile BOM (run scripts/ato_build.sh hardware)" % half)
+            problems.append("%s: no atopile BOM (run scripts/ato_build.sh %s)" % (half, project))
             continue
         for lcsc in sorted(set(bom) | set(listed)):
             if bom.get(lcsc, 0) != listed.get(lcsc, 0):
@@ -80,15 +85,16 @@ def main():
     if args.json:
         Path(args.json).write_text(json.dumps(result, indent=2, ensure_ascii=False) + "\n")
     if args.md:
-        lines = ["# BOM stock check", "",
-                 "Checked against the JLC assembly library at %s, for %d panels (both halves each). "
-                 "Quantities are per half." % (now, args.panels), "",
-                 "| LCSC | Part | Manufacturer | Package | Library | Qty/half | Needed | JLC stock | Role | Datasheet |",
+        lines = ["# BOM stock check%s" % (": dock" if args.dock else ""), "",
+                 ("Checked against the JLC assembly library at %s, for %d dock boards. Quantities are per board."
+                  if args.dock else "Checked against the JLC assembly library at %s, for %d panels (both halves "
+                  "each). Quantities are per half.") % (now, args.panels), "",
+                 "| LCSC | Part | Manufacturer | Package | Library | Qty/%s | Needed | JLC stock | Role | Datasheet |" % per,
                  "|---|---|---|---|---|---|---|---|---|---|"]
         for r in rows:
             lines.append("| %s | %s | %s | %s | %s | %d | %d | %s | %s | %s |" % (
                 r["lcsc"], r.get("mpn", "?"), r.get("manufacturer", "?"), r.get("package", "?"), r.get("library", "?"),
-                r["qty_per_half"], r["needed"], r.get("jlc_stock", "?"), r["role"],
+                r["qty_per_" + per], r["needed"], r.get("jlc_stock", "?"), r["role"],
                 "[pdf](../../%s)" % r["datasheet"] if r["datasheet"] else "missing"))
         lines += ["", "Problems: %s" % ("none" if not problems else ""), ""] + ["- " + p for p in problems]
         Path(args.md).write_text("\n".join(lines).rstrip() + "\n")

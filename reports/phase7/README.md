@@ -1,6 +1,6 @@
 # Phase 7: cases and dock
 
-Status: **cases and battery covers done; dock tray and dock PCB in progress.** Design decisions are in `docs/ARCHITECTURE.md` ("Case", "Dock", and the decision log of 2026-10-24). The parts and the hardware to buy are listed in `mech/README.md`.
+Status: **cases, battery covers, dock tray and dock PCB done; the dock review's findings are fixed or dispositioned in `review.md`.** Design decisions are in `docs/ARCHITECTURE.md` ("Case", "Dock", and the decision log of 2026-10-24). The parts and the hardware to buy are listed in `mech/README.md`.
 
 ## Cases and battery covers
 
@@ -11,16 +11,17 @@ Built by `scripts/mech/build.sh OUT` (2026-10-24):
 3. `mech build` makes the parts, exports STEP and STL, runs every check, and renders.
 4. `scripts/mech/slice.py` slices each part with Bambu Studio 02.07.01.62 for the A1 mini.
 
-CI runs steps 1 to 3 without renders (job `mech`, artifact `printed-parts`).
+CI runs steps 1 to 3 without renders (job `mech`, artifact `printed-parts`). Since the dock was added, the same build also makes the tray and checks it (below); `checks.json` holds the case and dock rows together.
 
 | Check | Result | Evidence |
 |---|---|---|
-| Fit: each printed part and each piece of hardware against the routed half's STEP | 46 checks, 0 failed. There is no overlap anywhere. Every gap is at least 0.25 mm, except where parts are meant to touch: the PCB on its standoffs, and the cover on the case and on its standoffs. Closest: case to the module's 3D model 0.289 mm; cover to the SW17 keycap 0.8 mm; the thumb screw's washer and head to the SW17 keycap 1.24 mm. | `checks.json` → `fit` |
-| Bed: every STL fits the A1 mini (180 × 180 × 180 mm) | 4 of 4 | `checks.json` → `bed` |
+| Fit: each printed part and each piece of hardware against the routed half's STEP | 46 checks (of the 81 in `checks.json`; the rest are the dock's), 0 failed. There is no overlap anywhere. Every gap is at least 0.25 mm, except where parts are meant to touch: the PCB on its standoffs, and the cover on the case and on its standoffs. (The PCB counts as touching everywhere, so the lips over it are checked in `hardware` instead.) Closest: case to the module's 3D model 0.289 mm; a standoff (modelled as a 4 mm hex) to the SW17 keycap 0.315 mm; cover to the SW17 keycap 0.8 mm; the thumb screw's washer and head to the SW17 keycap 1.24 mm. | `checks.json` → `fit` |
+| Bed: every STL fits the A1 mini (180 × 180 × 180 mm) | 4 of 4 (6 of 6 with the tray) | `checks.json` → `bed` |
 | Hardware: thread engagement and screw tips | M2 × 5 in the heat-set insert: 3.0 mm thread engaged, tip 0.9 mm above the hole's bottom. Nylon M2 × 8 and M2 × 3 in the 6 mm standoff: 3.0 and 2.2 mm of thread, 0.8 mm between the tips. The lower screw head sits 0.2 mm inside the case's underside. | `checks.json` → `hardware` |
+| Lips over the board's outer edge | Underside at 7.0 mm, on a layer boundary, 0.2 mm over the PCB and 0.04 mm over one 0.16 mm too thick. A board goes in tilted up to 11° (2° if 0.16 mm thick), pushed against the outer wall. Each lip stays 0.35 mm over the edge by RSS (0.2 mm worst case) with the board's play in its case (0.4 mm inward, solved) and JLC's ±0.2 mm outline | `checks.json` → `hardware` (rows `lip*`) |
 | No metal in the antenna keep-out | The nearest metal is the thumb screw, washer and insert, 34.4 mm away. The steel discs are 47.3 mm away. | `checks.json` → `hardware` |
 | Insertion: the board can drop into its case | J1 (USB-C) and SW35 (power switch) reach past the cavity, and both drop through full-height openings in the wall | `checks.json` → `insertion` |
-| Slicing (0.20 mm Standard, Bambu PLA Basic, no supports) | Each case: 27 min, 18.3 g. Each cover: 8 min, 3.2 g. The slicer gave no warnings. | `slice.json` |
+| Slicing (0.20 mm Standard, Bambu PLA Basic, no supports) | Each case: 27 min, 18.2 g. Each cover: 8 min, 3.2 g. The slicer gave no warnings. | `slice.json` |
 
 The modelled parts are what the STEP lacks:
 
@@ -51,4 +52,85 @@ Renders (`render/`):
 
 ## Dock
 
-Not done yet: the tray, the dock PCB, the fit check of the cased halves on the pins, and the review.
+Two parts: the dock PCB (`dock-pcb/`, one JLC order, assembled on its top) and the tray (`mech/src/mech/tray.py`, two printed pieces). The board follows the tray: `mech dock-geometry` writes its outline, magnet cutouts, and the positions of the pins, the USB-C receptacle and the screws to `dock-pcb/geometry.json`, and `scripts/mech/build.sh` fails if that file is stale.
+
+### Dock PCB
+
+Parts research: `dock-parts.md`. Circuit: `dock-pcb/dock.ato` (USB-C, power only → 0.5 A polyfuse → 5 V to the pins; SMF6.0A TVS after the fuse; 5.1 kΩ on each CC pin; green LED at about 1 mA).
+
+| Check | Result | Evidence |
+|---|---|---|
+| Stock (live JLC, 2026-10-24T16:12:04Z, for 5 boards) | 7 of 7 lines in stock; each has its datasheet in `docs/datasheets/` | `dock-bom.md`, `dock-bom.json` |
+| Build | `scripts/ato_build.sh dock-pcb --frozen` changes nothing | CI |
+| Placement | The pins sit on the halves' pad centres from `geometry.json`, and J1 and the screw holes where it puts them. Every part's courtyard and both screw heads are inside the parts area (0.8 mm from the pockets, where no case rests). No vias under J1's shell, and no F.Cu tracks in front of its pad row (rule areas J1_SHELL and J1_FRONT, checked here and by DRC) | `dock/placement.txt` |
+| Connectivity, against a netlist written from the datasheets | 28 numbered pads on their nets, LCSC number per designator, no other nets | `dock/connectivity.json` |
+| Routing | All connections routed: the 5 V trunk scripted (0.5 mm, F.Cu, along the strip below the magnet cutouts), the rest Freerouting; VBUS joins A9 and B9 behind J1's pads; GND pour on both layers | `dock/routing.json`, `dock/copper-*.png` |
+| DRC (JLC rules, zones refilled) | 0 errors, 0 unconnected. 11 warnings, dispositioned below | `dock/drc.md`, `dock/drc.json` |
+| Assembly files | 13 placements, 7 BOM lines, all on the top | `dock/bom.csv`, `dock/positions.csv` |
+
+DRC warnings:
+
+- `missing_courtyard` (2): H1 and H2 are bare screw holes; the screw heads are checked as circles instead (placement, and the fit checks below).
+- `silk_edge_clearance` (4): the EasyEDA outline of J1 runs to the board edge at the receptacle's mouth; JLC clips silkscreen at the edge.
+- `silk_over_copper` (5): EasyEDA pin-1 dots and outlines touching their own pads (R1, R2, R3, F1, LED1); JLC clips silkscreen off pads.
+
+The JLC bundle is `scripts/dock/fab.sh OUT` (also the CI artifact `dock-jlc-bundle`): Gerbers, BOM and CPL, with renders (`dock/dock-{top,bottom}.png`).
+
+### JLC upload checklist: dock PCB (done by the human)
+
+The bundle is `scripts/dock/fab.sh OUT` (or the CI artifact `dock-jlc-bundle`): `OUT/jlc/urchin-dock-gerbers.zip`, `OUT/jlc/bom.csv`, `OUT/jlc/positions.csv`. One dock serves both halves.
+
+**PCB:**
+
+- [ ] Upload `urchin-dock-gerbers.zip`. JLC's viewer should show one 2-layer board, 144.1 × 30.8 mm: a long bar with two 12.1 mm round cutouts and three round pads at each end, and a tab in the middle with the USB-C footprint on its front edge.
+- [ ] **Base material** FR-4, **2 layers**, **1.6 mm**, 1 oz copper.
+- [ ] **Surface finish:** lead-free HASL is fine; ENIG is optional. The pads carry soldered pins, not contacts.
+- [ ] **Solder mask green**, JLC's default.
+- [ ] **Delivery format: single PCB**, no panel. **Quantity 5**, JLC's minimum.
+- [ ] **Remove mark / order number:** JLC's default placement is fine.
+
+**If JLC's DFM check or an engineer asks about these, they are intended:**
+
+- **The two 12.1 mm round cutouts:** the tray's magnet bosses pass through them.
+- **Parts at the board edge:** the USB-C receptacle's mouth (J1) is flush with the tab's front edge.
+- **Plated slots with paste (J1's four shell legs):** intended pin-in-paste, so reflow solders the legs.
+- **Silkscreen on pads or at the edge:** EasyEDA's outlines of J1 at the edge, and pin-1 marks touching pads on R1–R3, F1 and LED1. JLC clips both.
+
+**Assembly:**
+
+- [ ] PCB Assembly on, **assembly side: Top**. Quantity 2, JLC's minimum.
+- [ ] Upload `bom.csv` and `positions.csv`: 7 BOM lines, 13 placements. The LCSC numbers must match `dock-bom.md`, with nothing "not matched".
+- [ ] Choose **"Confirm parts placement"**, so JLC sends its placement for approval before production.
+- [ ] In JLC's placement preview, check each part against its own pads. Positions are given in KiCad's top view, with the USB-C at the bottom:
+  - **D1 (SMF6.0A, TVS, just above the fuse):** the cathode band is on the **left** pad, the one the wide 5 V track joins. Reversed, it shorts 5 V to ground: the fuse trips and the dock is dead.
+  - **LED1 (green 0805, right of the fuse):** the anode (pad 1, "+" in its datasheet) is the pad **farther from the USB-C**. Reversed, it stays dark.
+  - **J1 (USB-C):** the opening faces out of the tab's front edge; the four legs go into the plated slots.
+  - **P1–P6 (pogo pins):** each centred on its round pad.
+  - F1 and R1–R3 have no polarity.
+- [ ] Confirm the stock of C5221284 (the pogo pins, 6 per board) at order time.
+
+**After delivery (by hand):**
+
+- [ ] J1: add solder to its four shell legs with an iron, as on the keyboard. The legs take the cable's forces.
+- [ ] Then assemble the dock as in `mech/README.md` ("The dock"), including the check of the pins' height.
+
+### Tray
+
+| Check | Result | Evidence |
+|---|---|---|
+| Fit, with both cased halves seated and the dock PCB (kicad-cli STEP, every 3D model) in its recess | 35 checks, 0 failed. Each case rests on the floor and the PCB; the pocket walls keep 0.4 mm from it and from the battery cover; the switches clear the walls by 4.2 mm, and the keycaps pass above them; the two tray pieces meet 0.2 mm apart. Every dock part, screw head and the USB-C plug's overmold keeps at least 0.25 mm from the tray and the cases (nearest: LED1 to the right case, 2.75 mm). The compressed pins touch only the halves' PCBs, 1.75 mm from the case window when centred | `checks.json` → `fit` (rows `tray_*`, `dock *`) |
+| Pin model | The pogo pin's EasyEDA 3D model stands 6.0 mm, as its datasheet and `params.py` say | `checks.json` → `dock_pins` |
+| Guidance | The pockets are 8.2 mm deep; their straight walls reach 7.0 mm, above the tallest free pin tip (6.46 mm worst case) plus the case's 0.4 mm bottom chamfer, so a half is in them before it meets the pins | `checks.json` → `dock_pins` |
+| Pin compression | 0.8 mm nominal. 0.51 to 1.09 mm by RSS of the pin's ±0.15 mm, its solder joint (0.05), the PCB's thickness (±0.16), the recess depth (0.1) and the case's standoffs (0.15): inside 0.2 mm to the 1.4 mm stroke. Worst case 0.19 to 1.41 mm | `checks.json` → `dock_pins` |
+| Pin landing, per pad and axis | The case's and the board's play (moving and turning) solved from their outlines: 0.69 / 0.61 mm (x / y) for the case in its pocket, 0.4 / 0.51 mm for the board in its case. With the dock PCB on its bosses (0.25), pocket to boss (0.1), the pin on its land (0.15) and its tilt (0.1): 0.86 mm by RSS across the pad, against 1.1 mm of room (the 2.5 mm pad less 0.15 mm at each edge). Worst case 1.69 mm, off the pad's 1.25 mm half-width if every term lines up; along the pad (1.85 mm of room) it stays on. In the worst case the case's window still clears the pins' flanges (1.54 mm needed, 1.75 mm there) | `checks.json` → `dock_pins` |
+| Hardware | M2 × 5 through the dock PCB into an M2 × 3 insert: 3.0 mm of thread, tip 0.6 mm above the hole's bottom; 1.72 mm of printed wall round each insert. 0.8 mm wall round each magnet inside the PCB's hole; magnet pockets 6.4 mm deep under a 0.6 mm skin. Feet: through-holes, so any foot up to 7.4 mm tall docks; each foot moves at most 1.4 mm (the case's play plus 0.2 mm in its seat) against 2.0 mm of room | `checks.json` → `hardware` (side `dock`) |
+| Bed | Each piece 119.6 × 101.2 × 15.2 mm | `checks.json` → `bed` |
+| Slicing (0.20 mm Standard, Bambu PLA Basic, no supports) | Each piece: 56 min, 39.4 g. No slicer warnings | `slice.json` |
+
+The play of a case in its pocket and of a board in its case is a linear program over a move and a small turn (`dock_checks.Play`): every short stretch of the outline may move outward by at most the clearance, and each locating screw by its play. On a rectangle it gives the clearance at every point, as it should.
+
+Renders (`render/`): `tray-{iso,top,under}.png` (the tray with the dock PCB), `dock-iso.png` (with both cased halves and covers), `dock-pin-section.png` (a cut through the left half's pins: tray, dock PCB, compressed pins, the case's floor and window, the half's PCB).
+
+None of this needed a change to the keyboard PCB.
+
+What only a print can tell: the magnets' pull through the 0.6 mm skin (two N52 10 × 3 mm per half against the pins' 3 to 3.5 N), how hard a half is to lift out by the finger notches, and the pins' real free height (measure it, `mech/README.md`).

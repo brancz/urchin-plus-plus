@@ -1,0 +1,31 @@
+{
+  "lcsc": "C75464",
+  "manufacturer": "BOURNS",
+  "mpn": "MF-NSMF050-2",
+  "datasheet_url": "https://lcsc.com/product-detail/Surface-Mount-Fuses_BOURNS_MF-NSMF050-2_0-5A-13-2V-Self-healing-fuse_C75464.html",
+  "symbol": "MF-NSMF050-2.kicad_sym",
+  "footprint": "F1206.kicad_mod",
+  "side": "top",
+  "footprint_changes": [
+    "dropped 20 item UUIDs (atopile would copy them onto every instance)",
+    "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
+  ],
+  "fixups_source": null,
+  "pin_names": null,
+  "model": "F1206_L3.2-W1.7-H0.6.step",
+  "pins": [
+    {
+      "pin": "1",
+      "name": "1",
+      "signal": null
+    },
+    {
+      "pin": "2",
+      "name": "2",
+      "signal": null
+    }
+  ],
+  "fetched_utc": "2026-10-24T15:42:35Z",
+  "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
+  "kicad_cli": "9.0.9"
+}

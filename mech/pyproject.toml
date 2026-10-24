@@ -10,6 +10,7 @@ requires-python = ">=3.11"
 dependencies = [
     "build123d>=0.13.0",
     "ocp-vscode>=4.2.0",
+    "scipy>=1.17",
     "vtk>=9.3",
 ]
 

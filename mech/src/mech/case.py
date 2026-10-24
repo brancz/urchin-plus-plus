@@ -180,7 +180,7 @@ def case(board: Board):
     for m in board["steel_discs"]:
         part -= cyl(*xy((m["x"], m["y"])), P.DISC_D + 0.3, -0.1, P.DISC_T)
     for m in board["feet"]:
-        part -= cyl(*xy((m["x"], m["y"])), m["d"] + 0.4, -0.1, P.FOOT_RECESS)
+        part -= cyl(*xy((m["x"], m["y"])), m["d"] + P.FOOT_SEAT, -0.1, P.FOOT_RECESS)
     return part
 
 

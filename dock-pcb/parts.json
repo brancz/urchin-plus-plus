@@ -1,0 +1,63 @@
+{
+  "_doc": "Every LCSC part of the dock board (phase 7; selection in reports/phase7/dock-parts.md). scripts/parts/import_lcsc.py --manifest dock-pcb/parts.json builds dock-pcb/parts/<LCSC>/. The dock is assembled on its top side (docs/ARCHITECTURE.md, Dock), so every footprint is a top-side one.",
+  "parts": [
+    {
+      "lcsc": "C5221284",
+      "qty": 6,
+      "side": "top",
+      "role": "SMD pogo pin, 6.0 mm free height (Yiyuan YTC1P-4020-01), 3 per half",
+      "fixups": {
+        "source": "The EasyEDA footprint's silkscreen is two circles, which crash atopile 0.15.7's designator placement (min() of no points in get_bbox_from_geos). The pins sit under the cases on the tray's floor, where silkscreen serves nothing. Its courtyard is a zero-width line (KiCad DRC: malformed courtyard); it becomes the 2.3 mm pad plus 0.25 mm all round.",
+        "drop_graphics": [
+          "F.SilkS"
+        ],
+        "courtyard_rect": [
+          2.8,
+          2.8
+        ]
+      }
+    },
+    {
+      "lcsc": "C2927029",
+      "qty": 1,
+      "side": "top",
+      "role": "USB-C receptacle, power only (DEALON USB-TYPE-C-009)",
+      "fixups": {
+        "source": "Pin-in-paste for the four through-hole shell legs (pads 7): the EasyEDA footprint has no paste on them, so reflow wouldn't solder them and the receptacle would hang on its six SMD pads (the keyboard's C165948 got the same fix, phase 4-6 review M3).",
+        "paste_pads": [
+          "7"
+        ]
+      }
+    },
+    {
+      "lcsc": "C75464",
+      "qty": 1,
+      "side": "top",
+      "role": "Resettable fuse 0.5 A hold (Bourns MF-NSMF050-2)"
+    },
+    {
+      "lcsc": "C123790",
+      "qty": 1,
+      "side": "top",
+      "role": "5V TVS, 6.0 V standoff (MDD SMF6.0A)"
+    },
+    {
+      "lcsc": "C25905",
+      "qty": 2,
+      "side": "top",
+      "role": "5.1k CC pull-downs, one per CC pin"
+    },
+    {
+      "lcsc": "C2297",
+      "qty": 1,
+      "side": "top",
+      "role": "Power LED, green 0805 (KENTO KT-0805G)"
+    },
+    {
+      "lcsc": "C25879",
+      "qty": 1,
+      "side": "top",
+      "role": "2.2k LED resistor"
+    }
+  ]
+}
