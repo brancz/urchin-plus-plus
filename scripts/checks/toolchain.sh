@@ -2,7 +2,7 @@
 # Verify the installed tools match toolchain.env exactly (CLAUDE.md rule 4).
 #
 #   scripts/checks/toolchain.sh          # tools every build needs (CI and local)
-#   scripts/checks/toolchain.sh --local  # plus easyeda2kicad and pyOCD (workstation only)
+#   scripts/checks/toolchain.sh --local  # plus easyeda2kicad, pyOCD and Swift (workstation only)
 #   scripts/checks/toolchain.sh --kicad  # only kicad-cli and pcbnew (fast preflight for other scripts)
 #
 # Needs KICAD_PY and FREEROUTING_JAR set as in docs/SETUP.md.
@@ -46,6 +46,9 @@ fi
 if [ "${1:-}" = "--local" ]; then
   check easyeda2kicad "$EASYEDA2KICAD_VERSION" "$(easyeda2kicad --version 2>/dev/null | sed -n 's/.*v\([0-9.]*\).*/\1/p')"
   check pyocd "$PYOCD_VERSION" "$(pyocd --version 2>/dev/null)"
+  if [ "$(uname)" = Darwin ]; then
+    check swift "$SWIFT_VERSION" "$(swift --version 2>&1 | sed -n 's/.*Apple Swift version \([0-9.]*\).*/\1/p' | head -1)"
+  fi
   if "$ROOT/scripts/freeze_constraints.sh" --check >/dev/null 2>&1; then
     printf 'ok   %-16s %s\n' constraints "atopile and KiKit trees match constraints/"
   else

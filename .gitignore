@@ -19,6 +19,10 @@ _autosave-*
 *.kicad_pcb-bak
 \#auto_saved_files#
 
+# Swift (menubar/): SwiftPM's build directory, which also holds the built app
+.build/
+.swiftpm/
+
 # Python
 __pycache__/
 *.py[cod]

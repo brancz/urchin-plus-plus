@@ -50,7 +50,7 @@ After that, double-tap the reset button (or use `&bootloader`) to get the `URCHI
 ## Behaviour
 
 - **Status LED** (zmk-rgbled-widget): it blinks the battery level on start (green, yellow, red) and the connection state on profile changes. The left half blinks its own level, then the right half's (`&ind_bat` too).
-- **Battery levels on the host:** the left half reports both halves, its own as the first Battery Service and the right half's as a second. macOS (and most hosts) shows only the first; a Bluetooth app or script can read both.
+- **Battery levels on the host:** the left half reports both halves, its own as the first Battery Service and the right half's as a second. macOS (and most hosts) shows only the first; the menu-bar app in `menubar/` shows both.
 - **Charge LED:** wired to the charger, no firmware: amber while charging, green when charged.
 - **Battery level reported to the host.** The charger feeds the system from its input whenever input power is present, so VDDH reads its regulated 4.4 V instead of the cell. `urchin,battery-power-aware` reads the charger's PGOOD and CHG outputs at every sample and reports:
   - on battery: the measured level;

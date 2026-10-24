@@ -165,6 +165,23 @@ jobs:
           path: ci-out/firmware
           if-no-files-found: error
 
+  menubar:
+    name: menu-bar app (unit tests, macOS app bundle)
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Load pinned versions
+        run: grep -E '^[A-Z0-9_]+=' toolchain.env >> "$GITHUB_ENV"
+      - name: Select the pinned Xcode (the same Swift as the Command Line Tools locally)
+        run: sudo xcode-select -s "/Applications/Xcode_${XCODE_VERSION}.app"
+      - name: Test and build
+        run: scripts/menubar/build.sh ci-out/menubar
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: menubar
+          path: ci-out/menubar/urchin++ Battery.app.zip
+          if-no-files-found: error
+
   dock:
     name: dock CAD environment
     runs-on: ubuntu-24.04

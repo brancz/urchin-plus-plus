@@ -21,6 +21,7 @@ Machine: macOS with Homebrew. CI must use the same tool versions.
 | Docker (firmware builds) | Docker Desktop | `scripts/firmware/build.sh` and `build_bootloader.sh` run in ZMK's build image when `west` / the Zephyr SDK aren't installed locally; start Docker Desktop first |
 | ZMK build image | `zmkfirmware/zmk-build-arm:4.1`, pinned by digest (`ZMK_BUILD_IMAGE` in `toolchain.env`) | Zephyr SDK 0.16.9 (GCC for the firmware and the bootloader), west 1.5.0; multi-arch, so the same digest runs on Apple Silicon and in CI |
 | ZMK, Zephyr, zmk-rgbled-widget | commits in `firmware/config/west.yml` | fetched by `west update` into `firmware/build/ws` |
+| Swift (menu-bar app) | 6.3.1, from Apple's Command Line Tools 26.4.1 (`SWIFT_VERSION`, `XCODE_VERSION` in `toolchain.env`) | `xcode-select --install`, or Software Update; CI uses Xcode 26.4.1. `scripts/menubar/build.sh` refuses another Swift |
 | Adafruit nRF52 bootloader | 0.11.0 (commit in `toolchain.env`) | cloned by `scripts/firmware/build_bootloader.sh`; `intelhex` 2.3.0 from its PyPI wheel, SHA-256 in `toolchain.env` |
 
 CI runs in the official `kicad/kicad:9.0.9` Docker image, pinned by digest in `.github/workflows/ci.yml` and `toolchain.env`. The KiCad 9 PPA (`ppa:kicad/kicad-9.0-releases`, `9.0.9~ubuntu24.04.1`) is the fallback if that image ever disappears; PPAs drop superseded versions, so don't pin CI to it by default.

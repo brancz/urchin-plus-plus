@@ -214,3 +214,8 @@ Append entries as `YYYY-MM-DD: decision — reason`.
   - **lvgl and hal_stm32 come from ZMK's pins.**
   - **The SWD probe:** one whose I/O follows VTref down to 1.8 V (e.g. a J-Link), not a Raspberry Pi Pico.
 - 2026-10-24: Both halves' battery levels (owner's choice). The left half fetches the right half's level, offers it to the host as a second Battery Service, and its LED blinks both levels (`firmware/config/urchin_pp_left.conf`). macOS shows only the first Battery Service, so the Mac still displays the left half; the second is there for an app or script. The settings-reset images build without the user config, which is meant for the real firmware.
+- 2026-10-24: A macOS menu-bar app shows both halves' battery levels (owner's request; `menubar/`).
+  - **Swift Package, AppKit status item, CoreBluetooth.** It's built with Apple's Command Line Tools, so Xcode isn't needed, and signed ad-hoc. It never pairs or connects on its own; it reads the Battery Services of the keyboard macOS has connected.
+  - **The halves are told apart by descriptors, not by service order.** Zephyr's level has presentation description 0x0106 "main". ZMK's proxy levels have 0x0108 "auxiliary" and the user description `Peripheral <n>`. A 0 from a peripheral shows as "no reading", because that's how ZMK reports one that isn't connected.
+  - **Swift is pinned:** `SWIFT_VERSION` 6.3.1 from Command Line Tools / Xcode `XCODE_VERSION` 26.4.1. CI selects that Xcode on the macos-26 runner, and `scripts/menubar/build.sh` refuses any other Swift.
+  - Only the decoding and labelling are unit-tested. The Bluetooth path waits for bring-up.
