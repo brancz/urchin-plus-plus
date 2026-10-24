@@ -1,6 +1,6 @@
 # Phase 7: cases and dock
 
-Status: **cases, battery covers, dock tray and dock PCB done; the dock review's findings are fixed or dispositioned in `review.md`.** Design decisions are in `docs/ARCHITECTURE.md` ("Case", "Dock", and the decision log of 2026-10-24). The parts and the hardware to buy are listed in `mech/README.md`.
+Status: **done (2026-10-24).** Cases, battery covers, dock tray and dock PCB; two reviewer passes, every finding fixed or dispositioned in `review.md`; CI run 40118268118 green, with the artifacts `dock-jlc-bundle` and `printed-parts`. Design decisions are in `docs/ARCHITECTURE.md` ("Case", "Dock", and the decision log of 2026-10-24). The parts and the hardware to buy are listed in `mech/README.md`.
 
 ## Cases and battery covers
 
