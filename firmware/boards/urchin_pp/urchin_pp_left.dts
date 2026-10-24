@@ -1,0 +1,11 @@
+/*
+ * SPDX-License-Identifier: MIT
+ */
+
+#include "urchin_pp.dtsi"
+#include "urchin_pp_left-pins.dtsi"
+
+/ {
+    model = "urchin++ left half";
+    compatible = "urchin_pp_left";
+};

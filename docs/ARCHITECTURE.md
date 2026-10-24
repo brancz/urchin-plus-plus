@@ -54,8 +54,10 @@ dock pads 5V ─TVS─Schottky┘           └── BAT ── protected LiPo
 ## Firmware
 
 - **ZMK, split, no dongle.** A custom board definition, not a shield, because the MCU is on the board. It lives in `firmware/` as a ZMK module.
-- **Bootloader:** Adafruit nRF52 UF2 bootloader built for this board.
-- **Modules:** `zmk-rgbled-widget`. Battery reporting via `zmk,battery-nrf-vddh`. Charging state read from the BQ24073 status pins (CHG_SENSE, PGOOD_SENSE; GPIOs per half in `hardware/pinmap.json`).
+- **ZMK main, pinned to a commit**, on Zephyr 4.1. Builds run in ZMK's build image, pinned by digest (`toolchain.env`).
+- **Bootloader:** Adafruit nRF52 UF2 bootloader built for this board: one LED-less build for both halves.
+- **Modules:** `zmk-rgbled-widget`. Battery reporting via `zmk,battery-nrf-vddh`, wrapped by `urchin,battery-power-aware`, which reads the BQ24073 status pins (CHG_SENSE, PGOOD_SENSE; GPIOs per half in `hardware/pinmap.json`) so a docked or charging half doesn't report the charger's output as a full battery.
+- Details and the first-flash procedure: `firmware/README.md`; decisions: the 2026-10-24 decision-log entry.
 
 ## Toolchain
 
@@ -91,6 +93,7 @@ Resolved in phase 2 (2026-10-18): E73 stock, assemblability, VDDH wiring and cry
 
 - SMD pogo pins for the dock: stock (phase 7)
 - easyeda2kicad footprints: silkscreen overlaps their own pads (DRC warnings in phase 0); every footprint's pads are reviewed against its datasheet land pattern at gate 1 (`reports/phase2/footprints.md`)
+- Bring-up: docked and charged with the power switch off, D4's (1N5819WS) reverse leakage, up to 0.5 mA, might faintly light the red charge LED (phase 8 review). Look for it in the dark.
 - JLC's live placement preview for the bottom side: the CPL convention (Y negated, rotation 180° − KiCad angle, as KiKit's `MirrorBottom`) was traced pin by pin by two reviews, but only JLC's preview at order time confirms it (checklist in `reports/phase6/README.md`)
 
 Resolved in phase 6 (2026-10-18): BOM and CPL without a schematic come from `scripts/fab/jlc_assembly.py`, which uses KiKit's position functions on the panel. The bottom-side rotation convention was checked by the phases 4–6 reviews against every polarised part's pin 1.
@@ -187,3 +190,26 @@ Append entries as `YYYY-MM-DD: decision — reason`.
     - `scripts/checks/panel_fills.py` (run by `fab/build.sh`) checks that the panel's GND pours equal the halves' apart from the mouse bites. It allows at most 1 mm² of extra copper per layer, and none inside the antenna keep-out.
   - **J1's legs are hand-soldered after delivery.** The pin-in-paste apertures equal the pads and fill the barrels only partly, and overprinting isn't safe 0.23 mm from the SMD pins. Supersedes "Hand soldering is not needed" in the first-review entry.
 - 2026-10-19: The pre-build guardrail (`kicad_guardrails.py --prebuild`) again refuses a footprint whose library footprint isn't found if it has no `atopile_address`. Such a footprint isn't an atopile part, and the build would delete it. An atopile part whose library part was swapped still passes, because the build replaces it. Refines the 2026-10-18 "ato_build settle" entry; the phase 0 round-trip (step 9) checks the refusal.
+- 2026-10-24: Gate 3 passed: the owner ordered 5 panels with assembly of 2 (Standard PCBA) at JLC, after checking the placement preview of every polarized part on both halves against the checklist.
+- 2026-10-24: Firmware (phase 8):
+  - **ZMK main, pinned to a commit** (4dd95d78, Zephyr 4.1, the new board format), not the v0.3.0 release (Zephyr 3.5, old board format). The owner's current Urchin runs ZMK main, and a board written for Zephyr 3.5 would need porting at the next ZMK release. ZMK's manifest names Zephyr by a branch, so `firmware/config/west.yml` overrides it with that branch's commit.
+  - zmk-rgbled-widget is pinned to its main branch, which tracks ZMK main.
+  - **Builds run in ZMK's build image**, pinned by digest (`ZMK_BUILD_IMAGE`). Locally they run through Docker; the bootloader uses the same image's Zephyr SDK GCC.
+  - **Board:** a custom board with two halves, `urchin_pp_left` (central) and `urchin_pp_right`. The key GPIOs, LED and charger-status pins, the matrix transform and ZMK Studio's physical layout are generated from `hardware/pinmap.json` and `hardware/geometry/urchin.json` (`scripts/firmware/gen_board.py --check`).
+  - **Keymap:** the owner's (brancz/urchin-zmk-firmware), with battery and connection indicators added on the settings layer. ZMK Studio runs on the left half.
+  - **Power configuration:**
+    - REG0 stays disabled in the devicetree, because Zephyr turns REG0's DC/DC on whenever `&reg0` is enabled and the module has no inductor for it (nice!nano's board enables it, so it must not be copied).
+    - REG1 runs as DC/DC.
+    - The 32 kHz clock is the RC oscillator (no crystal; P0.00/P0.01 carry keys and the LED).
+    - P0.18 is configured as reset (`gpio-as-nreset`).
+  - **Battery reporting:** `urchin,battery-power-aware` wraps `zmk,battery-nrf-vddh`. It reports the measured level on battery, the last pre-input level while charging, and 100 % once charged, by reading PGOOD and CHG at each sample with their pull-ups on only during the read. It resolves the phases 4–6 second review's L4 (VDDH reads the charger's 4.4 V on input power).
+  - **Bootloader:** Adafruit nRF52 bootloader 0.11.0, with S140 6.1.1 and the same flash layout as nice!nano.
+    - One build serves both halves, with no LED, because each half's LED pins are key inputs on the other half.
+    - It sets UICR.REGOUT0 to 3.3 V on first start.
+    - Its USB ID is the pid.codes test VID/PID 1209:0001: private use only, not for a distributed product.
+- 2026-10-24: Phase 8 review changes (`reports/phase8/review.md`):
+  - **LED outputs are open-drain.** A half flashed with the other half's image then can't drive a key's pin high against the switch.
+  - **The battery driver keeps the last on-battery level in GPREGRET2**, which survives resets and the wake from deep sleep, so a half that wakes or restarts while charging doesn't report full. It samples CHG over 600 ms (the charger blinks it at 2 Hz on a fault) and reports 100 % only on two consecutive "charged" samples.
+  - **The bootloader build is reproducible** (`SOURCE_DATE_EPOCH`).
+  - **lvgl and hal_stm32 come from ZMK's pins.**
+  - **The SWD probe:** one whose I/O follows VTref down to 1.8 V (e.g. a J-Link), not a Raspberry Pi Pico.

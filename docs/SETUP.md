@@ -18,6 +18,10 @@ Machine: macOS with Homebrew. CI must use the same tool versions.
 | easyeda2kicad | 1.0.1 | `uv tool install easyeda2kicad==1.0.1` |
 | pyOCD | 0.45.1 | `uv tool install pyocd==0.45.1`, then `pyocd pack install nrf52840` (installs `NordicSemiconductor.nRF_DeviceFamilyPack` 8.44.1) |
 | build123d | 0.13.0, locked in `dock/uv.lock` | `uv add build123d ocp_vscode` inside `dock/` |
+| Docker (firmware builds) | Docker Desktop | `scripts/firmware/build.sh` and `build_bootloader.sh` run in ZMK's build image when `west` / the Zephyr SDK aren't installed locally; start Docker Desktop first |
+| ZMK build image | `zmkfirmware/zmk-build-arm:4.1`, pinned by digest (`ZMK_BUILD_IMAGE` in `toolchain.env`) | Zephyr SDK 0.16.9 (GCC for the firmware and the bootloader), west 1.5.0; multi-arch, so the same digest runs on Apple Silicon and in CI |
+| ZMK, Zephyr, zmk-rgbled-widget | commits in `firmware/config/west.yml` | fetched by `west update` into `firmware/build/ws` |
+| Adafruit nRF52 bootloader | 0.11.0 (commit in `toolchain.env`) | cloned by `scripts/firmware/build_bootloader.sh`; `intelhex` 2.3.0 from its PyPI wheel, SHA-256 in `toolchain.env` |
 
 CI runs in the official `kicad/kicad:9.0.9` Docker image, pinned by digest in `.github/workflows/ci.yml` and `toolchain.env`. The KiCad 9 PPA (`ppa:kicad/kicad-9.0-releases`, `9.0.9~ubuntu24.04.1`) is the fallback if that image ever disappears; PPAs drop superseded versions, so don't pin CI to it by default.
 
@@ -53,13 +57,13 @@ export PATH="$(brew --prefix openjdk)/bin:$PATH"
 scripts/checks/toolchain.sh --local                    # every pinned version and the jar hash
 "$KICAD_PY" -m kikit.ui --help | head -1
 java -jar "$FREEROUTING_JAR" -help | head -3           # Freerouting v2.5.0
-pyocd list                                             # lists the Pico once connected
+pyocd list                                             # lists the J-Link once connected
 scripts/roundtrip/run.sh                               # full toolchain proof, ~2 min; output in scratch/roundtrip-report
 ```
 
 ## Hardware for bring-up
 
-- Raspberry Pi Pico flashed with `debugprobe_on_pico.uf2` (raspberrypi/debugprobe releases; hold BOOTSEL, plug in, drag the file)
+- An SWD probe whose I/O follows the target's VTref down to 1.8 V: a blank module runs its I/O at 1.8 V until the bootloader sets 3.3 V, and a fixed-3.3 V probe such as a Raspberry Pi Pico can't drive or read it safely (decision log, 2026-10-18). A SEGGER J-Link fits: SEGGER lists the J-Link EDU Mini's target interface voltage as 1.8 V and 3.3 V, and its licence allows non-profit educational use only, so check that the model's terms fit. pyOCD drives a J-Link through SEGGER's "J-Link Software and Documentation Pack", which must be installed. Wiring and commands: `firmware/README.md`.
 - Jumper wires for the SWD pads
 - Multimeter
 - 3D printer or JLC's 3D printing service (PETG) for the dock tray

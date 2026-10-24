@@ -140,6 +140,31 @@ jobs:
       - name: Python 3.9 syntax (KiCad's Python on macOS)
         run: uv run --no-project --python 3.9 python -m compileall -q scripts
 
+  firmware:
+    name: firmware (ZMK for both halves, bootloader)
+    runs-on: ubuntu-24.04
+    container:
+      # Must equal ZMK_BUILD_IMAGE in toolchain.env (scripts/checks/toolchain.sh checks it).
+      image: zmkfirmware/zmk-build-arm:4.1@sha256:edb1c953438c6f720ddb79c3762f3972013b7fbbaf4fff3592fc869983e7afc5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Trust the checkout
+        run: git config --global --add safe.directory '*'
+      - name: West workspace cache (ZMK, Zephyr and modules at the commits in firmware/config/west.yml)
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: firmware/build/ws
+          key: west-${{ hashFiles('firmware/config/west.yml') }}
+      - name: ZMK firmware (both halves, settings reset)
+        run: scripts/firmware/build.sh ci-out/firmware
+      - name: Adafruit nRF52 bootloader
+        run: scripts/firmware/build_bootloader.sh ci-out/firmware
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: firmware
+          path: ci-out/firmware
+          if-no-files-found: error
+
   dock:
     name: dock CAD environment
     runs-on: ubuntu-24.04

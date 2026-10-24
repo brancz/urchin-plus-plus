@@ -1,0 +1,15 @@
+file_format: "1"
+id: urchin_pp
+name: urchin++
+type: board
+arch: arm
+url: https://github.com/brancz/urchin-plus-plus
+features:
+  - keys
+  - studio
+outputs:
+  - usb
+  - ble
+siblings:
+  - urchin_pp_left
+  - urchin_pp_right

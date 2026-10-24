@@ -1,0 +1,34 @@
+# SPDX-License-Identifier: MIT
+
+description: |
+  Battery level for a power-path charger (TI BQ24073): wraps a battery sensor that
+  measures the system rail (zmk,battery-nrf-vddh), which carries the charger's regulated
+  output instead of the cell voltage whenever input power is present. The charger's
+  open-drain PGOOD and CHG outputs are read on demand, with the pull-ups enabled only
+  for the read:
+    - no input power: the wrapped sensor's reading, remembered (also in GPREGRET2, which
+      survives resets and the wake from System OFF);
+    - input power, charging: the last reading taken without input power;
+    - input power, not charging (charge complete) on two samples in a row: 100 %.
+  CHG is read over 600 ms (it blinks at 2 Hz on a charger fault), and any active read
+  counts as charging.
+
+compatible: "urchin,battery-power-aware"
+
+include: base.yaml
+
+properties:
+  battery:
+    type: phandle
+    required: true
+    description: The wrapped battery sensor (SENSOR_CHAN_GAUGE_* channels).
+
+  power-good-gpios:
+    type: phandle-array
+    required: true
+    description: The charger's PGOOD output (active while input power is good).
+
+  charging-gpios:
+    type: phandle-array
+    required: true
+    description: The charger's CHG output (active while charging).

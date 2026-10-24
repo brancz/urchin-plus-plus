@@ -1,0 +1,120 @@
+/*
+ * urchin++: an Ebyte E73-2G4M08S1C (nRF52840) module on each half, 17 direct-wired keys,
+ * a common-anode RGB status LED, and a BQ24073 charger whose PGOOD/CHG outputs reach two
+ * GPIOs (docs/ARCHITECTURE.md). The per-half GPIOs are in urchin_pp_{left,right}-pins.dtsi,
+ * generated from hardware/pinmap.json by scripts/firmware/gen_board.py.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+/dts-v1/;
+#include <nordic/nrf52840_qiaa.dtsi>
+#include <common/nordic/nrf52840_uf2_boot_mode.dtsi>
+#include <dt-bindings/zmk/matrix_transform.h>
+#include "urchin_pp-layouts.dtsi"
+
+/ {
+    chosen {
+        zmk,kscan = &kscan0;
+        zmk,physical-layout = &physical_layout0;
+        zmk,battery = &battery;
+        zephyr,code-partition = &code_partition;
+        zephyr,sram = &sram0;
+        zephyr,flash = &flash0;
+    };
+
+    kscan0: kscan {
+        compatible = "zmk,kscan-gpio-direct";
+        wakeup-source;
+        /* input-gpios: urchin_pp_{left,right}-pins.dtsi */
+    };
+
+    /* VDDH is the charger's system output (through the power switch), which is the cell
+     * voltage on battery and the charger's regulated 4.4 V on input power. */
+    vbatt: vbatt {
+        compatible = "zmk,battery-nrf-vddh";
+    };
+
+    /* What ZMK reports: the cell's level on battery, the level from before the input
+     * power came while charging, 100 % once charged (firmware/drivers). */
+    battery: battery {
+        compatible = "urchin,battery-power-aware";
+        battery = <&vbatt>;
+        /* power-good-gpios, charging-gpios: urchin_pp_{left,right}-pins.dtsi */
+    };
+
+    /* Status LED: anode on VDD, cathodes through resistors to GPIOs (active low,
+     * open-drain: each half's LED pins are key inputs on the other half, and an image
+     * flashed onto the wrong half must not drive them high into a pressed key).
+     * Driven by zmk-rgbled-widget through these aliases. */
+    leds {
+        compatible = "gpio-leds";
+        led_red: led_red { };
+        led_green: led_green { };
+        led_blue: led_blue { };
+    };
+
+    aliases {
+        led-red = &led_red;
+        led-green = &led_green;
+        led-blue = &led_blue;
+    };
+};
+
+/*
+ * Power. The module has REG1's DC/DC inductors but not REG0's: REG1 runs as DC/DC, and
+ * REG0 (the high-voltage stage fed from VDDH) must stay an LDO. Zephyr turns REG0's DC/DC
+ * on whenever &reg0 is enabled, so &reg0 stays disabled here (unlike nice!nano's board).
+ * The bootloader sets UICR.REGOUT0 to 3.3 V.
+ */
+&reg1 {
+    regulator-initial-mode = <NRF5X_REG_MODE_DCDC>;
+};
+
+/* P0.18 is the reset button's pin (SW36). */
+&uicr {
+    gpio-as-nreset;
+};
+
+&adc {
+    status = "okay";
+};
+
+&gpiote {
+    status = "okay";
+};
+
+&gpio0 {
+    status = "okay";
+};
+
+&gpio1 {
+    status = "okay";
+};
+
+zephyr_udc0: &usbd {
+    status = "okay";
+};
+
+/* Flash layout of the Adafruit nRF52 bootloader with SoftDevice S140 6.1.1, as on
+ * nice!nano and ZMK's other UF2 boards. */
+&flash0 {
+    partitions {
+        compatible = "fixed-partitions";
+        #address-cells = <1>;
+        #size-cells = <1>;
+
+        sd_partition: partition@0 {
+            reg = <0x00000000 0x00026000>;
+        };
+        code_partition: partition@26000 {
+            reg = <0x00026000 0x000c6000>;
+        };
+        storage_partition: partition@ec000 {
+            reg = <0x000ec000 0x00008000>;
+        };
+        boot_partition: partition@f4000 {
+            reg = <0x000f4000 0x0000c000>;
+        };
+    };
+};

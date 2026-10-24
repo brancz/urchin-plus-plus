@@ -1,0 +1,9 @@
+boards:
+  - name: urchin_pp_left
+    full_name: urchin++ (left half)
+    socs:
+      - name: nrf52840
+  - name: urchin_pp_right
+    full_name: urchin++ (right half)
+    socs:
+      - name: nrf52840

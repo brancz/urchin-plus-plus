@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: MIT
+
+if BOARD_URCHIN_PP_LEFT
+
+config ZMK_KEYBOARD_NAME
+    default "urchin++"
+
+# The left half is the central: it talks to the host and to the right half.
+config ZMK_SPLIT_ROLE_CENTRAL
+    default y
+
+endif # BOARD_URCHIN_PP_LEFT
+
+if BOARD_URCHIN_PP_RIGHT
+
+config ZMK_KEYBOARD_NAME
+    default "urchin++ right"
+
+endif # BOARD_URCHIN_PP_RIGHT
+
+if BOARD_URCHIN_PP_LEFT || BOARD_URCHIN_PP_RIGHT
+
+config ZMK_SPLIT
+    default y
+
+# The nRF52840's highest TX power (+8 dBm), whenever Bluetooth is on
+choice BT_CTLR_TX_PWR
+    default BT_CTLR_TX_PWR_PLUS_8
+endchoice
+
+endif # BOARD_URCHIN_PP_LEFT || BOARD_URCHIN_PP_RIGHT

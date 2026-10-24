@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: MIT
+
+DT_COMPAT_URCHIN_BATTERY_POWER_AWARE := urchin,battery-power-aware
+
+config URCHIN_BATTERY_POWER_AWARE
+    bool "Battery level that knows about the charger's input power"
+    default $(dt_compat_enabled,$(DT_COMPAT_URCHIN_BATTERY_POWER_AWARE))
+    depends on SENSOR
+    select GPIO
+    help
+      Wraps the VDDH battery sensor so ZMK doesn't report the charger's regulated output
+      as a full battery while input power is present (firmware/drivers).

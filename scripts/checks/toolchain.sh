@@ -61,5 +61,12 @@ else
   fails=$((fails + 1))
 fi
 
+if grep -q "image: $ZMK_BUILD_IMAGE\$" "$ROOT/.github/workflows/ci.yml"; then
+  printf 'ok   %-16s %s\n' zmk-image "$ZMK_BUILD_IMAGE"
+else
+  printf 'FAIL %-16s .github/workflows/ci.yml does not use %s\n' zmk-image "$ZMK_BUILD_IMAGE"
+  fails=$((fails + 1))
+fi
+
 [ "$fails" -eq 0 ] || { echo "toolchain: $fails mismatch(es)"; exit 1; }
 echo "toolchain: OK"
