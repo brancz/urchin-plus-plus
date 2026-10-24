@@ -54,9 +54,10 @@ Each phase ends with its outputs committed under `reports/<phase>/` and a `revie
 - KiKit panel (left + right), `kikit fab jlcpcb`, rotation corrections, a BOM/CPL sanity check (every placed part has an LCSC number, nothing on the top side).
 - **Exit:** a release-candidate bundle under `fab/` with renders and a checklist for the JLC upload. 🛑 **Gate 3: order approval** (the human uploads and orders).
 
-### Phase 7 — Dock
+### Phase 7 — Cases and dock
+- Printed case and battery cover per half (build123d, from the routed boards' data), fit-checked against kicad-cli's STEP of each half and sliced for the owner's A1 mini.
 - Dock PCB (atopile → KiCad → fab outputs, same pipeline).
-- build123d tray from the exported board outlines, with pockets, funnel walls, magnet seats, and pogo positions; STEP fit check with both halves; STL output.
+- build123d tray from the case outlines, with pockets, funnel walls, magnet seats, and pogo positions; STEP fit check with both cased halves; STL output.
 - **Exit:** dock fab bundle, STL files, fit-check report.
 
 ### Phase 8 — Firmware
@@ -88,6 +89,6 @@ Update this section whenever a phase moves.
 | 4 Routing | done (2026-10-18) | Both halves fully routed with 0 DRC errors. Freerouting runs with scripted pre-processing (inset boundary, via spacing, 24 width and clearance variants) and scripted USB-C joins. After import: GND pour on both layers, a solid module ground zone, and stitching vias, including under the module. Rule areas keep copper off the antenna and the module's core, and vias from under the USB-C shell. Repairs after the second review: `route.py --ripup-drc`, `scripts/routing/joins.py`, `route.py --restitch`. Evidence in `reports/phase4/`. |
 | 5 Validation | done (2026-10-18) | Every verification layer is green or dispositioned in `reports/phase5/README.md`. STEP fit (dock) and firmware build belong to phases 7 and 8. Two reviewer passes for phases 4–6; every finding is fixed or dispositioned in `reports/phase5/review.md`. |
 | 6 Fab outputs | done (2026-10-18) | JLC bundle from `scripts/fab/build.sh` (also the CI artifact `jlc-bundle`): framed panel of both halves, Gerbers, BOM, CPL, renders, STEP. Upload checklist in `reports/phase6/README.md`. **Gate 3 passed 2026-10-24:** the owner checked JLC's placement preview against the checklist and ordered 5 panels with assembly of 2 (Standard PCBA). |
-| 7 Dock | not started | |
+| 7 Cases and dock | in progress | Cases and battery covers done: `scripts/mech/build.sh` builds them from the routed boards, passes 14 fit checks and 4 bed checks, and slices them for the A1 mini (case 26 min / 18 g, cover 8 min / 3 g per half). Evidence in `reports/phase7/`. No keyboard PCB change needed. Dock tray and dock PCB next. |
 | 8 Firmware | done (2026-10-24) | ZMK board `urchin_pp_left`/`urchin_pp_right` on ZMK main (pinned), the owner's keymap, zmk-rgbled-widget, a charger-aware battery driver, and the Adafruit nRF52 bootloader (`firmware/`). CI run 40096653403 built both halves and the bootloader and attached them (artifact `firmware`), byte-identical to the local build. Review dispositioned in `reports/phase8/review.md`; runtime checks wait for bring-up. |
 | 9 Bring-up | not started | |

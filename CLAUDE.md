@@ -30,7 +30,7 @@ dock-pcb/        atopile project for the dock board
 scripts/         geometry extraction, placement, routing, checks/ (all Python/shell, run headless)
 reports/         per-phase evidence: DRC/ERC output, renders, diffs, reviewer findings
 fab/             generated JLC outputs (gitignored; release builds attached to git tags)
-dock/            build123d tray CAD (uv project) → STL
+mech/            build123d CAD (uv project): printed cases, battery covers, dock tray → STL
 firmware/        ZMK module: board definition, keymap, bootloader build config
 .github/workflows/  CI
 reference/       original Urchin (gitignored, read-only)
@@ -44,6 +44,7 @@ scratch/         throwaway experiments (gitignored)
 - Freerouting headless: `java -jar "$FREEROUTING_JAR" -de in.dsn -do out.ses`
 - atopile: `scripts/ato_build.sh hardware` (never bare `ato build`). New parts: `python3 scripts/parts/import_lcsc.py --parts-dir hardware/parts C12345` (bottom-side footprint by default); atopile's own part picker no longer works. No locks and no footprint-owned zones: atopile drops them (keep-outs are board-level rule areas).
 - Toolchain proof: `scripts/roundtrip/run.sh` (also runs in CI).
+- Printed parts: `scripts/mech/build.sh OUT` (STEP export, build123d parts, fit checks, renders, Bambu Studio slicing; CI runs it with `RENDER=0`, and slicing is local only).
 - Every generator and check is a script in `scripts/` that the CI workflow also runs. Avoid one-off commands that aren't captured in a script.
 
 ## Reviews

@@ -47,9 +47,21 @@ dock pads 5V ─TVS─Schottky┘           └── BAT ── protected LiPo
 
 ## Dock
 
-- **Dock PCB:** one long, thin board spanning both pockets. USB-C input in the middle (CC resistors, polyfuse, power LED), SMD pogo pins at each end, matching the pad positions. Its own small JLC order, built by the same pipeline.
-- **Tray:** build123d, PETG print. Two pockets generated from the real board outlines exported by kicad-cli, with chamfered funnel walls and neodymium magnets under the steel-disc positions. Each pocket fits its half only one way.
+- **The halves dock in their cases** (owner's choice, 2026-10-24). The tray's pockets fit the case outline. The case floor has a window over each half's charging pads (TP1), and the steel discs sit in recesses on the case's underside at MK1/MK2.
+- **Dock PCB:** one long, thin board under a tray for both halves. USB-C input in the middle (CC resistors, polyfuse, power LED), SMD pogo pins at each end. The pins reach each half's pads through the tray floor and the case's window. Its own small JLC order, built by the same pipeline.
+- **Tray:** build123d. Two pockets generated from the case outlines, with chamfered funnel walls, recesses for the case's feet, and neodymium magnets under the steel discs. Each pocket fits its half only one way. The owner's printer (Bambu Lab A1 mini) prints at most 180 × 180 × 180 mm, and a tray for both halves is about 240 mm wide. So the tray prints as two pieces that key together and screw onto the dock PCB.
 - **Behavior:** drop a half in roughly the right spot; the walls and magnets seat it onto the pins.
+
+## Case
+
+- **Printed tray case per half** for prototyping, on the owner's A1 mini.
+  - Floor plus walls up to the top of the PCB, keys exposed.
+  - A cover over the battery and electronics area.
+  - An opening over the tenting-puck mount, so the puck screws on through the case.
+  - Openings for USB-C, the power switch and the charging pads.
+  - The PCB is held by nylon screws and standoffs at the controller (which also carry the battery cover), one screw into a heat-set insert beside the thumb keys, and two lips over its outer edge.
+- **Generated from the routed boards.** `scripts/mech/board_data.py` extracts every feature the CAD needs (outline, holes, pads, part courtyards, puck, steel discs, feet) into `mech/data/{left,right}.json`, and `mech/` (build123d) builds each half's parts from its own data, never by mirroring. CI checks that the data is current.
+- **A machined aluminium case may follow.** Metal around the module would block Bluetooth, so that case must leave the antenna end open or use a non-metal window there. The printed case keeps the same openings, so it can serve as that case's model.
 
 ## Firmware
 
@@ -83,7 +95,7 @@ dock pads 5V ─TVS─Schottky┘           └── BAT ── protected LiPo
 3. Custom checks: antenna keep-out, pad positions, battery clearance, single-sided assembly, geometry matches the original
 4. After every `ato build` (`scripts/ato_build.sh`): KiCad format/feature guardrails (including footprints atopile would mangle), a pre-build snapshot, stale-net repair, and a board diff in build mode against the snapshot. In CI, every pushed commit's boards are also compared with their parent (`scripts/checks/board_history.sh`)
 5. Rendered layer images and a 3D view, inspected by the reviewer
-6. STEP export fit-checked against the dock CAD
+6. STEP export fit-checked against the printed cases, covers and dock tray (`scripts/mech/build.sh`)
 7. ZMK firmware builds for both halves
 8. JLC's DFM check on upload (done by the human)
 
@@ -219,3 +231,24 @@ Append entries as `YYYY-MM-DD: decision — reason`.
   - **The halves are told apart by descriptors, not by service order.** Zephyr's level has presentation description 0x0106 "main". ZMK's proxy levels have 0x0108 "auxiliary" and the user description `Peripheral <n>`. A 0 from a peripheral shows as "no reading", because that's how ZMK reports one that isn't connected.
   - **Swift is pinned:** `SWIFT_VERSION` 6.3.1 from Command Line Tools / Xcode `XCODE_VERSION` 26.4.1. CI selects that Xcode on the macos-26 runner, and `scripts/menubar/build.sh` refuses any other Swift.
   - Only the decoding and labelling are unit-tested. The Bluetooth path waits for bring-up.
+- 2026-10-24: Phase 7 scope (owner's choices):
+  - The halves get printed tray cases: low tray, keys exposed, tenting puck usable through the case.
+  - The halves dock inside their cases.
+  - The tray for both halves prints as two keyed pieces on one long dock PCB, because the owner's A1 mini prints at most 180 mm and the tray is about 240 mm wide.
+  - Alternatives considered: two separate docks with a USB-C each (two cables), and an upright stand (less certain seating).
+  - Supersedes "steel discs stuck to the bottom" of the PCB: they move to the case's underside.
+- 2026-10-24: Printed case details:
+  - **Stack:** 1.6 mm floor, 3.6 mm to the PCB's underside (the USB-C receptacle, the tallest bottom part, is 3.26 mm), walls flush with the PCB's top. The battery cover's roof sits 6 mm above the PCB (the cell on its foam tape is 5 mm).
+  - **Mounting:**
+    - The three 2.2 mm holes around the controller take M2 × 8 nylon screws from below into 6 mm nylon F-F standoffs, and M2 × 3 nylon screws hold the cover. Nylon because two of those holes are inside the antenna keep-out (rule 6). M2 × 4 at the top would meet the M2 × 8 inside the standoff.
+    - **Only one of the four 3.8 mm holes takes a screw:** the one beside the thumb keys, an M2 × 5 with a 5 mm washer into an M2 × 3 heat-set insert. The others sit 2.1 mm from a switch body and under a keycap's edge, where no washer fits (the original's plate cases pass posts through them). They get plain standoffs. Two lips on the outer wall hold the outer edge: the board tilts in under them, then the controller side screws down. A screw goes wherever a washer clears every keycap, so the rule is in code (`case.screwed`), not a list of holes.
+    - **The standoff under the hole next to the tenting puck is omitted:** it would overlap the puck.
+  - **The power switch's slot is open to the wall's top,** like the USB-C notch: the switch's actuator reaches past the board's edge, so the board can only drop in through it.
+  - **Standoffs are cut back** 0.3 mm from every bottom part's courtyard.
+  - **Fit checks:**
+    - Each printed part is checked against kicad-cli's STEP of the routed half. Modelled hotswap sockets, battery, switch bodies and keycaps are added. The hardware's heads, washers and standoffs are checked the same way. There must be no overlap, and at least 0.25 mm gap except where parts are meant to touch.
+    - Every screw's thread engagement and tip clearance is computed from the stack.
+    - No metal may sit in the antenna keep-out.
+    - Every part that reaches past the case's cavity must do so inside a full-height wall opening (insertion).
+    - Each STL must fit the 180 mm bed.
+  - **Slicing:** Bambu Studio's own A1 mini profiles (0.20 mm Standard, PLA Basic), flattened by `scripts/mech/slice.py`, so each part's print time and any slicer warning are part of the evidence. CI skips slicing (no Linux CLI build of that version).

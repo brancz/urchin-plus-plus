@@ -1,7 +1,7 @@
 [project]
-name = "dock"
+name = "mech"
 version = "0.1.0"
-description = "Add your description here"
+description = "urchin++ mechanical CAD: printed cases for both halves and the charging dock tray (build123d)"
 readme = "README.md"
 authors = [
     { name = "Frederic Branczyk", email = "fbranczyk@gmail.com" }
@@ -10,10 +10,11 @@ requires-python = ">=3.11"
 dependencies = [
     "build123d>=0.13.0",
     "ocp-vscode>=4.2.0",
+    "vtk>=9.3",
 ]
 
 [project.scripts]
-dock = "dock:main"
+mech = "mech.cli:main"
 
 [build-system]
 requires = ["uv_build>=0.13.1,<0.14.0"]

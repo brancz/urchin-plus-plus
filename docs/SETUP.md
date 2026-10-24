@@ -17,7 +17,8 @@ Machine: macOS with Homebrew. CI must use the same tool versions.
 | uv | 0.13.1 | Homebrew `uv`; CI pins the same version |
 | easyeda2kicad | 1.0.1 | `uv tool install easyeda2kicad==1.0.1` |
 | pyOCD | 0.45.1 | `uv tool install pyocd==0.45.1`, then `pyocd pack install nrf52840` (installs `NordicSemiconductor.nRF_DeviceFamilyPack` 8.44.1) |
-| build123d | 0.13.0, locked in `dock/uv.lock` | `uv add build123d ocp_vscode` inside `dock/` |
+| build123d | 0.13.0, with VTK 9.7.1 for renders, locked in `mech/uv.lock` | `uv sync --locked` inside `mech/`; `scripts/mech/build.sh` runs it through `uv run --locked` |
+| Bambu Studio (local slicing only) | 02.07.01.62 | bambulab.com download, in `/Applications/BambuStudio.app` (or set `BAMBU_STUDIO`). `scripts/mech/slice.py` slices every printed part with its A1 mini system profiles; CI skips slicing |
 | Docker (firmware builds) | Docker Desktop | `scripts/firmware/build.sh` and `build_bootloader.sh` run in ZMK's build image when `west` / the Zephyr SDK aren't installed locally; start Docker Desktop first |
 | ZMK build image | `zmkfirmware/zmk-build-arm:4.1`, pinned by digest (`ZMK_BUILD_IMAGE` in `toolchain.env`) | Zephyr SDK 0.16.9 (GCC for the firmware and the bootloader), west 1.5.0; multi-arch, so the same digest runs on Apple Silicon and in CI |
 | ZMK, Zephyr, zmk-rgbled-widget | commits in `firmware/config/west.yml` | fetched by `west update` into `firmware/build/ws` |
