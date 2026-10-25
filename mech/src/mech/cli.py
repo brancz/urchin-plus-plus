@@ -1,6 +1,7 @@
 """Build every printed part, export it, render it and check its fit.
 
     uv run mech build --boards DIR [--out DIR]
+    uv run mech preview --boards DIR [--out FILE.html]
 
 DIR holds kicad-cli's STEP exports of the halves and the dock PCB, {left,right,dock}.step
 (scripts/mech/build.sh makes them). Outputs, under --out (default mech/build):
@@ -157,7 +158,13 @@ def main():
     g = sub.add_parser("dock-geometry", help="the dock board's outline and feature positions, from the tray")
     g.add_argument("--out", default=str(ROOT.parent / "dock-pcb" / "geometry.json"))
     g.add_argument("--check", action="store_true")
+    v = sub.add_parser("preview", help="a 3D preview of the finished keyboard and dock, as one HTML page")
+    v.add_argument("--boards", required=True, help="directory with left.step, right.step and dock.step from kicad-cli")
+    v.add_argument("--out", default=str(ROOT / "build" / "preview.html"))
     args = ap.parse_args()
+    if args.cmd == "preview":
+        from . import preview
+        sys.exit(preview.build(args.boards, args.out))
     sys.exit(build(args) if args.cmd == "build" else dock_geometry(args))
 
 

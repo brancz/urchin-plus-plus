@@ -232,4 +232,5 @@ jobs:
             ci-out/mech/stl
             ci-out/mech/step
             ci-out/mech/checks.json
+            ci-out/mech/preview.html
           if-no-files-found: error

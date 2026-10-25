@@ -7,6 +7,8 @@
 #   OUT_DIR/boards/{left,right,dock}.step   the halves and the dock board with every 3D model
 #   OUT_DIR/step, stl, render          the parts (mech/README.md), renders unless RENDER=0
 #   OUT_DIR/checks.json                fit and bed-size checks; any failure fails the build
+#   OUT_DIR/preview.html               3D preview of the finished keyboard and dock (open in a
+#                                      browser), unless PREVIEW=0
 #   OUT_DIR/slice/                     Bambu Studio slices for the A1 mini, if Bambu Studio
 #                                      is installed and SLICE isn't 0 (local only)
 #
@@ -32,6 +34,9 @@ kicad-cli pcb export step --subst-models -f -o "$OUT/boards/dock.step" dock-pcb/
 render=""
 [ "${RENDER:-1}" = 0 ] && render="--no-render"
 (cd mech && uv run --locked mech build --boards "$OUT/boards" --out "$OUT" $render)
+if [ "${PREVIEW:-1}" != 0 ]; then
+  (cd mech && uv run --locked mech preview --boards "$OUT/boards" --out "$OUT/preview.html")
+fi
 
 if [ "${SLICE:-1}" != 0 ] && [ -x "${BAMBU_STUDIO:-/Applications/BambuStudio.app}/Contents/MacOS/BambuStudio" ]; then
   python3 scripts/mech/slice.py "$OUT/stl" "$OUT/slice"
