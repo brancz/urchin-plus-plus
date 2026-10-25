@@ -6,7 +6,7 @@ Date: 2026-10-18. `scripts/fab/build.sh` builds the bundle: locally into `fab/` 
 
 | File | What |
 |---|---|
-| `fab/jlc/urchin-panel-gerbers.zip` | Gerbers and drill files of the panel: copper, mask, paste, silkscreen, outline, plated and non-plated drill (KiKit `fab jlcpcb`) |
+| `fab/jlc/urchin-panel-2designs-gerbers.zip` | Gerbers and drill files of the panel: copper, mask, paste, silkscreen, outline, plated and non-plated drill (KiKit `fab jlcpcb`) |
 | `fab/jlc/bom.csv` | BOM in JLC's format (Comment, Designator, Footprint, LCSC Part #), 18 lines. Copy: `bom.csv` here |
 | `fab/jlc/positions.csv` | CPL (Designator, Mid X, Mid Y, Layer, Rotation), 60 placements, all on the bottom (B). Copy: `positions.csv` here |
 | `fab/panel/panel.kicad_pcb` | The panel; layout described below |
@@ -50,11 +50,12 @@ Designators carry a side suffix (`U1_L`, `U1_R`), and nets an `L-`/`R-` prefix. 
 
 **PCB:**
 
-- [ ] Upload `urchin-panel-gerbers.zip`. JLC's viewer should show 2 layers: the frame, two halves, 12 bridges with mouse bites, 3 tooling holes and the fiducials.
+- [ ] Upload `urchin-panel-2designs-gerbers.zip`. JLC's viewer should show 2 layers: the frame, two halves, 12 bridges with mouse bites, 3 tooling holes and the fiducials.
+- [ ] **Different Design: 2.** The panel holds two different boards, the left and the right half. JLC's form defaults to 1, and JLC then finds the second design in review and holds the order until a supplement is paid (the first order, 2026-10-25: $14.60 with VAT).
 - [ ] **Base material** FR-4, **2 layers**, **1.6 mm**, 1 oz copper.
 - [ ] **Surface finish ENIG**: the dock contacts need it.
 - [ ] **Solder mask green.** The USB-C receptacle and the charger QFN have 0.5 mm pitch with 0.2 mm mask dams between pads. JLC holds dams that narrow reliably only in green; other colours need wider dams.
-- [ ] **Delivery format "Panel by Customer"**, **Different Design: 2** (the panel holds the left and the right half). Edge rails: none to add; the frame is in the Gerbers. Panel size as above.
+- [ ] **Delivery format "Panel by Customer".** Edge rails: none to add; the frame is in the Gerbers. Panel size as above.
 - [ ] **Remove mark / order number:** JLC's default placement is fine; nothing is reserved for it.
 - [ ] **Quantity:** 5 panels, JLC's minimum, is 5 keyboards. PCBA can be fewer (2 or more).
 

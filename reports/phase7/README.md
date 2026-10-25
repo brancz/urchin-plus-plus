@@ -89,7 +89,7 @@ The bundle is `scripts/dock/fab.sh OUT` (or the CI artifact `dock-jlc-bundle`): 
 - [ ] **Base material** FR-4, **2 layers**, **1.6 mm**, 1 oz copper.
 - [ ] **Surface finish:** lead-free HASL is fine; ENIG is optional. The pads carry soldered pins, not contacts.
 - [ ] **Solder mask green**, JLC's default.
-- [ ] **Delivery format: single PCB**, no panel. **Quantity 5**, JLC's minimum.
+- [ ] **Different Design: 1** (JLC's default): one board. **Delivery format: single PCB**, no panel. **Quantity 5**, JLC's minimum.
 - [ ] **Remove mark / order number:** JLC's default placement is fine.
 
 **If JLC's DFM check or an engineer asks about these, they are intended:**
