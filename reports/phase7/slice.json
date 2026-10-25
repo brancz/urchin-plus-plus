@@ -25,9 +25,39 @@
   "ironing": false,
   "filament": "Bambu PLA Basic @BBL A1M"
  },
+ "dock_cover": {
+  "prediction_s": 252,
+  "weight_g": 1.51,
+  "warnings": [],
+  "ok": true,
+  "machine": "Bambu Lab A1 mini 0.4 nozzle",
+  "process": "0.20mm Standard @BBL A1M",
+  "ironing": false,
+  "filament": "Bambu PLA Basic @BBL A1M"
+ },
+ "pin_jig_left": {
+  "prediction_s": 377,
+  "weight_g": 1.35,
+  "warnings": [],
+  "ok": true,
+  "machine": "Bambu Lab A1 mini 0.4 nozzle",
+  "process": "0.20mm Standard @BBL A1M",
+  "ironing": false,
+  "filament": "Bambu PLA Basic @BBL A1M"
+ },
+ "pin_jig_right": {
+  "prediction_s": 382,
+  "weight_g": 1.35,
+  "warnings": [],
+  "ok": true,
+  "machine": "Bambu Lab A1 mini 0.4 nozzle",
+  "process": "0.20mm Standard @BBL A1M",
+  "ironing": false,
+  "filament": "Bambu PLA Basic @BBL A1M"
+ },
  "shell_left": {
   "prediction_s": 3262,
-  "weight_g": 15.36,
+  "weight_g": 15.35,
   "warnings": [],
   "ok": true,
   "machine": "Bambu Lab A1 mini 0.4 nozzle",
@@ -36,7 +66,7 @@
   "filament": "Bambu PLA Basic @BBL A1M"
  },
  "shell_right": {
-  "prediction_s": 3255,
+  "prediction_s": 3256,
   "weight_g": 15.36,
   "warnings": [],
   "ok": true,
@@ -46,8 +76,8 @@
   "filament": "Bambu PLA Basic @BBL A1M"
  },
  "tray_left": {
-  "prediction_s": 3413,
-  "weight_g": 39.38,
+  "prediction_s": 2546,
+  "weight_g": 27.18,
   "warnings": [],
   "ok": true,
   "machine": "Bambu Lab A1 mini 0.4 nozzle",
@@ -56,8 +86,8 @@
   "filament": "Bambu PLA Basic @BBL A1M"
  },
  "tray_right": {
-  "prediction_s": 3409,
-  "weight_g": 39.36,
+  "prediction_s": 2550,
+  "weight_g": 27.22,
   "warnings": [],
   "ok": true,
   "machine": "Bambu Lab A1 mini 0.4 nozzle",

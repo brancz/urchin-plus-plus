@@ -5,18 +5,17 @@
   - Edge.Cuts: the outline and the magnet cutouts from dock-pcb/geometry.json, which the
     tray CAD writes (`mech dock-geometry`): the board follows the tray. Board drawings on
     Edge.Cuts are replaced.
-  - The pogo pins P1-P6 on the halves' pad centres (geometry "pins", in order: left half
-    pads 1-3, right half pads 1-3), J1 with its front face on the board's front edge, and
-    the screw holes H1/H2: exactly where geometry.json puts them.
-  - Everything else from dock-pcb/placement.json. Every part except the pins must lie inside
-    geometry.json's parts area (on the board, PARTS_CLEAR away from the pockets): a case
-    rests on the board everywhere else.
+  - The contacts TP1 (left half) and TP2 (right half), each pad under a half's pad (geometry
+    "contacts", in order: left half pads 1-3, right half pads 1-3), and J1 with its mouth on
+    the board's back edge: exactly where geometry.json puts them.
+  - Everything else from dock-pcb/placement.json. Every part but the contacts and J1 must lie
+    inside geometry.json's parts area (on the board, PARTS_CLEAR away from the pockets): a
+    case rests on the board everywhere else.
   - Designators: only those in placement.json's "labels" show (the connector and the LED),
     centred where it puts them, as 1.0 mm text with a 0.15 mm stroke (JLC's legible minimum);
     the rest would only crowd the tab.
-  - Under J1's body, a rule area J1_SHELL on both layers forbidding vias (its shell sits on
-    the solder mask, as on the keyboard), and J1_FRONT on F.Cu forbidding tracks too, from
-    just in front of its pad row to its front: no track runs under the grounded shell.
+  - Under J1's shell and its wings, a rule area J1_SHELL on both layers forbidding tracks and
+    vias: the wings sit on the solder mask, and no track runs under the grounded shell.
 The dock is assembled on its top side: every footprint must be a top-side one.
 --check changes nothing and fails if anything differs. Runs under KiCad's Python; 3.9.
 """
@@ -31,8 +30,10 @@ from pathlib import Path
 import pcbnew
 
 ROOT = Path(__file__).resolve().parents[2]
-SHELL_NAME, FRONT_NAME = "J1_SHELL", "J1_FRONT"
-FRONT_GAP = 0.2  # mm from J1's pad row to J1_FRONT
+SHELL_NAME = "J1_SHELL"
+# J1's shell with its wings in its footprint's frame (TYPE-C-31-M-28A's 3D model, offset as in
+# dock-pcb/parts.json): x either side, y from the shell's back to its mouth.
+SHELL = (5.77, -1.52, 5.28)
 LABEL_SIZE, LABEL_STROKE = 1.0, 0.15
 
 
@@ -64,20 +65,14 @@ def courtyard_corners(fp, inset=0.0):
     return [(x0 + w, y0 + w), (x1 - w, y0 + w), (x1 - w, y1 - w), (x0 + w, y1 - w)]
 
 
-def head_points(x, y, d, n=16):
-    return [(x + d / 2 * math.cos(2 * math.pi * i / n), y + d / 2 * math.sin(2 * math.pi * i / n)) for i in range(n)]
-
-
 def shell_polygon(fp):
-    return [(nm(x), nm(y)) for x, y in courtyard_corners(fp)]
-
-
-def front_polygon(fp):
-    """J1's courtyard in front of its pad row (larger y: the board's front edge)."""
-    (x0, y0), (x1, _), _, (_, y1) = courtyard_corners(fp)
-    row = max(p.GetBoundingBox().GetBottom() for p in fp.Pads() if p.GetNumber() != "7") / 1e6
-    y0 = row + FRONT_GAP
-    return [(nm(x0), nm(y0)), (nm(x1), nm(y0)), (nm(x1), nm(y1)), (nm(x0), nm(y1))]
+    """SHELL on the board: the footprint's frame turned and moved as the footprint is."""
+    w, y0, y1 = SHELL
+    a = math.radians(fp.GetOrientationDegrees())
+    o = fp.GetPosition()
+    # KiCad turns a footprint counter-clockwise on screen, with y down
+    return [(int(round(o.x + nm(x * math.cos(a) + y * math.sin(a)))), int(round(o.y + nm(-x * math.sin(a) + y * math.cos(a)))))
+            for x, y in ((-w, y0), (w, y0), (w, y1), (-w, y1))]
 
 
 def rule_area(board, name, layers, poly, tracks):
@@ -141,11 +136,11 @@ def main():
     placement_file = json.loads((ROOT / "dock-pcb/placement.json").read_text())
     placement, labels = placement_file["parts"], placement_file["labels"]
     targets = {}
-    for i, p in enumerate(geo["pins"]):
-        targets["P%d" % (i + 1)] = dict(x=p["x"], y=p["y"], rot=0.0, net=p["net"])
+    for ref, half in (("TP1", "left"), ("TP2", "right")):
+        pads = [c for c in geo["contacts"] if c["half"] == half]
+        mid = pads[1]
+        targets[ref] = dict(x=mid["x"], y=mid["y"], rot=0.0, pads={str(i + 1): c for i, c in enumerate(pads)})
     targets["J1"] = dict(x=geo["usb"]["x"], y=geo["usb"]["y"], rot=geo["usb"]["rot"])
-    for i, s in enumerate(geo["screws"]):
-        targets["H%d" % (i + 1)] = dict(x=s["x"], y=s["y"], rot=0.0)
     for ref, r in placement.items():
         if ref in targets:
             sys.exit("placement.json places %s, which comes from geometry.json" % ref)
@@ -153,7 +148,7 @@ def main():
 
     board = pcbnew.LoadBoard(args.board)
     footprints = list(board.GetFootprints())
-    zones = [z for z in board.Zones() if z.GetIsRuleArea() and z.GetZoneName() in (SHELL_NAME, FRONT_NAME)]
+    zones = [z for z in board.Zones() if z.GetIsRuleArea() and z.GetZoneName().startswith("J1_")]  # older J1_ rule areas go too
     edges = [d for d in board.GetDrawings() if d.GetLayer() == pcbnew.Edge_Cuts]
     problems = []
     seen = set()
@@ -167,10 +162,13 @@ def main():
         if fp.GetLayer() != pcbnew.F_Cu:
             problems.append("%s: not a top-side footprint (the dock is assembled on its top)" % ref)
             continue
-        if "net" in t:
-            nets = {p.GetNetname() for p in fp.Pads()}
-            if nets != {t["net"]}:
-                problems.append("%s is on %s, the half's pad there is %s" % (ref, sorted(nets), t["net"]))
+        for pad in fp.Pads():
+            want = t.get("pads", {}).get(pad.GetNumber())
+            if want and pad.GetNetname() != want["net"]:
+                problems.append("%s pad %s is on %s, the half's pad above it is %s" % (
+                    ref, pad.GetNumber(), pad.GetNetname(), want["net"]))
+            if want and args.check and pad.GetPosition() != at(want["x"], want["y"]):
+                problems.append("%s pad %s isn't under the half's pad" % (ref, pad.GetNumber()))
         if args.check:
             dr = (fp.GetOrientationDegrees() - t["rot"]) % 360
             if fp.GetPosition() != at(t["x"], t["y"]) or min(dr, 360 - dr) > 1e-6:
@@ -202,15 +200,11 @@ def main():
     for ref in sorted(set(targets) - seen):
         problems.append("%s: placed but not on the board" % ref)
 
-    heads = {"H%d" % (i + 1): s for i, s in enumerate(geo["screws"])}
     for fp in footprints:
         ref = fp.GetReference()
-        if ref.startswith("P") or ref not in targets:
+        if ref.startswith("TP") or ref == "J1" or ref not in targets:
             continue
-        if ref in heads:  # a screw head on the board's top
-            corners = head_points(targets[ref]["x"], targets[ref]["y"], heads[ref]["head_d"])
-        else:
-            corners = courtyard_corners(fp, inset=0.01)
+        corners = courtyard_corners(fp, inset=0.01)
         outside = [c for c in corners if not inside(geo["parts_area"], *c)]
         if outside:
             problems.append("%s: courtyard corner %s outside the parts area (a case rests there)" % (
@@ -220,8 +214,9 @@ def main():
         if board_edges(board) != edge_items(geo):
             problems.append("Edge.Cuts differs from geometry.json")
         j1 = next(fp for fp in footprints if fp.GetReference() == "J1")
-        want = {SHELL_NAME: (False, {pcbnew.F_Cu, pcbnew.B_Cu}, shell_polygon(j1)),
-                FRONT_NAME: (True, {pcbnew.F_Cu}, front_polygon(j1))}
+        want = {SHELL_NAME: (True, {pcbnew.F_Cu, pcbnew.B_Cu}, shell_polygon(j1))}
+        if len(zones) != len(want):
+            problems.append("rule areas %s, expected %s" % (sorted(z.GetZoneName() for z in zones), sorted(want)))
         for name, (tracks, layers, poly) in want.items():
             found = [z for z in zones if z.GetZoneName() == name]
             if len(found) != 1:
@@ -263,11 +258,10 @@ def main():
         s.SetWidth(nm(0.1))
         board.Add(s)
     j1 = next(fp for fp in footprints if fp.GetReference() == "J1")
-    rule_area(board, SHELL_NAME, (pcbnew.F_Cu, pcbnew.B_Cu), shell_polygon(j1), tracks=False)
-    rule_area(board, FRONT_NAME, (pcbnew.F_Cu,), front_polygon(j1), tracks=True)
+    rule_area(board, SHELL_NAME, (pcbnew.F_Cu, pcbnew.B_Cu), shell_polygon(j1), tracks=True)
     board.Save(args.board)
-    print("placed %d footprints on %s; outline %d segments, %d cutouts; rule areas %s, %s" % (
-        len(seen), args.board, len(pts), len(geo["cutouts"]), SHELL_NAME, FRONT_NAME))
+    print("placed %d footprints on %s; outline %d segments, %d cutouts; rule area %s" % (
+        len(seen), args.board, len(pts), len(geo["cutouts"]), SHELL_NAME))
     sys.stdout.flush()
     os._exit(0)  # KiCad 9's SWIG objects segfault in destructors at exit
 

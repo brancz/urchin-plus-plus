@@ -2,32 +2,82 @@
   "_doc": "Every LCSC part of the dock board (phase 7; selection in reports/phase7/dock-parts.md). scripts/parts/import_lcsc.py --manifest dock-pcb/parts.json builds dock-pcb/parts/<LCSC>/. The dock is assembled on its top side (docs/ARCHITECTURE.md, Dock), so every footprint is a top-side one.",
   "parts": [
     {
-      "lcsc": "C5221284",
-      "qty": 6,
-      "side": "top",
-      "role": "SMD pogo pin, 6.0 mm free height (Yiyuan YTC1P-4020-01), 3 per half",
-      "fixups": {
-        "source": "The EasyEDA footprint's silkscreen is two circles, which crash atopile 0.15.7's designator placement (min() of no points in get_bbox_from_geos). The pins sit under the cases on the tray's floor, where silkscreen serves nothing. Its courtyard is a zero-width line (KiCad DRC: malformed courtyard); it becomes the 2.3 mm pad plus 0.25 mm all round.",
-        "drop_graphics": [
-          "F.SilkS"
-        ],
-        "courtyard_rect": [
-          2.8,
-          2.8
-        ]
-      }
-    },
-    {
-      "lcsc": "C2927029",
+      "lcsc": "C2848622",
       "qty": 1,
       "side": "top",
-      "role": "USB-C receptacle, power only (DEALON USB-TYPE-C-009)",
+      "role": "USB-C receptacle, power only, mid-mount (HRO TYPE-C-31-M-28A): its body sinks into a notch in the board, 1.58 mm above and below its top",
       "fixups": {
-        "source": "Pin-in-paste for the four through-hole shell legs (pads 7): the EasyEDA footprint has no paste on them, so reflow wouldn't solder them and the receptacle would hang on its six SMD pads (the keyboard's C165948 got the same fix, phase 4-6 review M3).",
+        "source": "Pin-in-paste for the four through-hole shell legs (pads 7-10): the EasyEDA footprint has no paste on them, so reflow wouldn't solder them (the keyboard's C165948 got the same fix, phase 4-6 review M3). Its Edge.Cuts lines (the board's edge and the notch) go: the outline, notch included, comes from dock-pcb/geometry.json, where the tray puts it. The six SMD pads lose 0.14 mm at their front end, toward the notch (1.26 mm long, centre moved back 0.07 mm): HRO's layout puts them 0.16 mm from the notch's end (0.5 mm behind the rear legs), under the 0.3 mm copper to edge rule; the tails solder on the pads' back part, which stays.",
         "paste_pads": [
-          "7"
+          "7",
+          "8",
+          "9",
+          "10"
+        ],
+        "drop_graphics": [
+          "Edge.Cuts"
+        ],
+        "move_pads": {
+          "A5": [
+            -0.5,
+            -2.55
+          ],
+          "B5": [
+            0.5,
+            -2.55
+          ],
+          "A9": [
+            1.52,
+            -2.55
+          ],
+          "B9": [
+            -1.52,
+            -2.55
+          ],
+          "A12": [
+            2.75,
+            -2.55
+          ],
+          "B12": [
+            -2.75,
+            -2.55
+          ]
+        },
+        "resize_pads": {
+          "A5": [
+            0.7,
+            1.26
+          ],
+          "B5": [
+            0.7,
+            1.26
+          ],
+          "A9": [
+            0.8,
+            1.26
+          ],
+          "B9": [
+            0.8,
+            1.26
+          ],
+          "A12": [
+            0.9,
+            1.26
+          ],
+          "B12": [
+            0.9,
+            1.26
+          ]
+        }
+      },
+      "model": {
+        "offset": [
+          0,
+          -1.88,
+          0
         ]
-      }
+      },
+      "model_note": "The model's legs on the footprint's slots: in the model, the front legs' centre is 2.80 mm behind the mouth and the rear legs 3.60 mm behind those (HRO's drawing: 6.8 mm body, front legs 4.00 mm from its back)"
     },
     {
       "lcsc": "C75464",

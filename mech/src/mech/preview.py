@@ -17,10 +17,11 @@ from pathlib import Path
 import numpy as np
 from build123d import Align, Axis, Box, Plane, Pos, Rectangle, RectangleRounded, Sphere, fillet, loft
 
-from . import checks, dock_checks
+from . import checks, dock_checks, pins
 from . import params as P
 from .board import Board, rect_face, xy
-from .case import case, cell_box, cyl, prism, screw_holes, shell
+from .checks import STEP_UNDERSIDE
+from .case import box, case, cell_box, cyl, prism, screw_holes, shell
 from .tray import Dock
 
 TEMPLATE = Path(__file__).with_name("preview.html")
@@ -121,6 +122,10 @@ def half(m: Meshes, board: Board, step_path):
         elif name.endswith("socket"):
             m.add(shape, "Hot-swap socket", "socket", g, "pcb", "Kailh Choc, under each switch")
 
+    for _, shape in pins.pins(board):
+        m.add(shape, "Pogo pin", "gold", g, "pcb", "spring-loaded, soldered on the charging pad; "
+              "presses on the dock's gold contact")
+
     keys = [[*xy((k["x"], k["y"])), 0.0, k["rot"]] for k in board["keys"]]
     m.add(switch(), "Kailh Choc v1 switch", "switch", g, "switch", "3 mm travel, in a hot-swap socket",
           inst=[[x, y, P.Z_PCB_TOP, r] for x, y, _, r in keys])
@@ -159,26 +164,30 @@ def half(m: Meshes, board: Board, step_path):
 
 def dock(m: Meshes, d: Dock, step_path):
     for piece in d.pieces(d.tray()):
-        m.add(piece, "Dock tray", "print", "dock", "dock", "two printed pieces, joined by the dock PCB")
-    parts, _ = dock_checks.dock_parts(d, step_path)
-    refs = dock_checks.dock_refs(d)
+        m.add(piece, "Dock tray", "print", "dock", "dock", "two printed pieces, joined by the dock PCB and the cover")
+    parts = dock_checks.dock_parts(d, step_path)
+    cover = d.cover([(n.split()[1], s) for n, s in parts[1:]])
+    m.add(cover, "Dock cover", "print", "dock", "dock", "printed, glued over the dock PCB's parts; "
+          "a pinhole over the power LED")
     for name, shape in parts:
         if name == "dock pcb":
-            m.add(shape, "Dock PCB", "pcb", "dock", "dock", "USB-C in, 5 V out to the pogo pins", tol=0.03)
-        elif " pin" in name:
-            m.add(shape, "Pogo pin", "gold", "dock", "dock", "spring-loaded, presses on the half's charging pads")
-        elif "screw head" in name:
-            m.add(shape, "M2 x 5 screw", "steel", "dock", "dock", "holds the dock PCB and both tray pieces")
+            m.add(shape, "Dock PCB", "pcb", "dock", "dock", "USB-C in at the back, 5 V out to the gold contacts",
+                  tol=0.03)
         else:
             ref = name.split()[1]
             kind, label, info = part_kind(ref)
             if ref == "LED1":
                 label, info = "Power LED", "green while the dock has power"
             elif ref.startswith("J"):
-                info = "power only: any 5 V USB-C charger"
+                info = "power only, at the back: any 5 V USB-C charger"
             m.add(shape, label, kind, "dock", "dock", info, tol=0.03, ang=0.6)
-    x, y = refs["LED1"]
-    m.add(cyl(x, y, 1.6, P.Z_DOCK + 0.8, P.Z_DOCK + 0.9), "Power LED", "glow-power", "dock", "dock",
+    w, h = P.DOCK_CONTACT
+    for x, y, net, _ in d.contacts:
+        m.add(box(x - w / 2, x + w / 2, y - h / 2, y + h / 2, P.Z_DOCK + STEP_UNDERSIDE, P.Z_DOCK), "Dock contact", "gold", "dock",
+              "dock", f"flat gold (ENIG) pad, {'5 V' if net == 'DOCK_5V' else 'GND'}: a half's pogo pin lands on it")
+    x, y = d.placed("LED1")
+    top = P.Z_DOCK + P.POCKET_DEPTH
+    m.add(cyl(x, y, P.LED_HOLE_D - 0.1, top - 0.3, top - 0.25), "Power LED", "glow-power", "dock", "dock",
           "green while the dock has power")
 
 

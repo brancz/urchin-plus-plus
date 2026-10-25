@@ -1,25 +1,25 @@
 #pragma experiment("TRAITS")
 #pragma experiment("INSTANCE_TRAITS")
 # The dock board (docs/ARCHITECTURE.md, "Dock"): USB-C in, a resettable fuse, a TVS and a
-# power LED, and three pogo pins per half that meet the halves' charging pads (GND, 5V, GND).
+# power LED, and three flat contacts per half under the pogo pins soldered on the halves'
+# charging pads (GND, 5V, GND).
 # Parts were chosen in reports/phase7/dock-parts.md; positions come from the tray CAD
 # (dock-pcb/geometry.json, placed by scripts/dock/place.py).
 
 import has_net_name_suggestion
 import has_designator
-from "parts/C5221284/C5221284.ato" import C5221284_package
-from "parts/C2927029/C2927029.ato" import C2927029_package
+from "parts/C2848622/C2848622.ato" import C2848622_package
+from "parts/DOCK_CONTACTS/DOCK_CONTACTS.ato" import DOCK_CONTACTS_package
 from "parts/C75464/C75464.ato" import C75464_package
 from "parts/C123790/C123790.ato" import C123790_package
 from "parts/C25905/C25905.ato" import C25905_package
 from "parts/C2297/C2297.ato" import C2297_package
 from "parts/C25879/C25879.ato" import C25879_package
-from "parts/HOLE_M2_3_5/HOLE_M2_3_5.ato" import HOLE_M2_3_5_package
 
 module Dock:
     signal gnd
     signal vbus        # USB-C VBUS, before the fuse
-    signal dock_5v     # after the fuse: the pins, the TVS and the LED
+    signal dock_5v     # after the fuse: the contacts, the TVS and the LED
     signal cc1
     signal cc2
     signal led_a
@@ -32,7 +32,7 @@ module Dock:
     trait led_a has_net_name_suggestion<name="LED_A", level="EXPECTED">
 
     # ---- USB-C, power only ------------------------------------------------------
-    usb = new C2927029_package
+    usb = new C2848622_package
     trait usb has_designator<designator="J1">
     usb.VBUS ~ vbus
     usb.GND ~ gnd
@@ -51,7 +51,7 @@ module Dock:
     r_cc2.2 ~ gnd
 
     # ---- protection -----------------------------------------------------------------
-    # The fuse trips on a short across the exposed pins (a coin, a paper clip). The TVS sits
+    # The fuse trips on a short across the exposed contacts (a coin, a paper clip). The TVS sits
     # after it, so an overvoltage it clamps trips the fuse instead of burning the TVS.
     fuse = new C75464_package
     trait fuse has_designator<designator="F1">
@@ -72,28 +72,13 @@ module Dock:
     led.A ~ led_a
     led.K ~ gnd
 
-    # ---- pogo pins: left half P1-P3, right half P4-P6, in pad order (GND, 5V, GND) -----
-    p1 = new C5221284_package
-    trait p1 has_designator<designator="P1">
-    p1.1 ~ gnd
-    p2 = new C5221284_package
-    trait p2 has_designator<designator="P2">
-    p2.1 ~ dock_5v
-    p3 = new C5221284_package
-    trait p3 has_designator<designator="P3">
-    p3.1 ~ gnd
-    p4 = new C5221284_package
-    trait p4 has_designator<designator="P4">
-    p4.1 ~ gnd
-    p5 = new C5221284_package
-    trait p5 has_designator<designator="P5">
-    p5.1 ~ dock_5v
-    p6 = new C5221284_package
-    trait p6 has_designator<designator="P6">
-    p6.1 ~ gnd
-
-    # ---- mounting: M2 screws into heat-set inserts in the tray -----------------------
-    h1 = new HOLE_M2_3_5_package
-    trait h1 has_designator<designator="H1">
-    h2 = new HOLE_M2_3_5_package
-    trait h2 has_designator<designator="H2">
+    # ---- contacts: a flat pad under each pogo pin soldered on the halves, left half TP1 and right
+    # half TP2, in the halves' pad order (GND, 5V, GND) -----------------------------------------
+    left = new DOCK_CONTACTS_package
+    trait left has_designator<designator="TP1">
+    left.GND ~ gnd
+    left.V5 ~ dock_5v
+    right = new DOCK_CONTACTS_package
+    trait right has_designator<designator="TP2">
+    right.GND ~ gnd
+    right.V5 ~ dock_5v

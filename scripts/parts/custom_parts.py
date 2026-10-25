@@ -2,6 +2,7 @@
 """Generate the parts that have no LCSC number: contact pads and mechanical outlines.
 
     "$KICAD_PY" scripts/parts/custom_parts.py [--parts-dir hardware/parts]
+    "$KICAD_PY" scripts/parts/custom_parts.py --dock      # the dock's, into dock-pcb/parts
 
   BAT_PADS   top:    two 2.0 x 3.0 mm pads, 4.0 mm apart, for the battery's wires
                      (POS, NEG); hand-soldered, so no paste
@@ -17,6 +18,10 @@
   RUBBER_FOOT bottom: no pads; a 6 mm rubber foot, at least 3.5 mm tall: taller than
                      the tallest bottom part (USB-C receptacle 3.26 mm, module 3.0 mm);
                      the bottom has no room for wider feet near the corners
+The dock's (--dock):
+  DOCK_CONTACTS top: three 3.2 x 6.0 mm pads at 4.0 mm pitch, GND / 5V / GND, flat under
+                     the pogo pins soldered on a half's DOCK_PADS; bare ENIG, no paste,
+                     no silkscreen (they lie in the dock's pocket floor, in view)
 All are excluded from the BOM and position files. Bottom-side parts are written as
 bottom-side library footprints (scripts/parts/footprint_to_bottom.py), then
 sanitized like imported parts (scripts/lib/footprint.py). UUIDs are derived from
@@ -61,6 +66,12 @@ PARTS = {
                            ("3", "SWDCLK", 0, 0, "circle", 1.5, 1.5), ("4", "RESET", 2.54, 0, "circle", 1.5, 1.5),
                            ("5", "GND", 5.08, 0, "circle", 1.5, 1.5)],
                      labels=[("V", -5.08, 1.6), ("IO", -2.54, 1.6), ("CK", 0, 1.6), ("RS", 2.54, 1.6), ("G", 5.08, 1.6)]),
+}
+DOCK_PARTS = {
+    "DOCK_CONTACTS": dict(side="top", prefix="TP", doc="Dock contacts under a half's pogo pins: GND / 5V / GND (bare ENIG).",
+                          pads=[("1", "GND", -4.0, 0, "rect", 3.2, 6.0), ("2", "V5", 0, 0, "rect", 3.2, 6.0),
+                                ("3", "GND", 4.0, 0, "rect", 3.2, 6.0)],
+                          labels=[]),
 }
 
 SYMBOL = '''(kicad_symbol_lib
@@ -154,7 +165,7 @@ def footprint(name, spec):
 
 
 def one(parts_dir, name):
-    spec = PARTS[name]
+    spec = {**PARTS, **DOCK_PARTS}[name]
     # KiCad orders a footprint's items partly by UUID: seed the generator so reruns match
     pcbnew.KIID.SeedGenerator(sum(ord(c) * 31 ** i for i, c in enumerate(name)) % 2 ** 31)
     out = parts_dir / name
@@ -184,15 +195,16 @@ def one(parts_dir, name):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--parts-dir", default=str(ROOT / "hardware/parts"))
+    ap.add_argument("--parts-dir")
+    ap.add_argument("--dock", action="store_true", help="the dock's parts (default parts dir dock-pcb/parts)")
     ap.add_argument("--one", help=argparse.SUPPRESS)
     args = ap.parse_args()
-    parts = Path(args.parts_dir)
+    parts = Path(args.parts_dir or ROOT / ("dock-pcb/parts" if args.dock else "hardware/parts"))
     if args.one:
         one(parts, args.one)
         sys.stdout.flush()
         os._exit(0)  # KiCad 9's SWIG objects segfault in destructors at exit
-    for name, spec in PARTS.items():
+    for name, spec in (DOCK_PARTS if args.dock else PARTS).items():
         subprocess.run([sys.executable, __file__, "--parts-dir", str(parts), "--one", name], check=True)
         if spec["side"] == "bottom":
             subprocess.run([sys.executable, str(ROOT / "scripts/parts/footprint_to_bottom.py"), str(parts / name), name],

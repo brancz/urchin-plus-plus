@@ -44,6 +44,11 @@ def fixups(node, spec):
         old = (at[1], at[2])
         at[1], at[2] = _num(x), _num(y)
         changes.append("pad %s moved from (%s, %s) to (%s, %s)" % (name, old[0], old[1], x, y))
+    for name, (w, h) in sorted((spec.get("resize_pads") or {}).items()):
+        size = sexp.child(pads[name], "size")
+        old = (size[1], size[2])
+        size[1], size[2] = _num(w), _num(h)
+        changes.append("pad %s resized from %s x %s to %s x %s" % (name, old[0], old[1], w, h))
     for x, y, d in spec.get("add_npth") or []:
         node.append([A("pad"), "", A("np_thru_hole"), A("circle"), [A("at"), _num(x), _num(y)],
                      [A("size"), _num(d), _num(d)], [A("drill"), _num(d)], [A("layers"), "*.Cu", "*.Mask"],

@@ -189,8 +189,8 @@ def stitch(board, gnd, rule_areas):
             if p.GetDrillSize().x > 0:
                 holes.append((p.GetPosition().x, p.GetPosition().y, max(p.GetDrillSize().x, p.GetDrillSize().y) / 2))
     for t in board.GetTracks():
-        if t.GetClass() == "PCB_VIA":
-            holes.append((t.GetPosition().x, t.GetPosition().y, t.GetDrill() / 2))
+        if t.GetClass() == "PCB_VIA":  # a via fresh from a session has no drill of its own: the default's
+            holes.append((t.GetPosition().x, t.GetPosition().y, t.GetDrillValue() / 2))
 
     outline = pcbnew.SHAPE_POLY_SET()
     board.GetBoardPolygonOutlines(outline)

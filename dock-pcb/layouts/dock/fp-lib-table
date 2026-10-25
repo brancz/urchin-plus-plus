@@ -56,4 +56,18 @@
 		(options "")
 		(descr "atopile: part lib: HOLE_M2_3_5")
 	)
+	(lib
+		(name "C2848622")
+		(type "KiCad")
+		(uri "${KIPRJMOD}/../../parts/C2848622")
+		(options "")
+		(descr "atopile: part lib: C2848622")
+	)
+	(lib
+		(name "DOCK_CONTACTS")
+		(type "KiCad")
+		(uri "${KIPRJMOD}/../../parts/DOCK_CONTACTS")
+		(options "")
+		(descr "atopile: part lib: DOCK_CONTACTS")
+	)
 )

@@ -1,15 +1,16 @@
 {
-  "_doc": "Positions of the dock board's small parts (KiCad mm, y down, degrees), inside the parts area of dock-pcb/geometry.json (scripts/dock/place.py checks it). The pins, J1 and the screw holes come from geometry.json, not from here. \"labels\" places the designators that show (the connector and the LED); every other designator is hidden.",
+  "_doc": "Positions of the dock board's small parts (KiCad mm, y down, degrees), inside the parts area of dock-pcb/geometry.json (scripts/dock/place.py checks it): on the tab at the back, between the halves, in front of J1 (its pad row at y 33.22, its mouth on the back edge). The contacts and J1 come from geometry.json, not from here. \"labels\" places the designators that show (the connector and the LED); every other designator is hidden. \"trunk_y\" is where the 5 V trunk runs across the tab, below the fuse and the TVS, from the fuse out to each arm (scripts/routing/preroutes.py).",
   "parts": {
-    "F1": {"x": 150.0, "y": 113.0, "rot": 180.0, "why": "pin 1 (VBUS) under J1's A9, pin 2 (DOCK_5V) toward the TVS"},
-    "D1": {"x": 150.0, "y": 110.3, "rot": 0.0, "why": "right after the fuse: cathode on DOCK_5V, anode to GND"},
-    "R1": {"x": 144.4, "y": 115.4, "rot": 0.0, "why": "CC1 pull-down, beside J1's CC pins"},
-    "R2": {"x": 144.4, "y": 113.9, "rot": 0.0, "why": "CC2 pull-down"},
-    "LED1": {"x": 156.0, "y": 112.0, "rot": 90.0, "why": "power LED, between the pockets where it shows"},
-    "R3": {"x": 156.0, "y": 115.6, "rot": 90.0, "why": "LED resistor, its silkscreen clear of the LED's"}
+    "R2": {"x": 149.3, "y": 35.58, "rot": 270.0, "why": "CC2 pull-down, straight below J1's CC2 pad (B5)"},
+    "R1": {"x": 150.7, "y": 35.58, "rot": 270.0, "why": "CC1 pull-down, straight below J1's CC1 pad (A5)"},
+    "F1": {"x": 150.0, "y": 39.6, "rot": 270.0, "why": "pin 1 (VBUS) up toward J1's VBUS pads, pin 2 (DOCK_5V) down to the 5 V trunk"},
+    "D1": {"x": 154.6, "y": 41.1, "rot": 0.0, "why": "TVS right after the fuse: cathode level with the fuse's pin 2, anode to GND"},
+    "R3": {"x": 146.0, "y": 45.6, "rot": 0.0, "why": "LED resistor, below the 5 V trunk, beside the LED"},
+    "LED1": {"x": 150.0, "y": 45.6, "rot": 180.0, "why": "power LED on the centre line, under the cover's pinhole; anode toward R3"}
   },
+  "trunk_y": 43.0,
   "labels": {
-    "J1": {"x": 142.0, "y": 116.9, "rot": 0.0},
-    "LED1": {"x": 158.3, "y": 112.0, "rot": 90.0}
+    "J1": {"x": 141.0, "y": 31.0, "rot": 0.0},
+    "LED1": {"x": 150.0, "y": 47.8, "rot": 0.0}
   }
 }

@@ -31,11 +31,6 @@ Z_WALL_TOP = Z_PCB_TOP - SEAM_GAP
 BOSS_D = 6.0                 # standoff under each case hole (cut back around nearby parts)
 PART_CLEAR = 0.3             # standoff to a bottom part's courtyard
 
-# Heat-set inserts: the dock's tray holds its PCB with two (M2 x 3, CNC Kitchen's, 3.2 mm hole).
-INSERT_D = 3.2
-INSERT_DEPTH = 4.0           # the insert sits in the top 3 mm; 1 mm below it for displaced plastic
-INSERT_L = 3.0
-
 # Lips over the PCB's outer edge, opposite the controller. The board tilts in under them,
 # outer edge first, and the controller side is screwed down. Each lip stands on the wall's
 # inner part (LIP_ANCHOR wide), so the shell's wall can wrap round it.
@@ -69,7 +64,7 @@ SCREW_TIP_ROOM = 0.6         # the pilot hole reaches this far past the screw's 
 SHELL_SCREW_MIN_KEYCAP = 2.5 # a hole outside the keep-out takes a screw if it's this far from every keycap
 MIN_BOSS_WALL = 1.0          # printed wall round a pilot hole
 M2_MIN_D = 1.886             # an M2 thread's smallest major diameter (6g)
-MIN_THREAD = 2.0             # least thread engagement of a screw in a printed part or an insert
+MIN_THREAD = 2.0             # least thread engagement of a screw in a printed part
                              # (5 turns of M2)
 MIN_TIP_GAP = 0.3            # between a screw's tip and a hole's bottom
 PIN_D = 1.9                  # printed pin in the PCB's 2.2 mm hole
@@ -86,7 +81,7 @@ USB_PLUG = (12.4, 6.5)       # a USB-C plug's overmold, width and height
 USB_AXIS = Z_PCB_BOTTOM - 1.2  # the half's receptacle (its 3D model, checked against it)
 USB_WINDOW_TOP = USB_AXIS + USB_PLUG[1] / 2 + 0.35  # the shell's wall ends above the plug here
 RESET_HOLE_D = 2.5           # poke hole under the reset button (a pin or paper clip)
-DOCK_WINDOW_MARGIN = 1.5     # around the charging pads, for the dock's pins (the dock checks size it)
+DOCK_WINDOW_MARGIN = 1.5     # around the charging pads, for the pogo pins soldered on them (checked)
 PUCK_CLEAR = 0.75            # around the tenting puck's outline
 DISC_D = 10.0                # steel for the dock magnets (the board's MK1/MK2 marker): an M5 washer,
                              # DIN 125 / ISO 7089, zinc-plated steel, 10 x 1 mm with a 5.3 mm hole
@@ -153,89 +148,146 @@ LID_WALL_MIN = 0.5           # ...thinner beside the cell
 LID_BEYOND_HOLES = 5.0       # the lid ends this far beyond its outermost holes (along y)
 LED_WINDOW_D = 3.0           # over the status and charge LEDs, which shine up through the PCB
 
-# --- Dock tray (docs/ARCHITECTURE.md, Dock) --------------------------------------------------
-# The halves sit side by side in their cases, inner edges facing, as in use. The tray prints
-# as two pieces split between the pockets; the dock PCB lies in a recess across both and its
-# screws hold them together.
+# --- Dock (docs/ARCHITECTURE.md, Dock) -------------------------------------------------------
+# The halves sit side by side in their cases, inner edges facing, as in use, in two shallow
+# pockets of a flat tray. Each half carries three pogo pins soldered on its charging pads, their
+# plungers out through the case's window; the dock PCB lies flush in the pocket floors with a
+# flat gold pad under each pin. The tray prints as two pieces split between the pockets; the
+# dock PCB lies in a recess across both, and a printed cover over the PCB's back tab (the USB-C
+# receptacle and the small parts) joins them.
 POCKET_CLEAR = 0.4           # case to pocket wall (see the pin landing terms for why not more)
 DIVIDER = 3.0                # wall between the pockets at the cases' inner edges
 TRAY_WALL = 3.0              # around the tray
 TRAY_EDGE_TOP = 1.0          # chamfers on the tray's outer edges
 TRAY_EDGE_BOTTOM = 0.4
-Z_DOCK = 7.0                 # pocket floor above the table: the cases' underside, the dock PCB's top
-FUNNEL = 1.2                 # 45° lead-in at the top of every pocket wall
-FINGER_NOTCH = (9.0, 1.0)    # radius, and height above the floor: a notch in each pocket's outer
-                             # wall, to get a finger to the case's side and tilt the half out
 SPLIT_GAP = 0.2              # between the two tray pieces
-RELIEF_DEPTH = 1.2           # hollow below the dock PCB under the receptacle's legs and the fuse
+FUNNEL = 0.6                 # 45° lead-in at the top of every pocket wall
+POCKET_DEPTH = 2.6           # the straight walls reach above the lowest pin tip plus the case's
+                             # bottom chamfer, so a half is guided before its pins meet the pads
+
+# Magnets: an N52 10 x 3 mm disc under each of the case's steel washers, glued into a pocket from
+# below. Two per half outweigh the three pins (up to 3 x 1.2 N) with the half's weight on top.
+MAGNET = (10.0, 3.0)
+MAGNET_FIT = 0.2
+MAGNET_SKIN = 0.6            # printed floor between the magnet and the case's steel washer
+MAGNET_WALL = 0.8            # least printed wall around a magnet, inside the dock PCB's hole
+MAGNET_POCKET_H = MAGNET[1] + 0.4  # the magnet, and room for its glue
+Z_DOCK = MAGNET_POCKET_H + MAGNET_SKIN  # 4.0: pocket floor above the table: the cases' underside,
+                                        # the dock PCB's top
+RELIEF_DEPTH = 1.0           # hollow below the dock PCB under the receptacle's legs and the fuse
 FUSE_RELIEF = 2.0            # the hollow reaches this far past the fuse's centre
 
 DOCK_PCB_T = 1.6
 DOCK_PCB_CLEAR = 0.3         # recess around the dock PCB's outline (JLC routes it to +-0.2 mm)
 BOSS_CLEAR = 0.15            # the PCB's holes around the magnet bosses: these locate the bar,
-                             # one beside each half's pins
-BAR_RIM = 2.5                # dock PCB beyond the pin pads and magnet holes, for its traces
-BAR_END = 1.3                # dock PCB beyond the outermost pin pads
-TAB_HALF_W = 10.5            # the dock PCB's tab between the halves, for the USB-C and parts
-PARTS_CLEAR = 0.8            # dock PCB parts and screw heads to the pockets' outline
-DOCK_SCREW_DX = 8.3          # the two M2 screws, either side of the USB-C receptacle
-MIN_INSERT_WALL = 1.0        # printed wall beside a heat-set insert's 3.2 mm hole
-DOCK_SCREW_HEAD = (4.0, 1.6) # M2 x 5 pan head into an M2 x 3 heat-set insert below the PCB
-DOCK_SCREW_L = 5.0
+                             # one beside each half's pads
+DOCK_CONTACT = (3.2, 6.0)    # the flat ENIG pad under each pin: at 4 mm pitch, 0.8 mm between pads
+BAR_RIM = 2.5                # dock PCB beyond the pads and magnet holes, for its traces
+BAR_END = 1.0                # dock PCB beyond the outermost pads (1 mm of tray between its recess
+                             # and the next magnet's pocket)
+SPINE_W = 6.0                # each arm of the dock PCB, from its bar back to the tab under the case
+PCB_INSET = 1.5              # the dock PCB inside the pockets' walls, where it lies in their floor
+TAB_HALF_W = 12.5            # the dock PCB's tab at the back, between the halves: the USB-C and parts.
+                             # Its recess clears the round ends of the pockets' inner walls by 1.5 mm.
+TAB_LEAD = 0.5               # the tab reaches this far forward of the pockets' straight inner walls'
+                             # ends, so the cover, not a sliver of tray, forms the rounded walls behind
+PARTS_CLEAR = 0.8            # dock PCB parts to the pockets' outline
 DOCK_PCB_ORIGIN = (150.0, 100.0)  # KiCad position of the tray's centre line and pad row
 
-# Pogo pins (C5221284, docs/datasheets/C5221284_YTC1P-4020-01.pdf): free 6.0 mm above the dock
-# PCB, 4.6 mm fully compressed; the half's pads are Z_PCB_BOTTOM (5.2 mm) above the floor.
+# The cover over the tab: it fills the recess outside the pockets, flush with the tray's top,
+# rests on the PCB and holds it down, with a pocket over each part and a hole over the LED.
+COVER_CLEAR = 0.15           # the cover's outline inside its recess
+COVER_PART_CLEAR = 0.3       # its pockets round the parts' bodies, and above them
+COVER_MIN_SKIN = 0.6         # three layers over the tallest part
+LED_HOLE_D = 1.2             # over the dock's power LED
+
+# Dock USB-C receptacle: HRO TYPE-C-31-M-28A (C2848622, docs/datasheets/C2848622_TYPE-C-31-M-28A.pdf),
+# power only, mid-mount: its body sinks into a notch in the dock PCB and stands 1.58 mm above and
+# below the board's top, so the cover over it stays flush with the tray's top. Its mouth is flush
+# with the tray's back face.
+DOCK_USB_BODY = (8.94, 6.8, 1.58)  # width, depth, height above the PCB's top
+DOCK_USB_AXIS = 0.0          # plug axis above the PCB's top (checked against its 3D model)
+DOCK_USB_FRONT = 5.28        # its mouth, ahead of the footprint's origin: 2.80 mm ahead of the front
+                             # legs (the drawing's 6.8 mm body less 4.00); the body's back is at -1.52
+DOCK_USB_NOTCH = (9.2, 1.62)  # the PCB's notch: width (the shell plus 0.13 mm a side; the housing
+                              # below the board at its back is 8.34 wide), and how far behind the
+                              # footprint's origin it ends (HRO's layout: 0.5 mm behind the rear legs)
+DOCK_USB_NOTCH_RELIEF = 1.0   # a round relief behind each inner corner: JLC's 1.0 mm router reaches them
+DOCK_USB_LEGS = (5.58, -1.12, 2.48)  # its four shell legs through the PCB: x either side, and
+                                     # the front and back pairs' y (footprint, mouth at +y)
+
+# Pogo pins (C5221284, docs/datasheets/C5221284_YTC1P-4020-01.pdf), three per half, soldered by
+# hand on the half's charging pads (TP1), plunger down through the case's window: 6.0 mm free from
+# the flange's base, 4.6 mm fully compressed. Docked, each stands on a dock contact flush with the
+# pocket floor, so it is Z_PCB_BOTTOM less its solder (5.15 mm) long: 0.85 mm compressed. Off the
+# dock, the free tips stand 0.85 mm below the case and the feet hold them off the desk.
 PIN_FREE = 6.0
 PIN_BOTTOM = 4.6
-PIN_PAD_D = 2.3              # the dock PCB's land
 PIN_FLANGE = (2.0, 0.5)
-PIN_BARREL = (1.54, 4.0)     # diameter, top above the PCB
+PIN_BARREL = (1.54, 4.0)     # diameter, length from the flange's base
 PIN_TIP_D = 0.9
-PIN_PAD_MARGIN = 0.15        # the tip's apex stays this far inside the half's pad
+PIN_SOLDER = 0.05            # solder under the flange
+PIN_PAD_MARGIN = 0.15        # the tip's apex stays this far inside the dock's pad
 MIN_COMPRESSION = 0.2        # the pins stay at least this far compressed (contact force)
 
 # Tolerances, each the most it can be off either way. The checks add them up both linearly (the
 # worst case) and as a root sum of squares (independent errors: the spread to expect).
-# The pin tip's height above the pocket floor:
+# A free pin's length below the half's pad:
 PIN_HEIGHT_TOL = {
     "pin free height (+-0.15 in its 4020-01R sibling's datasheet, C48783831)": 0.15,
-    "pin on its solder joint": 0.05,
+    "pin on its hand-soldered joint": 0.1,
+}
+# The half's pads above the case's underside:
+CASE_HEIGHT_TOL = {"case underside to the PCB's standoffs (print)": 0.15}
+# The dock's contacts against the pocket floor:
+DOCK_HEIGHT_TOL = {
     "dock PCB thickness (1.6 mm +-10 %)": 0.16,
     "tray recess depth (print)": 0.1,
 }
-# The half's pads above the pocket floor:
-CASE_HEIGHT_TOL = {"case underside to the PCB's standoffs (print)": 0.15}
-# The pockets' straight walls reach above the tallest pin tip plus the case's bottom chamfer, so
-# a half is guided before the pins meet it.
-POCKET_DEPTH = 8.2
-# Where the pin lands on the half's pad and stands in the case's window. How far the case moves
-# and turns in its pocket, and the board in its case, is worked out from their outlines and
+# Where a pin lands on its dock pad, and where it stands in the case's window. How far the case
+# moves and turns in its pocket, and the board in its case, is worked out from their outlines and
 # these clearances.
 POCKET_PLAY = POCKET_CLEAR + 0.2  # plus the pocket's and the case's outlines as printed
 BOARD_WALL_PLAY = FIT + 0.1       # PCB to the case's wall, plus the print
 BOARD_SCREW_PLAY = 0.4            # M2 in the PCB's 2.2 mm and the case's 2.4 mm holes (0.1 + 0.2),
                                   # plus 0.1 for where the printer puts the hole
 BOARD_PIN_PLAY = 0.25             # a printed pin in the PCB's 2.2 mm hole (0.15), plus 0.1 for the print
-DOCK_TOL = {
+PIN_TOL = {                       # the pin on the half
+    "pin soldered on its pad, in the jig (its bore's 0.18 mm a side, and the print)": 0.3,
+    "pin tilt (1.5 degrees over 6 mm)": 0.16,
+}
+DOCK_TOL = {                      # the pad on the dock
     "dock PCB on the magnet bosses (its milled holes +-0.2 mm)": BOSS_CLEAR + 0.1,
     "pocket to boss (one print)": 0.1,
-    "pin on its 2.3 mm land (2.0 mm flange)": (PIN_PAD_D - PIN_FLANGE[0]) / 2,
-    "pin tilt (1 degree over 6 mm)": 0.1,
 }
 
-# Magnets: an N52 10 x 3 mm disc (or N45 10 x 5 mm) under each of the case's steel washers, glued
-# into a pocket from below. Two per half outweigh the three pins (up to 3 x 1.2 N) with the half's
-# weight on top.
-MAGNET = (10.0, 3.0)
-MAGNET_FIT = 0.2
-MAGNET_SKIN = 0.6            # printed floor between the magnet and the case's steel washer
-MAGNET_WALL = 0.8            # least printed wall around a magnet, inside the dock PCB's hole
-MAGNET_POCKET_H = 5.0        # deep enough for a 10 x 5 mm magnet too
+# The jig that holds a half's three pins upright while they're soldered (board out of its case,
+# bottom up): a plate over the pins with a bore round each plunger, standing on the board on two
+# legs with a peg into the board's holes either side of the pads, and on two feet beside the pins.
+# Seen from above, the plate leaves each pad's ends (past the flange) open for the iron.
+JIG_GAP = 4.6                # the plate's underside above the PCB: past every bottom part (GAP tall)
+                             # and the pins' barrels
+JIG_PLATE_T = 2.0            # the plungers' tips end inside it, at least JIG_TIP_INSET short of its
+                             # top (the face printed on the bed, with its first layer's squish) with
+                             # the longest pin
+JIG_TIP_INSET = 0.3
+JIG_BORE_CLEAR = 0.35        # bore over the plunger's diameter: a printed hole comes out about 0.1 small
+JIG_LEAD = 0.3               # 45° lead-in on each bore, where the plunger comes in
+JIG_COLLAR = 0.8             # wall round each bore: two perimeters
+JIG_LEG_D = 5.0
+JIG_PEG_CLEAR = 0.2          # peg under the board hole's diameter
+JIG_PEG_LEN = 1.2            # into the 1.6 mm board
+JIG_BAR_W = 5.0              # the plate's arms from the strip's ends to each leg and foot
+JIG_STRIP = 1.8              # the strip joining the collars along the pin row: inside the flanges
+JIG_STRIP_END = 4.5          # it runs this far past the end pins, where the arms start
+JIG_PAD_VIEW = 1.0           # mm², of each pad's end past the flange, in view from above past the
+                             # plate (grown by MIN_GAP): room for the iron
+JIG_FOOT_D = 4.0
+JIG_FOOT_ALONG = 9.0         # each foot from the pins' centre along their row, either way...
+JIG_FOOT_OUT = 3.5           # ...and this far out from it, away from the legs: the pins stand
+                             # between the legs and the feet
 
-FOOT_H = 2.0                 # the case's rubber feet: 6 mm round bumpers, 2 mm tall
+FOOT_H = 2.5                 # the case's rubber feet: 6 mm round bumpers, at least 2.5 mm tall
+FOOT_SQUASH = 0.2            # how far a foot gives under a hand on the keys
 FOOT_POCKET = 4.0            # the tray's hole under a foot, diameter over the foot's; it goes
                              # through, so a taller foot fits too
-
-USB_BODY = (8.94, 6.8, 3.2)  # dock USB-C receptacle (C2927029): width, depth, height
-DOCK_USB_AXIS = 1.68         # plug axis above the PCB (datasheet)

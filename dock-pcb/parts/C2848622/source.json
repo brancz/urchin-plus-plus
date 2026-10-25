@@ -1,0 +1,91 @@
+{
+  "lcsc": "C2848622",
+  "manufacturer": "韩国韩荣",
+  "mpn": "TYPE-C-31-M-28A",
+  "datasheet_url": "https://www.lcsc.com/datasheet/C2848622.pdf",
+  "symbol": "TYPE-C-31-M-28A.kicad_sym",
+  "footprint": "TYPE-C-SMD_TYPE-C-31-M-28A.kicad_mod",
+  "side": "top",
+  "footprint_changes": [
+    "pad A12 moved from (2.75, -2.48) to (2.75, -2.55)",
+    "pad A5 moved from (-0.5, -2.48) to (-0.5, -2.55)",
+    "pad A9 moved from (1.52, -2.48) to (1.52, -2.55)",
+    "pad B12 moved from (-2.75, -2.48) to (-2.75, -2.55)",
+    "pad B5 moved from (0.5, -2.48) to (0.5, -2.55)",
+    "pad B9 moved from (-1.52, -2.48) to (-1.52, -2.55)",
+    "pad A12 resized from 0.9 x 1.4 to 0.9 x 1.26",
+    "pad A5 resized from 0.7 x 1.4 to 0.7 x 1.26",
+    "pad A9 resized from 0.8 x 1.4 to 0.8 x 1.26",
+    "pad B12 resized from 0.9 x 1.4 to 0.9 x 1.26",
+    "pad B5 resized from 0.7 x 1.4 to 0.7 x 1.26",
+    "pad B9 resized from 0.8 x 1.4 to 0.8 x 1.26",
+    "pad 7 gets solder paste (pin-in-paste)",
+    "pad 8 gets solder paste (pin-in-paste)",
+    "pad 9 gets solder paste (pin-in-paste)",
+    "pad 10 gets solder paste (pin-in-paste)",
+    "fp_line Edge.Cuts removed",
+    "fp_line Edge.Cuts removed",
+    "fp_line Edge.Cuts removed",
+    "3D model offset set to [0, -1.88, 0]",
+    "dropped 30 item UUIDs (atopile would copy them onto every instance)",
+    "dropped fp_text ${REFERENCE} (atopile strips duplicate designators)"
+  ],
+  "fixups_source": "Pin-in-paste for the four through-hole shell legs (pads 7-10): the EasyEDA footprint has no paste on them, so reflow wouldn't solder them (the keyboard's C165948 got the same fix, phase 4-6 review M3). Its Edge.Cuts lines (the board's edge and the notch) go: the outline, notch included, comes from dock-pcb/geometry.json, where the tray puts it. The six SMD pads lose 0.14 mm at their front end, toward the notch (1.26 mm long, centre moved back 0.07 mm): HRO's layout puts them 0.16 mm from the notch's end (0.5 mm behind the rear legs), under the 0.3 mm copper to edge rule; the tails solder on the pads' back part, which stays.",
+  "pin_names": null,
+  "model": "TYPE-C-SMD_TYPE-C-31-M-28A.step",
+  "pins": [
+    {
+      "pin": "A5",
+      "name": "CC1",
+      "signal": "CC1"
+    },
+    {
+      "pin": "B5",
+      "name": "CC2",
+      "signal": "CC2"
+    },
+    {
+      "pin": "7",
+      "name": "EH",
+      "signal": "EH"
+    },
+    {
+      "pin": "8",
+      "name": "EH",
+      "signal": "EH"
+    },
+    {
+      "pin": "9",
+      "name": "EH",
+      "signal": "EH"
+    },
+    {
+      "pin": "10",
+      "name": "EH",
+      "signal": "EH"
+    },
+    {
+      "pin": "A12",
+      "name": "GND",
+      "signal": "GND"
+    },
+    {
+      "pin": "B12",
+      "name": "GND",
+      "signal": "GND"
+    },
+    {
+      "pin": "A9",
+      "name": "VBUS",
+      "signal": "VBUS"
+    },
+    {
+      "pin": "B9",
+      "name": "VBUS",
+      "signal": "VBUS"
+    }
+  ],
+  "fetched_utc": "2026-10-25T14:42:32Z",
+  "easyeda2kicad": "-- easyeda2kicad.py v1.0.1 --",
+  "kicad_cli": "9.0.9"
+}

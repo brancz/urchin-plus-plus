@@ -21,23 +21,23 @@ import pcbnew
 ROOT = Path(__file__).resolve().parents[2]
 
 EXPECTED = {
-    # USB-TYPE-C-009 (C2927029) pin assignments: A5 CC1, B5 CC2, A9/B9 VBUS, A12/B12 GND;
-    # pad 7 is the shell's four legs, grounded
-    "J1": {"A5": "CC1", "B5": "CC2", "A9": "VBUS", "B9": "VBUS", "A12": "GND", "B12": "GND", "7": "GND"},
+    # TYPE-C-31-M-28A (C2848622) pin assignments: A5 CC1, B5 CC2, A9/B9 VBUS, A12/B12 GND;
+    # pads 7-10 are the shell's four legs, grounded
+    "J1": {"A5": "CC1", "B5": "CC2", "A9": "VBUS", "B9": "VBUS", "A12": "GND", "B12": "GND",
+           "7": "GND", "8": "GND", "9": "GND", "10": "GND"},
     # SMF6.0A (C123790): pad 1 cathode, pad 2 anode
     "D1": {"1": "DOCK_5V", "2": "GND"},
     # KT-0805G (C2297) p.2: pin 1 is + (anode), pin 2 the cathode
     "LED1": {"1": "LED_A", "2": "GND"},
-    # pogo pins on each half's pads in order: GND, 5V, GND (the halves' TP1)
-    "P1": {"1": "GND"}, "P2": {"1": "DOCK_5V"}, "P3": {"1": "GND"},
-    "P4": {"1": "GND"}, "P5": {"1": "DOCK_5V"}, "P6": {"1": "GND"},
+    # the contacts under each half's pogo pins, in its pads' order: GND, 5V, GND (the halves' TP1)
+    "TP1": {"1": "GND", "2": "DOCK_5V", "3": "GND"},
+    "TP2": {"1": "GND", "2": "DOCK_5V", "3": "GND"},
 }
 TWO_TERMINAL = {  # either orientation
     "F1": ("VBUS", "DOCK_5V"), "R1": ("CC1", "GND"), "R2": ("CC2", "GND"), "R3": ("DOCK_5V", "LED_A"),
 }
-LCSC = {"J1": "C2927029", "D1": "C123790", "LED1": "C2297", "F1": "C75464", "R1": "C25905", "R2": "C25905",
-        "R3": "C25879", **{"P%d" % i: "C5221284" for i in range(1, 7)}}
-MECHANICAL = {"H1", "H2"}  # screw holes: no numbered pads, not assembled
+LCSC = {"J1": "C2848622", "D1": "C123790", "LED1": "C2297", "F1": "C75464", "R1": "C25905", "R2": "C25905",
+        "R3": "C25879", "TP1": "", "TP2": ""}  # the contacts are bare pads: nothing to assemble
 NETS = {"GND", "VBUS", "DOCK_5V", "CC1", "CC2", "LED_A"}
 
 
@@ -52,10 +52,6 @@ def main():
         ref = fp.GetReference()
         seen.add(ref)
         lcsc = fp.GetFieldText("LCSC") if fp.HasFieldByName("LCSC") else ""
-        if ref in MECHANICAL:
-            if any(p.GetNumber() for p in fp.Pads()) or lcsc:
-                problems.append("%s: a screw hole with numbered pads or an LCSC number" % ref)
-            continue
         if LCSC.get(ref) != lcsc:
             problems.append("%s carries LCSC %r, expected %r" % (ref, lcsc, LCSC.get(ref)))
         pads = [(p.GetNumber(), p.GetNetname()) for p in fp.Pads() if p.GetNumber()]
@@ -78,7 +74,7 @@ def main():
         missing = set(want) - {n for n, _ in pads}
         if missing:
             problems.append("%s: pads %s missing" % (ref, sorted(missing)))
-    for ref in sorted((set(EXPECTED) | set(TWO_TERMINAL) | MECHANICAL) - seen):
+    for ref in sorted((set(EXPECTED) | set(TWO_TERMINAL)) - seen):
         problems.append("%s: not on the board" % ref)
     nets = {str(n) for n in board.GetNetsByName().keys()} - {""}
     if nets != NETS:

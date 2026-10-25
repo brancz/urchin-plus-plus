@@ -306,12 +306,14 @@ def shell(board: Board):
     outer = offset(outline, P.FIT + P.WALL, kind=Kind.ARC)
     lid = lid_region(board)
 
-    # The outside: the case's walls carried up to the rim, the lid above it.
-    body = prism(outer, z0, P.Z_RIM)
+    # The outside: the case's walls carried up to the rim, the lid above it. Each is chamfered at
+    # z = 0 and then moved up, as the case is: on Linux, OCCT failed to chamfer the walls' outline
+    # built in place (CI run 40194850673).
+    body = prism(outer, 0, P.Z_RIM - z0)
     body = chamfer(body.faces().sort_by(Axis.Z)[-1].edges(), P.SHELL_EDGE)
-    body = chamfer(body.faces().sort_by(Axis.Z)[0].edges(), P.SHELL_EDGE)
-    top = prism(lid, P.Z_RIM - 1.0, P.Z_LID_TOP)
-    part = body + chamfer(top.faces().sort_by(Axis.Z)[-1].edges(), P.SHELL_EDGE)
+    body = Pos(0, 0, z0) * chamfer(body.faces().sort_by(Axis.Z)[0].edges(), P.SHELL_EDGE)
+    top = prism(lid, 0, P.Z_LID_TOP - (P.Z_RIM - 1.0))
+    part = body + Pos(0, 0, P.Z_RIM - 1.0) * chamfer(top.faces().sort_by(Axis.Z)[-1].edges(), P.SHELL_EDGE)
 
     # The keys: a well round each down to the plate, a cutout in the plate for the switch, and
     # room below the plate for its clips.

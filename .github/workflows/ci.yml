@@ -125,6 +125,7 @@ jobs:
           path: |
             ci-out/fab/dock/jlc
             ci-out/fab/dock/checks
+            ci-out/fab/dock/render
             ci-out/fab/dock/step
           if-no-files-found: error
 

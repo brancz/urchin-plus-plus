@@ -8,6 +8,5 @@ Excused errors (hardware/drc_allow.json):
 
 Warnings by type:
 
-- missing_courtyard: 2
-- silk_edge_clearance: 4
+- silk_edge_clearance: 8
 - silk_over_copper: 5

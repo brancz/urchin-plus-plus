@@ -5,6 +5,16 @@
 **Check date: 2026-10-24.** Live stock comes from `python3 scripts/parts/jlc.py check ... --need 30`, run at **2026-10-24T14:38:48Z**. All 15 parts listed below passed with at least 30 in JLC stock. Prices are JLC assembly-library prices at check time, in USD per unit.
 Datasheets were saved with `jlc.py datasheet` to `docs/datasheets/`.
 
+## Update 2026-10-25: the dock redesign
+
+The dock was redesigned before it was ordered (docs/ARCHITECTURE.md, decision log of 2026-10-25): the pins moved onto the halves, the dock went flat, and the USB-C moved to the back. What changes here:
+
+- **The pogo pins (C5221284) leave the dock's BOM.** The owner buys six loose from LCSC and solders three on each half's TP1 pads with a printed jig. Live stock: 6,413 at 2026-10-25T13:57:53Z (`jlc.py check C5221284 --need 6`). The pin research in section 1 still holds: the same pin, the same 5.2 mm from the case's underside to the half's pads, now measured from the other end.
+- **The dock's contacts are a footprint, not a part** (DOCK_CONTACTS, `scripts/parts/custom_parts.py --dock`): three bare 3.2 × 6.0 mm pads per half at the pins' 4 mm pitch, GND / 5 V / GND. Nothing is assembled on them, and **ENIG is required**: the pins press on bare copper finish, and HASL is neither flat nor wear-resistant.
+- **USB-C: HRO TYPE-C-31-M-28A (C2848622), replacing C2927029.** The cover over the receptacle must be flush with the tray's top, 2.6 mm above the board, so the receptacle had to be mid-mount: its body sinks into a notch in the board and stands 1.58 mm above its top (a top-mount one stands 3.2 mm). It is power-only (6 pins: CC1, CC2, VBUS and GND twice), 5 A, 20 V, rated 3,000 mating cycles, which is plenty for a cable that stays plugged in. HRO also makes the keyboard's receptacle; its EasyEDA CAD imports. Its 3D model needs its own offset (review M2): placed with its legs on the footprint's slots, its mouth is 2.80 mm ahead of the front legs, as HRO's drawing gives (6.8 mm body, front legs 4.00 mm from its back), and that is what puts the mouth on the tray's back face. JLC stock 15,510 at 2026-10-25T13:57:41Z (`dock-bom.md`). Also in stock at the same search (2026-10-25T12:53:04Z): DEALON USB-TYPE-C-012 (C2927032), also mid-mount, only 912 in stock; and the recessed "TYPE-C 6P CB1.6/CB0.8 (073)" (C2858274, C2858273), rated 3 A and 5,000 cycles.
+- **Footprint fixes** (`dock-pcb/parts.json`): the notch ends where HRO's layout puts it, 0.5 mm behind the rear legs, with a 1.0 mm round relief behind each inner corner so the router's radius stays off the housing. HRO's land pattern leaves 0.16 mm from the signal pads (A5, B5, A9, B9, A12, B12) to the notch's end, so the pads are trimmed 0.14 mm on the notch side (1.26 mm long), for the 0.3 mm copper-to-edge JLC needs; their back ends, where the tails solder, stay. The four shell legs are pin-in-paste, and the footprint's own Edge.Cuts is dropped (the board's notch comes from `geometry.json`).
+- The fuse, TVS, CC resistors, LED and its resistor are unchanged.
+
 ## Recommendation
 
 | Function | Part | LCSC | Why |

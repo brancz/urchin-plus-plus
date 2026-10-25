@@ -6,7 +6,8 @@
 #   OUT_DIR/jlc/urchin-dock-gerbers.zip   Gerbers and drill files (kikit fab jlcpcb --no-assembly)
 #   OUT_DIR/jlc/bom.csv, positions.csv   BOM and CPL, top side (scripts/fab/jlc_assembly.py --dock)
 #   OUT_DIR/checks/                  placement, unique UUIDs, connectivity and DRC of the board
-#   OUT_DIR/render/                  top and bottom renders (RENDER=0 skips them)
+#   OUT_DIR/render/                  top and bottom renders (RENDER=0 skips them), and the copper
+#                                    of each layer and both as SVG (always)
 #   OUT_DIR/step/dock.step           3D model
 # The board is the routed dock-pcb/layouts/dock/dock.kicad_pcb, unpanelised (JLC adds rails
 # if its assembly line needs them). Fails if any step or check fails. Needs KICAD_PY with KiKit.
@@ -29,5 +30,10 @@ kpy scripts/fab/jlc_assembly.py --dock "$BOARD" "$OUT/jlc"
 if [ "${RENDER:-1}" = 1 ]; then  # kicad-cli's 3D renderer needs a display; CI sets RENDER=0
   scripts/render.sh "$BOARD" "$OUT/render/dock"
 fi
+for layers in F.Cu B.Cu F.Cu,B.Cu; do
+  name="copper-$(echo "$layers" | sed 's/F.Cu,B.Cu/both/; s/\./_/')"
+  kicad-cli pcb export svg --mode-single --page-size-mode 2 --exclude-drawing-sheet \
+    --layers "$layers,Edge.Cuts" -o "$OUT/render/$name.svg" "$BOARD" >/dev/null
+done
 kicad-cli pcb export step --subst-models -f -o "$OUT/step/dock.step" "$BOARD" >/dev/null
 ls -la "$OUT/jlc"
