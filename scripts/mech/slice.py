@@ -6,8 +6,8 @@
 Uses Bambu Studio's own system profiles: Bambu Lab A1 mini, 0.4 mm nozzle, "0.20mm Standard
 @BBL A1M", and the given filament. Those profiles inherit from parents, which Bambu Studio's
 command line doesn't resolve, so this script flattens them first. Each part is sliced on its
-own plate as exported (already in print orientation, no supports); the shells, the parts you
-see, get their top surfaces ironed. The result per part is its sliced 3MF (open it in Bambu
+own plate as exported (already in print orientation, no supports); the shells and the dock's
+floor plates, the parts you see most, get their top surfaces ironed. The result per part is its sliced 3MF (open it in Bambu
 Studio to print), plus print time, filament use and any slicer warning in OUT_DIR/slice.json.
 Exits 1 if a part fails to slice.
 
@@ -88,7 +88,7 @@ def main():
     results, failed = {}, []
     for stl in sorted(Path(args.stl_dir).glob("*.stl")):
         target = out / f"{stl.stem}.3mf"
-        iron = stl.stem.startswith("shell_")
+        iron = stl.stem.startswith(("shell_", "dock_floor_"))
         cmd = [str(BIN), "--slice", "0", "--arrange", "1", "--orient", "0",
                "--load-settings", f"{machine};{ironed if iron else process}", "--load-filaments", str(filament),
                "--export-3mf", target.name, "--outputdir", str(out), str(stl.resolve())]

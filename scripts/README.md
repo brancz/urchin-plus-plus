@@ -39,7 +39,7 @@ Every generator and check, runnable headless; CI runs the same scripts.
 | `checks/clearance.py BOARD --half H` | `$KICAD_PY` | Part spacing, holes, edge, tenting puck, rule 2 sides, antenna keep-out (rule 6) |
 | `checks/drc.py BOARD --half H` | python3 | KiCad DRC (zones refilled) with the allow-list in `hardware/drc_allow.json`; `--half dock` for the dock board |
 | `mech/board_data.py [--check]` | `$KICAD_PY` | Each half's mechanical features (outline, holes, pads, courtyards, puck, discs, feet) → `mech/data/{left,right}.json` |
-| `mech/build.sh [OUT]` | bash | STEP export of the halves and the dock board, `mech dock-geometry --check`, then the printed parts (`mech/`, build123d: cases, covers, the dock tray's two pieces) with their fit, hardware, insertion and dock pin checks, renders (`RENDER=0` skips) and slicing (`SLICE=0` skips) |
+| `mech/build.sh [OUT]` | bash | STEP export of the halves and the dock board, `mech dock-geometry --check`, then the printed parts (`mech/`, build123d: cases, top shells, the dock tray's two pieces, its cover and floor plates, the pin jigs) with their fit, hardware, insertion and dock pin checks, renders (`RENDER=0` skips) and slicing (`SLICE=0` skips) |
 | `mech/slice.py STL_DIR OUT` | python3 | Bambu Studio slices for the A1 mini (system profiles, flattened); print time, weight and warnings → `slice.json` |
 | `checks/hardware_all.sh [--out DIR] [ato args]` | bash | All of the above for both halves, after `ato_build.sh` (CI) |
 | `render/placement_views.sh BOARD OUT`, `render/copper_views.sh BOARD OUT`, `render/svg_to_png.py` | bash/uv | 2D layer views for reports |

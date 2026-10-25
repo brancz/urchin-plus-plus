@@ -20,9 +20,9 @@ SOCKET_H = 1.85              # Kailh Choc hotswap socket body, below the PCB
 WALL = 2.0                   # side wall
 EDGE_TOP = 0.6               # chamfer on the outer top edge
 EDGE_BOTTOM = 0.4            # chamfer on the outer bottom edge (also offsets first-layer squish)
-FLOOR = 1.6                  # 8 layers
+FLOOR = 1.2                  # 6 layers
 GAP = 3.6                    # floor to PCB underside: BOTTOM_PARTS_H plus 0.34 mm
-Z_PCB_BOTTOM = FLOOR + GAP   # 5.2: the dock's pins reach this high
+Z_PCB_BOTTOM = FLOOR + GAP   # 4.8: the dock's pins reach this high
 Z_PCB_TOP = Z_PCB_BOTTOM + PCB_T
 SEAM_GAP = 0.2               # the walls end this far below the PCB's top: the shell sits on the
                              # PCB, never on them, even when the board is PCB_T_TOL thin
@@ -61,6 +61,8 @@ SHELL_SCREW_L = 8.0          # M2 x 8 pan head, DIN 7985 / ISO 7045, steel
 SHELL_SCREW_HEAD = (4.0, 1.6)
 PILOT_D = 1.7                # an M2 machine screw cuts its thread in a 1.7 mm printed hole
 SCREW_TIP_ROOM = 0.6         # the pilot hole reaches this far past the screw's tip
+SCREW_L_TOL = 0.29           # an M2 x 8's length, either way (ISO 4759-1 grade A: js15)
+PILOT_MIN_ROOF = 0.6         # the shell over a pilot hole's end: three layers
 SHELL_SCREW_MIN_KEYCAP = 2.5 # a hole outside the keep-out takes a screw if it's this far from every keycap
 MIN_BOSS_WALL = 1.0          # printed wall round a pilot hole
 M2_MIN_D = 1.886             # an M2 thread's smallest major diameter (6g)
@@ -87,6 +89,8 @@ DISC_D = 10.0                # steel for the dock magnets (the board's MK1/MK2 m
                              # DIN 125 / ISO 7089, zinc-plated steel, 10 x 1 mm with a 5.3 mm hole
 DISC_T = 1.2                 # its recess in the case's underside: the washer is at most 1.1 mm
                              # thick (ISO 7089), so it never stands proud; 6 layers
+DISC_PAD = (0.8, 0.4)        # the floor is no thicker, so a pad inside over each recess: its wall
+                             # round the recess, and the skin over it
 FOOT_RECESS = 0.4            # shallow seat for each stick-on rubber foot
 FOOT_SEAT = 0.4              # the seat's diameter over the foot's
 
@@ -151,10 +155,12 @@ LED_WINDOW_D = 3.0           # over the status and charge LEDs, which shine up t
 # --- Dock (docs/ARCHITECTURE.md, Dock) -------------------------------------------------------
 # The halves sit side by side in their cases, inner edges facing, as in use, in two shallow
 # pockets of a flat tray. Each half carries three pogo pins soldered on its charging pads, their
-# plungers out through the case's window; the dock PCB lies flush in the pocket floors with a
-# flat gold pad under each pin. The tray prints as two pieces split between the pockets; the
-# dock PCB lies in a recess across both, and a printed cover over the PCB's back tab (the USB-C
-# receptacle and the small parts) joins them.
+# plungers out through the case's window; the dock PCB lies in a recess in the tray, flush with
+# its floor, with a flat gold pad under each pin. A thin printed plate covers each pocket's
+# floor, the PCB included: through a slot in it the pins reach their pads, and only the pads
+# show. The tray prints as two pieces split between the pockets; the dock PCB lies across both,
+# and a printed cover over the PCB's back tab (the USB-C receptacle and the small parts) joins
+# them.
 POCKET_CLEAR = 0.4           # case to pocket wall (see the pin landing terms for why not more)
 DIVIDER = 3.0                # wall between the pockets at the cases' inner edges
 TRAY_WALL = 3.0              # around the tray
@@ -169,11 +175,16 @@ POCKET_DEPTH = 2.6           # the straight walls reach above the lowest pin tip
 # below. Two per half outweigh the three pins (up to 3 x 1.2 N) with the half's weight on top.
 MAGNET = (10.0, 3.0)
 MAGNET_FIT = 0.2
-MAGNET_SKIN = 0.6            # printed floor between the magnet and the case's steel washer
+MAGNET_SKIN = 0.4            # printed skin over the magnet, under the floor plate (two layers)
 MAGNET_WALL = 0.8            # least printed wall around a magnet, inside the dock PCB's hole
 MAGNET_POCKET_H = MAGNET[1] + 0.4  # the magnet, and room for its glue
-Z_DOCK = MAGNET_POCKET_H + MAGNET_SKIN  # 4.0: pocket floor above the table: the cases' underside,
-                                        # the dock PCB's top
+Z_DOCK = MAGNET_POCKET_H + MAGNET_SKIN  # 3.8: the tray's floor in the pockets and the dock PCB's
+                                        # top, above the table
+DOCK_FLOOR_T = 0.4           # the floor plate over each pocket's floor (two layers)
+DOCK_FLOOR_CLEAR = 0.15      # its outline inside the pocket's
+DOCK_FLOOR_PLAY = DOCK_FLOOR_CLEAR + 0.2  # how far it moves in the pocket, with both outlines as printed
+DOCK_FLOOR_SLOT = 0.4        # its slot over a half's three contacts reaches this far past them
+Z_POCKET = Z_DOCK + DOCK_FLOOR_T  # 4.2: the pocket floor: the cases' undersides
 RELIEF_DEPTH = 1.0           # hollow below the dock PCB under the receptacle's legs and the fuse
 FUSE_RELIEF = 2.0            # the hollow reaches this far past the fuse's centre
 
@@ -218,9 +229,10 @@ DOCK_USB_LEGS = (5.58, -1.12, 2.48)  # its four shell legs through the PCB: x ei
 
 # Pogo pins (C5221284, docs/datasheets/C5221284_YTC1P-4020-01.pdf), three per half, soldered by
 # hand on the half's charging pads (TP1), plunger down through the case's window: 6.0 mm free from
-# the flange's base, 4.6 mm fully compressed. Docked, each stands on a dock contact flush with the
-# pocket floor, so it is Z_PCB_BOTTOM less its solder (5.15 mm) long: 0.85 mm compressed. Off the
-# dock, the free tips stand 0.85 mm below the case and the feet hold them off the desk.
+# the flange's base, 4.6 mm fully compressed. Docked, each stands on a dock contact DOCK_FLOOR_T
+# below the pocket floor, so it is Z_PCB_BOTTOM less its solder plus DOCK_FLOOR_T (5.15 mm) long:
+# 0.85 mm compressed. Off the dock, the free tips stand 1.25 mm below the case and the feet hold
+# them off the desk.
 PIN_FREE = 6.0
 PIN_BOTTOM = 4.6
 PIN_FLANGE = (2.0, 0.5)
@@ -239,8 +251,11 @@ PIN_HEIGHT_TOL = {
 }
 # The half's pads above the case's underside:
 CASE_HEIGHT_TOL = {"case underside to the PCB's standoffs (print)": 0.15}
-# The dock's contacts against the pocket floor:
-DOCK_HEIGHT_TOL = {
+# The dock's contacts against the pocket floor, either way:
+DOCK_HEIGHT_TOL = {"floor plate thickness (print)": 0.05}
+# ...and only deeper: where the dock PCB stands proud of the tray's floor, the plate and the case
+# rest on it, and the contacts stay DOCK_FLOOR_T under the case.
+DOCK_DEPTH_TOL = {
     "dock PCB thickness (1.6 mm +-10 %)": 0.16,
     "tray recess depth (print)": 0.1,
 }
@@ -287,7 +302,7 @@ JIG_FOOT_ALONG = 9.0         # each foot from the pins' centre along their row, 
 JIG_FOOT_OUT = 3.5           # ...and this far out from it, away from the legs: the pins stand
                              # between the legs and the feet
 
-FOOT_H = 2.5                 # the case's rubber feet: 6 mm round bumpers, at least 2.5 mm tall
+FOOT_H = 3.0                 # the case's rubber feet: 6 mm round bumpers, at least 3 mm tall
 FOOT_SQUASH = 0.2            # how far a foot gives under a hand on the keys
-FOOT_POCKET = 4.0            # the tray's hole under a foot, diameter over the foot's; it goes
-                             # through, so a taller foot fits too
+FOOT_POCKET = 5.0            # the hole under a foot in the tray and the floor plate, diameter
+                             # over the foot's; it goes through, so a taller foot fits too

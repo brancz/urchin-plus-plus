@@ -153,7 +153,7 @@ def half(m: Meshes, board: Board, step_path):
     for f in board["feet"]:
         x, y = xy((f["x"], f["y"]))
         m.add(cyl(x, y, f["d"], -(P.FOOT_H - P.FOOT_RECESS), P.FOOT_RECESS), "Rubber foot", "rubber", g, "under",
-              "6 x 2 mm bumper")
+              f"6 x {P.FOOT_H:g} mm bumper")
     for led in board["leds"]:
         kind = "glow-charge" if led["ref"] == "LED2" else "glow-status"
         for h in led["holes"]:
@@ -169,10 +169,13 @@ def dock(m: Meshes, d: Dock, step_path):
     cover = d.cover([(n.split()[1], s) for n, s in parts[1:]])
     m.add(cover, "Dock cover", "print", "dock", "dock", "printed, glued over the dock PCB's parts; "
           "a pinhole over the power LED")
+    for plate in d.floor_plates():
+        m.add(plate, "Dock floor plate", "print", "dock", "dock", "printed, 0.4 mm, glued over the pocket's floor and "
+              "the dock PCB; a slot over the gold contacts")
     for name, shape in parts:
         if name == "dock pcb":
-            m.add(shape, "Dock PCB", "pcb", "dock", "dock", "USB-C in at the back, 5 V out to the gold contacts",
-                  tol=0.03)
+            m.add(shape, "Dock PCB", "pcb-black", "dock", "dock", "black mask, USB-C in at the back, 5 V out to the "
+                  "gold contacts", tol=0.03)
         else:
             ref = name.split()[1]
             kind, label, info = part_kind(ref)
@@ -186,7 +189,7 @@ def dock(m: Meshes, d: Dock, step_path):
         m.add(box(x - w / 2, x + w / 2, y - h / 2, y + h / 2, P.Z_DOCK + STEP_UNDERSIDE, P.Z_DOCK), "Dock contact", "gold", "dock",
               "dock", f"flat gold (ENIG) pad, {'5 V' if net == 'DOCK_5V' else 'GND'}: a half's pogo pin lands on it")
     x, y = d.placed("LED1")
-    top = P.Z_DOCK + P.POCKET_DEPTH
+    top = d.top
     m.add(cyl(x, y, P.LED_HOLE_D - 0.1, top - 0.3, top - 0.25), "Power LED", "glow-power", "dock", "dock",
           "green while the dock has power")
 
@@ -209,7 +212,7 @@ def build(boards_dir, out):
         "meshes": m.meta,
         "boxes": boxes,
         "dx": round(d.dx, 3),
-        "z_dock": P.Z_DOCK,
+        "z_dock": P.Z_POCKET,
         "z_desk": P.FOOT_H - P.FOOT_RECESS,
         "spec": {
             "keys": sum(len(b["keys"]) for b in (d.left, d.right)),

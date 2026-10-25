@@ -166,17 +166,27 @@ def screw_stacks(board: Board, shell_part):
     engaged_thick = tip - (P.Z_PCB_TOP + P.PCB_T_TOL)
     to_bottom_thin = pilot_top() - P.PCB_T_TOL - tip
     head_in = P.HEAD_DEPTH - P.SHELL_SCREW_HEAD[1]
+    # A screw at the long end of its tolerance, on a thin board, still stops short of the
+    # pilot's end, so its tip never bears on the shell's roof.
     rows.append({"stack": f"M2 x {P.SHELL_SCREW_L:g} from below, through the PCB into the shell "
                           f"({', '.join(h['ref'] for h in holes)})",
                  "thread_thick_board_mm": round(engaged_thick, 2), "tip_to_hole_bottom_thin_board_mm": round(to_bottom_thin, 2),
+                 "long_screw_tip_to_hole_bottom_thin_board_mm": round(to_bottom_thin - P.SCREW_L_TOL, 2),
                  "head_above_underside_mm": round(head_in, 2),
-                 "ok": engaged_thick >= P.MIN_THREAD and to_bottom_thin >= P.MIN_TIP_GAP and head_in >= 0})
+                 "ok": engaged_thick >= P.MIN_THREAD and to_bottom_thin >= P.MIN_TIP_GAP
+                       and to_bottom_thin - P.SCREW_L_TOL > 0 and head_in >= 0})
     for h in holes:
         x, y = xy((h["x"], h["y"]))
         walls = [boss_wall(shell_part, x, y, z, P.PILOT_D)
                  for z in (P.Z_PCB_TOP + 0.3, (P.Z_PCB_TOP + tip) / 2, tip - 0.3)]
         rows.append({"stack": f"{h['ref']}: the shell's plastic round the pilot hole", "wall_mm": round(min(walls), 2),
                      "min_mm": P.MIN_BOSS_WALL, "ok": min(walls) >= P.MIN_BOSS_WALL})
+        # The shell over the pilot's end, up to the first face above it.
+        col = shell_part & cyl(x, y, P.PILOT_D, pilot_top() - 0.01, pilot_top() + 20)
+        solids = col.solids() if col is not None else []
+        roof = min(s.bounding_box().max.Z for s in solids) - pilot_top() if solids else 0.0
+        rows.append({"stack": f"{h['ref']}: the shell's roof over the pilot hole", "roof_mm": round(roof, 2),
+                     "min_mm": P.PILOT_MIN_ROOF, "ok": roof >= P.PILOT_MIN_ROOF - 1e-6})
     pins = pin_holes(board)
     if pins:
         top = P.Z_PCB_TOP + P.PIN_INTO_SHELL

@@ -198,6 +198,10 @@ def case(board: Board):
             part -= cyl(x, y, P.HEAD_D, -0.1, P.HEAD_DEPTH)
         elif h["ref"] in pins:
             part += pin(x, y)
+    # A pad inside over each steel washer's recess, which is as deep as the floor is thick.
+    wall, skin = P.DISC_PAD
+    for m in board["steel_discs"]:
+        part += cyl(*xy((m["x"], m["y"])), P.DISC_D + 0.3 + 2 * wall, P.FLOOR - 0.01, P.DISC_T + skin)
 
     part += lips(board)
 
@@ -215,11 +219,13 @@ def case(board: Board):
     part -= cyl(outer_face_x + d * (P.SWITCH_SCOOP_R - P.SWITCH_SCOOP_DEPTH), (sy0 + sy1) / 2,
                 2 * P.SWITCH_SCOOP_R, z0 - 1.0, P.Z_WALL_TOP + 0.1)
 
-    # Floor openings: reset button, charging pads, tenting puck.
+    # Floor openings: reset button, charging pads, tenting puck. They go through the washers'
+    # pads too, should one reach them.
+    z1 = P.DISC_T + P.DISC_PAD[1] + 0.1
     rx, ry = xy((board["reset"]["x"], board["reset"]["y"]))
-    part -= cyl(rx, ry, P.RESET_HOLE_D, -0.1, P.FLOOR + 0.1)
-    part -= prism(dock_window(board), -0.1, P.FLOOR + 0.1)
-    part -= cyl(px, py, 2 * (pk["radius"] + P.PUCK_CLEAR), -0.1, P.FLOOR + 0.1)
+    part -= cyl(rx, ry, P.RESET_HOLE_D, -0.1, z1)
+    part -= prism(dock_window(board), -0.1, z1)
+    part -= cyl(px, py, 2 * (pk["radius"] + P.PUCK_CLEAR), -0.1, z1)
 
     # Underside: recesses for the steel washers the dock's magnets pull on, seats for the
     # rubber feet.

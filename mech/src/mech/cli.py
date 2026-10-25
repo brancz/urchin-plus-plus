@@ -106,24 +106,26 @@ def build(args):
         render([(jig, "cover", 1.0)] + [(s, "pins", 1.0) for _, s in pins.pins(board)] + pcb_and_parts,
                out / "render" / f"pin_jig_{side}-under.png", "under")
 
-    # The dock: the tray in two pieces and the cover over the dock PCB's parts, checked with the
-    # dock PCB and both cased halves seated.
+    # The dock: the tray in two pieces, the cover over the dock PCB's parts and the plate over
+    # each pocket's floor, checked with the dock PCB and both cased halves seated.
     dock = Dock.load()
     tray = dock.tray()
     pieces = dock.pieces(tray)
+    plates = dock.floor_plates()
     dparts = dock_checks.dock_parts(dock, Path(args.boards) / "dock.step")
     cover = dock.cover([(n.split()[1], s) for n, s in dparts[1:]])
-    for name, part in zip(("tray_left", "tray_right", "dock_cover"), pieces + (cover,)):
+    for name, part in zip(("tray_left", "tray_right", "dock_cover", "dock_floor_left", "dock_floor_right"),
+                          pieces + (cover,) + plates):
         export_step(part, out / "step" / f"{name}.step")
         printable = on_bed(part)
         export_stl(printable, out / "stl" / f"{name}.stl", tolerance=0.01, angular_tolerance=0.1)
         report["bed"].append(checks.bed_fit(name, printable))
-    rows, shapes = dock_checks.checks(dock, tray, pieces, cover, dparts, args.boards)
+    rows, shapes = dock_checks.checks(dock, tray, pieces, cover, plates, dparts, args.boards)
     report["fit"] += rows["fit"]
     report["hardware"] += [dict(r, side="dock") for r in rows["hardware"]]
     report["dock_pins"] = rows["pins"]
     if not args.no_render:
-        dock_render(out / "render", dock, pieces, cover, shapes)
+        dock_render(out / "render", dock, pieces, cover, plates, shapes)
 
     failed = [r for r in report["fit"] + report["bed"] + report["hardware"] + report["insertion"] + report["dock_pins"]
               if not r["ok"]]
@@ -137,10 +139,11 @@ def build(args):
     return 0 if not failed else 1
 
 
-def dock_render(out, dock, pieces, cover, shapes):
+def dock_render(out, dock, pieces, cover, plates, shapes):
     from .render import render  # VTK: only when rendering
     trays = [(p, "tray", 1.0) for p in pieces]
     lid = [(cover, "cover", 1.0)]
+    floors = [(p, "tray", 1.0) for p in plates]
     dock_pcb = [(s, "dock" if n == "dock pcb" else "parts", 1.0) for n, s in shapes["dock"]]
     pins_ = [(s, "pins", 1.0) for _, s in shapes["pins"]]
     cases = [(s, "case", 1.0) for _, s in shapes["cases"]]
@@ -148,16 +151,17 @@ def dock_render(out, dock, pieces, cover, shapes):
     boards = [(s, "board" if n.endswith(" pcb") else "parts", 1.0) for n, s in shapes["halves"]
               if n.endswith(" pcb") or n.endswith("3D model")]
     render(trays + dock_pcb, out / "tray-iso.png", "iso")
-    render(trays + dock_pcb + lid, out / "tray-top.png", "top")
-    render(trays + lid + dock_pcb, out / "tray-back.png", "iso-back")
+    render(trays + dock_pcb + lid + floors, out / "tray-top.png", "top")
+    render(trays + dock_pcb + lid + floors, out / "tray-finished-iso.png", "iso")
+    render(trays + lid + dock_pcb + floors, out / "tray-back.png", "iso-back")
     render(trays + lid, out / "tray-under.png", "under")
     render([(cover, "cover", 1.0)], out / "dock_cover-under.png", "under")
-    render(trays + lid + dock_pcb + cases + shells + boards + pins_, out / "dock-iso.png", "iso")
+    render(trays + lid + floors + dock_pcb + cases + shells + boards + pins_, out / "dock-iso.png", "iso")
     # A section through the left half's middle pin, seen from the front: tray, dock PCB and its
     # contact, the compressed pin, the case's floor and window, and the half's PCB.
     x, y, *_ = dock.contacts[1]
     keep = box(x - 14, x + 14, y, y + 30, -1, 40)
-    cut = [(s & keep, c, o) for s, c, o in trays + dock_pcb + cases + boards + pins_]
+    cut = [(s & keep, c, o) for s, c, o in trays + floors + dock_pcb + cases + boards + pins_]
     render([i for i in cut if i[0] is not None and i[0].solids()], out / "dock-pin-section.png", "front")
 
 

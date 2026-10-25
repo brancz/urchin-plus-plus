@@ -1,10 +1,11 @@
-"""Fit checks for the dock: the tray, its cover, the dock PCB (kicad-cli's STEP export of the
-routed board, every 3D model) and both halves in their cases, seated in the pockets, with the
-pogo pins soldered on the halves modelled compressed on the dock's contacts. The pins' landing
-on the contacts, their place in the case's window, their compression, how the pockets guide a
-half onto them and the feet's room in the tray are worked out from the tolerances in
-params.py; how far a case moves and turns in its pocket, and a board in its case, from their
-outlines (play.Play). Also the soldering jig on each half's board."""
+"""Fit checks for the dock: the tray, its cover and floor plates, the dock PCB (kicad-cli's STEP
+export of the routed board, every 3D model) and both halves in their cases, seated in the
+pockets, with the pogo pins soldered on the halves modelled compressed on the dock's contacts.
+The pins' landing on the contacts, their place in the case's window and the floor plate's slot,
+their compression, how the pockets guide a half onto them and the feet's room in the tray are
+worked out from the tolerances in params.py; how far a case moves and turns in its pocket, a
+floor plate in its pocket and a board in its case, from their outlines (play.Play). Also the
+soldering jig on each half's board."""
 
 import json
 import math
@@ -24,8 +25,8 @@ PLUG_LEN = 20.0         # mm of a USB-C plug's overmold modelled behind the rece
 
 
 def seated(shape, dx):
-    """A half's part (case frame) seated in its pocket (dock frame)."""
-    return Pos(dx, 0, P.Z_DOCK) * shape
+    """A half's part (case frame) seated in its pocket (dock frame), on the floor plate."""
+    return Pos(dx, 0, P.Z_POCKET) * shape
 
 
 def dock_refs(dock: Dock):
@@ -63,7 +64,7 @@ def feet(dock: Dock):
     for b, dx in dock.halves():
         for f in b["feet"]:
             x, y = dock.at(b, dx, (f["x"], f["y"]))
-            out.append((f"{b.side} {f['ref']} foot", cyl(x, y, f["d"], P.Z_DOCK - (P.FOOT_H - P.FOOT_RECESS), P.Z_DOCK)))
+            out.append((f"{b.side} {f['ref']} foot", cyl(x, y, f["d"], P.Z_POCKET - (P.FOOT_H - P.FOOT_RECESS), P.Z_POCKET)))
     return out
 
 
@@ -80,7 +81,7 @@ def case_face(b: Board):
     return offset(b.outline(), P.FIT + P.WALL, kind=Kind.ARC).faces()[0]
 
 
-def checks(dock: Dock, tray, pieces, cover, dparts, boards_dir):
+def checks(dock: Dock, tray, pieces, cover, plates, dparts, boards_dir):
     """Every dock check; returns (report rows by kind, shapes for the renders)."""
     rows = {"fit": [], "pins": [], "hardware": []}
     dpcb = dparts[0][1]
@@ -91,25 +92,32 @@ def checks(dock: Dock, tray, pieces, cover, dparts, boards_dir):
         halves += [(f"{b.side} {n}", seated(s, dx)) for n, s in board_parts(b, Path(boards_dir) / f"{b.side}.step")]
         above += [(f"{b.side} switches", seated(Compound([s for _, s in switches(b)]), dx)),
                   (f"{b.side} keycaps", seated(Compound([s for _, s in keycaps(b)]), dx))]
-        # Docked, each pin is pressed up until its tip is on the contact, level with the case's underside.
-        docked += [(f"{n}, compressed", seated(s, dx)) for n, s in PN.pins(b, tip_z=0.0)]
+        # Docked, each pin is pressed up until its tip is on the contact, under the floor plate.
+        docked += [(f"{n}, compressed", seated(s, dx)) for n, s in PN.pins(b, tip_z=-P.DOCK_FLOOR_T)]
     case_names = tuple(n for n, _ in cases)
-    printed = [("tray_left", pieces[0]), ("tray_right", pieces[1]), ("dock_cover", cover)]
+    floors = [("dock_floor_left", plates[0]), ("dock_floor_right", plates[1])]
+    floor_names = tuple(n for n, _ in floors)
 
-    # The tray: the cases rest on its floor, the dock PCB and the cover lie in its recess, the
+    # The tray: the floor plates lie on its floor, the dock PCB and the cover in its recess, the
     # plug's overmold butts on its back face; everything else keeps MIN_GAP. Its walls above
-    # the floor keep MIN_GAP from the cases and shells.
-    for name, piece in printed[:2]:
+    # the plates keep MIN_GAP from the cases and shells.
+    for name, piece in (("tray_left", pieces[0]), ("tray_right", pieces[1])):
         rows["fit"] += fit(name, piece, cases + shells + above + docked + [("dock pcb", dpcb)] + dparts[1:] + feet(dock)
-                           + [plug(dock), ("dock_cover", cover)],
-                           touching=case_names + ("dock pcb", "dock_cover", "USB-C plug"))
+                           + [plug(dock), ("dock_cover", cover)] + floors,
+                           touching=("dock pcb", "dock_cover", "USB-C plug") + floor_names)
         bb = piece.bounding_box()
-        walls = piece & box(bb.min.X - 1, bb.max.X + 1, bb.min.Y - 1, bb.max.Y + 1, P.Z_DOCK + 0.05, bb.max.Z + 1)
+        walls = piece & box(bb.min.X - 1, bb.max.X + 1, bb.min.Y - 1, bb.max.Y + 1, P.Z_POCKET + 0.05, bb.max.Z + 1)
         rows["fit"] += fit(f"{name} walls", walls, cases + shells)
     rows["fit"] += fit("tray_left", pieces[0], [("tray_right", pieces[1])], touching=("tray_right",))
-    # The cover rests on the PCB; its walls are pocket walls where it crosses them.
-    rows["fit"] += fit("dock_cover", cover, cases + shells + above + [("dock pcb", dpcb)] + dparts[1:] + [plug(dock)],
-                       touching=("dock pcb", "USB-C plug"))
+    # The cover rests on the PCB; its walls are pocket walls where it crosses them, round the
+    # floor plates.
+    rows["fit"] += fit("dock_cover", cover, cases + shells + above + [("dock pcb", dpcb)] + dparts[1:] + [plug(dock)]
+                       + floors, touching=("dock pcb", "USB-C plug") + floor_names)
+    # The floor plates lie on the tray and the dock PCB, under the cases; the pins reach
+    # through their slots and the feet through their holes.
+    for name, plate in floors:
+        rows["fit"] += fit(name, plate, cases + docked + [("dock pcb", dpcb)] + dparts[1:] + feet(dock),
+                           touching=case_names + ("dock pcb",))
 
     # The dock's parts and the plug against the seated cases; the dock PCB under them.
     for name, shape in dparts[1:] + [plug(dock)]:
@@ -183,19 +191,25 @@ def pin_rows(dock: Dock):
     case's window."""
     rows = []
     protrusion = P.PIN_SOLDER + P.PIN_FREE - P.Z_PCB_BOTTOM  # a free tip below the case's underside
+    pressed = protrusion - P.DOCK_FLOOR_T                    # docked, on a contact under the floor plate
     half_tol = {**P.PIN_HEIGHT_TOL, **P.CASE_HEIGHT_TOL}
-    every = {**half_tol, **P.DOCK_HEIGHT_TOL}
-    lin, rss = stack(every)
+    # The dock PCB and its recess only ever take the contacts deeper: they count against the
+    # least compression, not the most.
+    up = {**half_tol, **P.DOCK_HEIGHT_TOL}
+    down = {**up, **P.DOCK_DEPTH_TOL}
+    lo_lin, lo_rss = stack(down)
+    hi_lin, hi_rss = stack(up)
     stroke = P.PIN_FREE - P.PIN_BOTTOM
-    rows.append({"check": "pin compression", "nominal_mm": r2(protrusion), "rss_mm": [r2(protrusion - rss), r2(protrusion + rss)],
-                 "worst_case_mm": [r2(protrusion - lin), r2(protrusion + lin)], "limits_mm": [P.MIN_COMPRESSION, r2(stroke)],
-                 "terms_mm": every, "ok": protrusion - rss >= P.MIN_COMPRESSION and protrusion + rss <= stroke})
+    rows.append({"check": "pin compression", "nominal_mm": r2(pressed), "rss_mm": [r2(pressed - lo_rss), r2(pressed + hi_rss)],
+                 "worst_case_mm": [r2(pressed - lo_lin), r2(pressed + hi_lin)], "limits_mm": [P.MIN_COMPRESSION, r2(stroke)],
+                 "terms_mm": {"either way": up, "less only": P.DOCK_DEPTH_TOL},
+                 "ok": pressed - lo_rss >= P.MIN_COMPRESSION and pressed + hi_lin <= stroke})
     # A half must be in the pocket's straight walls (its full outline, above its bottom chamfer)
     # before its pins' tips come down onto the contacts.
     straight = P.POCKET_DEPTH - P.FUNNEL
     rows.append({"check": "the pocket guides a half before its pins meet the contacts", "straight_wall_mm": r2(straight),
-                 "case_bottom_chamfer_mm": P.EDGE_BOTTOM, "tips_meet_contacts_at_mm": r2(protrusion + lin),
-                 "ok": straight - P.EDGE_BOTTOM >= protrusion + lin})
+                 "case_bottom_chamfer_mm": P.EDGE_BOTTOM, "tips_meet_contacts_at_mm": r2(pressed + hi_lin),
+                 "ok": straight - P.EDGE_BOTTOM >= pressed + hi_lin})
     # Off the dock, a half stands on its feet (the shortest allowed, pressed in) and its pins
     # stay off the desk.
     feet = P.FOOT_H - P.FOOT_RECESS - P.FOOT_SQUASH
@@ -205,15 +219,21 @@ def pin_rows(dock: Dock):
 
     pin_lin, _ = stack(P.PIN_TOL)
     r = P.PIN_BARREL[0] / 2  # the barrel reaches into the floor's window; the flange stays above the floor
-    for b, dx in dock.halves():
+    for (b, dx), pocket in zip(dock.halves(), dock.pockets):
         in_pocket = Play(case_face(b), P.POCKET_PLAY)
         in_case = Play(b.outline(), P.BOARD_WALL_PLAY, pins=board_pins(b))
+        plate = Play(dock.floor_face(b, dx, pocket), P.DOCK_FLOOR_PLAY)
         win = dock_window(b).bounding_box()
+        slot = dock.floor_slot(b.side).bounding_box()
         rows += tilt_rows(b, in_case, win, pin_lin)
         half = {"x": P.DOCK_CONTACT[0] / 2, "y": P.DOCK_CONTACT[1] / 2}
         for p in b["dock_pads"]["pads"]:
             q = xy((p["x"], p["y"]))
             to_window = {"x": min(q[0] - win.min.X, win.max.X - q[0]) - r, "y": min(q[1] - win.min.Y, win.max.Y - q[1]) - r}
+            qd = dock.at(b, dx, (p["x"], p["y"]))
+            # The tip's apex lands in the plate's slot with the whole tip clear of its edge.
+            to_slot = {"x": min(qd[0] - slot.min.X, slot.max.X - qd[0]) - P.PIN_TIP_D / 2,
+                       "y": min(qd[1] - slot.min.Y, slot.max.Y - qd[1]) - P.PIN_TIP_D / 2}
             row = {"check": f"{b.side} pin on pad {p['number']} ({p['net']})", "contact_mm": list(P.DOCK_CONTACT),
                    "terms_mm": {}}
             ok = True
@@ -228,13 +248,22 @@ def pin_rows(dock: Dock):
                 # The pin is on the board: the board's play in its case and the pin's own error
                 # move it in the case's window.
                 window_need = board_play + pin_lin + MIN_GAP
+                # In the plate's slot: the pin against the pocket, and the plate in it.
+                slot_terms = {k: v for k, v in terms.items() if k not in P.DOCK_TOL}
+                slot_terms["floor plate in its pocket (moves and turns)"] = plate.along(qd, axis)
+                row["terms_mm"].setdefault("floor plate in its pocket (moves and turns)", []).append(
+                    r2(slot_terms["floor plate in its pocket (moves and turns)"]))
+                slot_lin, slot_rss = stack(slot_terms)
                 row.setdefault("landing_rss_mm", []).append(r2(rss))
                 row.setdefault("landing_worst_case_mm", []).append(r2(lin))
                 row.setdefault("tip_room_on_contact_mm", []).append(r2(room))
                 row.setdefault("worst_case_on_contact", []).append(lin <= half[axis])
                 row.setdefault("pin_to_window_mm", []).append(r2(to_window[axis]))
                 row.setdefault("window_needs_mm", []).append(r2(window_need))
-                ok &= rss <= room and window_need <= to_window[axis]
+                row.setdefault("in_slot_rss_mm", []).append(r2(slot_rss))
+                row.setdefault("tip_room_in_slot_mm", []).append(r2(to_slot[axis]))
+                row.setdefault("worst_case_in_slot", []).append(slot_lin <= to_slot[axis])
+                ok &= rss <= room and window_need <= to_window[axis] and slot_rss <= to_slot[axis]
             row["ok"] = bool(ok)
             rows.append(row)
     return rows
@@ -310,24 +339,33 @@ def hardware_rows(dock: Dock, tray, cover, dparts):
                         P.MAGNET_WALL)
         rows.append({"stack": f"{side} {ref} magnet pocket: wall to the dock PCB's recess", "wall_mm": r2(w),
                      "min_mm": P.MAGNET_WALL, "ok": w >= P.MAGNET_WALL})
-    # Feet: the tray's holes go through, so any foot shorter than this fits.
-    tallest = P.Z_DOCK + P.FOOT_RECESS
+    # Feet: the holes go through the tray and the floor plate, so any foot shorter than this fits.
+    tallest = P.Z_POCKET + P.FOOT_RECESS
     rows.append({"stack": "case feet: the tray's holes go through", "foot_h_mm": P.FOOT_H,
                  "tallest_foot_mm": r2(tallest), "ok": P.FOOT_H < tallest})
-    # A foot moves with its case, and in its seat; it stays clear of its hole's wall and of the
-    # dock PCB's edge.
-    for b, dx in dock.halves():
+    # A foot moves with its case, and in its seat; it stays clear of its hole's wall, the floor
+    # plate's hole (which moves too) and the dock PCB's edge.
+    for (b, dx), pocket in zip(dock.halves(), dock.pockets):
         in_pocket = Play(case_face(b), P.POCKET_PLAY)
+        plate = Play(dock.floor_face(b, dx, pocket), P.DOCK_FLOOR_PLAY)
         for f in b["feet"]:
             moves = in_pocket.radial(xy((f["x"], f["y"]))) + P.FOOT_SEAT / 2
             x, y = dock.at(b, dx, (f["x"], f["y"]))
-            room = min(P.FOOT_POCKET / 2, dock.pcb_outline.distance_to(Vector(x, y, 0)) - f["d"] / 2)
+            room = min(P.FOOT_POCKET / 2 - plate.radial((x, y)), dock.pcb_outline.distance_to(Vector(x, y, 0)) - f["d"] / 2)
             rows.append({"stack": f"{b.side} {f['ref']} foot in its tray hole", "moves_mm": r2(moves),
                          "room_mm": r2(room), "ok": moves + MIN_GAP <= room})
+    # Each floor plate: no strip of it narrower than two perimeters, round its slot and holes.
+    w = 0.8
+    for (b, dx), pocket in zip(dock.halves(), dock.pockets):
+        face = dock.floor_face(b, dx, pocket)
+        opened = offset(offset(face, -w / 2, kind=Kind.ARC), w / 2, kind=Kind.ARC)
+        lost = face.area - sum(f.area for f in opened.faces())
+        rows.append({"stack": f"{b.side} floor plate: no strip narrower than {w:g} mm", "lost_mm2": round(lost, 3),
+                     "ok": lost <= 0.05})
     # The cover: a printable skin over every part under it. The receptacle's pocket opens
-    # through the back face round its mouth; its top stays under the tray's flat top (it cuts
-    # into the face's top chamfer, behind the dock).
-    top = P.Z_DOCK + P.POCKET_DEPTH
+    # through the back face round its mouth; its top stays under the tray's flat top (the row
+    # reports how far it cuts into the face's top chamfer, behind the dock, if at all).
+    top = dock.top
     for name, shape in dparts[1:]:
         roof = shape.bounding_box().max.Z + P.COVER_PART_CLEAR
         row = {"stack": f"cover over {name.split()[1]}", "skin_mm": r2(top - roof), "min_mm": P.COVER_MIN_SKIN,

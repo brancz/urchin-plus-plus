@@ -2,10 +2,11 @@
 feature positions (docs/ARCHITECTURE.md, "Dock").
 
 The dock frame is the left half's CAD frame; the right half sits DX to its right, so the two
-cases' inner edges are DIVIDER plus two POCKET_CLEARs apart. The pocket floor is at Z_DOCK:
-there the cases' undersides rest, and the dock PCB's top lies flush with it in a recess. The
-pogo pins soldered on each half's charging pads come down through the case's window onto flat
-pads on the dock PCB.
+cases' inner edges are DIVIDER plus two POCKET_CLEARs apart. The tray's floor in the pockets is
+at Z_DOCK, and the dock PCB's top lies flush with it in a recess. A thin printed plate covers
+each pocket's floor, the PCB included; on it, at Z_POCKET, the cases' undersides rest. The pogo
+pins soldered on each half's charging pads come down through the case's window and a slot in
+the plate onto flat pads on the dock PCB.
 
 The dock PCB is a U: under each half a bar along its pads and an arm back along the half's
 inner wall, both in the pocket's floor; at the back, between the halves, a tab that joins the
@@ -22,7 +23,7 @@ from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
 
-from build123d import Axis, Circle, Kind, Pos, Vector, chamfer, offset
+from build123d import Axis, Circle, Kind, Pos, RectangleRounded, Vector, chamfer, offset
 
 from . import params as P
 from .board import Board, xy
@@ -273,7 +274,7 @@ class Dock:
 
     @property
     def top(self):
-        return P.Z_DOCK + P.POCKET_DEPTH
+        return P.Z_POCKET + P.POCKET_DEPTH
 
     def envelope(self):
         """The tray's outer shape, its edges chamfered."""
@@ -303,15 +304,37 @@ class Dock:
             for m in b["steel_discs"]:
                 x, y = self.at(b, dx, (m["x"], m["y"]))
                 part -= cyl(x, y, P.MAGNET[0] + P.MAGNET_FIT, -0.1, P.Z_DOCK - P.MAGNET_SKIN)
-            # The case's rubber feet: holes right through, so any foot height fits.
-            for f in b["feet"]:
-                x, y = self.at(b, dx, (f["x"], f["y"]))
-                part -= cyl(x, y, f["d"] + P.FOOT_POCKET, -0.1, P.Z_DOCK + 0.1)
-            # A tenting puck, if one is mounted, goes through.
-            pk = b["puck"]
-            x, y = self.at(b, dx, (pk["x"], pk["y"]))
-            part -= cyl(x, y, 2 * (pk["radius"] + P.PUCK_CLEAR) + 1.0, -0.1, P.Z_DOCK + 0.1)
+            for x, y, d in self.floor_holes(b, dx):
+                part -= cyl(x, y, d, -0.1, P.Z_DOCK + 0.1)
         return part
+
+    def floor_holes(self, b, dx):
+        """[(x, y, d)] of the holes through a pocket's floor: under the case's rubber feet (right
+        through, so any foot height fits), and under a tenting puck, if one is mounted."""
+        out = [(*self.at(b, dx, (f["x"], f["y"])), f["d"] + P.FOOT_POCKET) for f in b["feet"]]
+        pk = b["puck"]
+        return out + [(*self.at(b, dx, (pk["x"], pk["y"])), 2 * (pk["radius"] + P.PUCK_CLEAR) + 1.0)]
+
+    def floor_slot(self, side):
+        """The floor plate's slot over a half's three contacts."""
+        w, h = P.DOCK_CONTACT
+        cs = [c for c in self.contacts if c[3] == side]
+        m = P.DOCK_FLOOR_SLOT
+        x0, x1 = min(c[0] for c in cs) - w / 2 - m, max(c[0] for c in cs) + w / 2 + m
+        y0, y1 = min(c[1] for c in cs) - h / 2 - m, max(c[1] for c in cs) + h / 2 + m
+        return Pos((x0 + x1) / 2, (y0 + y1) / 2) * RectangleRounded(x1 - x0, y1 - y0, 1.0)
+
+    def floor_face(self, b, dx, pocket):
+        """The floor plate's outline in a pocket, with its slot and holes."""
+        face = offset(pocket, -P.DOCK_FLOOR_CLEAR, kind=Kind.ARC) - self.floor_slot(b.side)
+        for x, y, d in self.floor_holes(b, dx):
+            face = face - Pos(x, y) * Circle(d / 2)
+        return one_face(face)
+
+    def floor_plates(self):
+        """The plate over each pocket's floor, the dock PCB under it: (left, right)."""
+        return tuple(prism(self.floor_face(b, dx, pk), P.Z_DOCK, P.Z_POCKET)
+                     for pk, (b, dx) in zip(self.pockets, self.halves()))
 
     def pieces(self, tray):
         """The tray split on its centre line, SPLIT_GAP apart: (left piece, right piece)."""
@@ -329,6 +352,10 @@ class Dock:
         part = self.envelope() & prism(region, P.Z_DOCK, self.top + 1)
         for cut in self.pocket_cuts(P.Z_DOCK - 0.1):
             part -= cut
+        # Where it forms a pocket's wall, the floor plate keeps its clearance with the cover
+        # moved as far as its own clearance lets it.
+        for pk in self.pockets:
+            part -= prism(offset(pk, P.COVER_CLEAR, kind=Kind.ARC), P.Z_DOCK - 0.1, P.Z_POCKET)
         c = P.COVER_PART_CLEAR
         for ref, shape in parts:
             bb = shape.bounding_box()
