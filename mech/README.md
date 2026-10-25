@@ -4,8 +4,8 @@ build123d CAD for the printed parts, generated from the routed boards (docs/ARCH
 
 | Part | Count | Prints | Notes |
 |---|---|---|---|
-| `case_{left,right}` | 1 per half | floor down, no supports | Tray under the PCB, walls flush with its top. Openings for USB-C, the power switch, the reset button, the charging pads and the tenting puck. |
-| `cover_{left,right}` | 1 per half | roof down (the STL is already flipped), no supports | Over the battery and the controller, with windows over the LEDs. |
+| `case_{left,right}` | 1 per half | floor down, no supports | Tray under the PCB, its walls ending 0.2 mm below the PCB's top. Openings for USB-C, the power switch, the reset button, the charging pads and the tenting puck; a pin at each of the two holes at the antenna end. |
+| `shell_{left,right}` | 1 per half | upright, as it sits (the STL is already placed), no supports; the slice irons its top surfaces | Over the PCB: the switch plate (the switches clip into it), a well round the keys with the rim about 1 mm below the keycaps, and a flat lid over the battery with windows over the LEDs. Two screws from below hold it; no hardware shows from the top. |
 | `tray_{left,right}` | 1 each, one dock | floor down, no supports | The dock: a pocket for each cased half, split between the pockets, with a finger notch in each outer wall. The dock PCB lies in a recess across both pieces. The magnet pockets are open below, under a 0.6 mm skin the printer bridges; the holes under the case's feet go right through. |
 
 Build everything (STEP export of the boards, parts, fit checks, renders, slicing):
@@ -20,14 +20,14 @@ scripts/mech/build.sh OUT        # RENDER=0 skips the PNGs, SLICE=0 Bambu Studio
 
 | Qty | Part | Where |
 |---|---|---|
-| 1 | M2 × 3 heat-set insert for a 3.2 mm hole (CNC Kitchen's; ruthex makes only M2 × 4) | Into the standoff under the 3.8 mm hole beside the thumb keys, from the top, with a soldering iron (about 220 °C for PLA) |
-| 1 | M2 × 5 pan-head screw and M2 washer (DIN 125, 5 mm) | Through that hole into the insert. The hole is wider than the screw head, hence the washer |
-| 3 | M2 × 16 nylon pan-head screw (DIN 7985, polyamide) | From the case's underside, up through a standoff, one of the PCB's 2.2 mm holes around the controller, and the cover's post |
-| 3 | M2 nylon hex nut (DIN 934), all polyamide: not a DIN 985 lock nut, whose body is usually steel | On those screws, on the cover's roof |
+| 2 | M2 × 8 pan-head screw, steel (DIN 7985 or ISO 7045) | From the case's underside, one beside the thumb keys and one at the battery's far end. Each goes up through a standoff and the PCB into the shell, where it cuts its own thread |
 | 2 | M5 washer, DIN 125 / ISO 7089, zinc-plated steel (10 × 1 mm) | Glued into the recesses on the case's underside, for the dock's magnets. Not stainless: A2 is barely magnetic. A plain 10 × 1 mm steel disc works too |
 | 4 | 6 mm round rubber bumper, about 2 mm tall | In the shallow seats on the case's underside. The dock's holes for them go right through, so any height up to 7 mm still docks |
+| 3 | Only with the tenting puck: M2 button-head screw (ISO 7380, 3.5 mm head), as long as the puck needs | From the top, through the PCB into the puck. A 4 mm pan head hits two switches |
 
-The hardware around the controller is nylon on purpose: two of those holes are inside the antenna keep-out, where nothing conductive may go. The cover's posts take the place of standoffs: two of the holes sit 2.6 mm from a keycap's edge, and the narrowest nylon M2 standoffs sold in Germany (5 mm across flats) would hit it.
+The two holes at the antenna end get no hardware: they are inside the antenna keep-out, where nothing conductive may go. A pin printed on the case's standoff goes up through each and into the shell, so the case, the PCB and the shell line up. The 3.8 mm holes between the keys sit 1.5 mm from a switch, with no room for a screw; the shell covers them, and two lips on the case's outer wall hold that edge of the PCB down.
+
+Before the top shell (2026-10-25), the halves used a battery cover held by nylon screws and nuts, and a screw with a heat-set insert beside the thumb keys. The shell needs none of that: if you bought it, the nylon M2 × 16 screws, the nylon nuts, the case's M2 × 3 insert and its M2 × 5 screw and washer are spare. The dock still takes its own two inserts and two M2 × 5 screws.
 
 **The cell.** Cells sold as 401730 are usually 32 mm long with their protection board, up to 32 × 17.5 mm and 4.5 mm thick: longer than the board's 17 × 30 mm outline. Fit it before the case:
 
@@ -35,19 +35,20 @@ The hardware around the controller is nylon on purpose: two of those holes are i
 2. Solder the wires to BT1 first, red to "+", black to "−", with the cell held beside the board (check the polarity with a meter). The protection board's end, where the wires come out, goes toward BT1.
 3. Lay the cell on the foam, centred, with its far end on the outline's end nearer the antenna, and let the extra length reach toward BT1. The longest cells reach up to 0.4 mm over the pads' ends and partly over the two LEDs' light holes; on the foam they ride 0.2 mm above the solder joints. Keep the joints flat, the wire along the pad.
 
-The cover clears a cell up to 32.5 × 17.5 × 4.5 mm on 1 mm foam tape.
+The shell's lid clears a cell up to 32.5 × 17.5 × 4.5 mm on 1 mm foam tape, laid centred on the outline as above. Its wall between the cell and the keys is 0.5 mm thick; a cell pushed off-centre toward the keys stops the shell from sitting flat.
 
-The other 3.8 mm holes take no screws. They sit right beside the switches, under the keycaps' edges, where no screw head fits; the original Urchin's plate cases pass posts through them. The case supports the board under them, and two lips on the outer wall hold that edge down. The tenting puck mounts to the PCB through the round opening in the case floor, as on the original Urchin; the 3.8 mm hole next to it gets no standoff, because the puck covers it.
+The tenting puck mounts to the PCB through the round opening in the case floor, as on the original Urchin; the 3.8 mm hole next to it gets no standoff, because the puck covers it. Its screws' heads sit on the PCB under the shell, which has a pocket over each, so the puck goes on before the shell.
 
 ## Assembly
 
-1. Press the insert into the standoff beside the thumb keys. Glue the steel washers into their recesses (CA), pushed all the way in; stick on the feet.
-2. Tilt the half slightly (up to about 10°) and slide its outer edge (the pinky column) under the two lips, then lower the controller side. The USB-C receptacle and the power switch drop through their openings in the inner wall.
-3. Screw down the hole beside the thumb keys: M2 × 5 with its washer.
-4. Lay the cover over the battery, its three posts on the PCB around the controller holes. Its edge stays just clear of the wall's top.
-5. Push the nylon M2 × 16 screws up from the underside through the three controller holes and the posts (each post's bore has a lead-in; wiggle the cover to line it up). Thread a nylon nut onto each on the roof: hold the nut with tweezers and turn the screw from below, finger-tight. A nut driver doesn't fit beside the keycaps; pull the two nearest keycaps off if tweezers don't do. Don't tighten them harder: the case's standoffs under the two holes at the antenna end have only about 0.5 mm of wall, where they make room for nearby parts.
-6. Two of the nuts on each half sit right beside a keycap (one of them a thumb key). Turn each of those on to the next flat that faces the keycap: a corner would come within about 0.15 mm of it.
-7. Trim all three screws flush with their nuts (flush cutters). Untrimmed, each end stands 2 mm above its nut, higher than the keycaps beside it.
+1. Glue the steel washers into their recesses on the case's underside (CA), pushed all the way in; stick on the feet.
+2. Tilt the half slightly (up to about 10°) and slide its outer edge (the pinky column) under the two lips, then lower the controller side onto the two pins at the antenna end. The USB-C receptacle and the power switch drop through their openings in the inner wall.
+3. Fit the cell (above).
+4. With the tenting puck: hold it in the floor opening and screw it on from the top, through the PCB.
+5. Lay the shell over the PCB, its two pin holes over the pins. It sits on the PCB, just clear of the case's wall.
+6. Turn the two M2 × 8 screws in from the underside until they're snug. The first time, each cuts its thread in the shell, so it turns stiffly; stop as soon as the head is down. The thread is plastic: don't force it, and on later fittings start it by hand.
+7. Press each switch straight down through the plate into its socket until it clicks into the plate. To swap one later, pull it with a Choc switch puller.
+8. Push on the keycaps.
 
 ## The dock
 

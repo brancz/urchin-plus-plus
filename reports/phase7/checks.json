@@ -33,140 +33,343 @@
    "part": "case_left",
    "against": "SW16 switch",
    "overlap_mm3": 0,
-   "gap_mm": 1.777,
+   "gap_mm": 2.037,
    "ok": true
   },
   {
    "part": "case_left",
    "against": "SW17 switch",
    "overlap_mm3": 0,
-   "gap_mm": 1.775,
+   "gap_mm": 2.034,
    "ok": true
   },
   {
-   "part": "cover_left",
+   "part": "shell_left",
    "against": "pcb",
    "overlap_mm3": 0,
    "gap_mm": 0.005,
    "ok": true
   },
   {
-   "part": "cover_left",
+   "part": "shell_left",
+   "against": "battery",
+   "overlap_mm3": 0,
+   "gap_mm": 0.28,
+   "ok": true
+  },
+  {
+   "part": "shell_left",
+   "against": "SW1 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_left",
+   "against": "SW10 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_left",
+   "against": "SW11 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_left",
+   "against": "SW12 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_left",
+   "against": "SW13 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_left",
+   "against": "SW14 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_left",
+   "against": "SW15 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_left",
+   "against": "SW16 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_left",
    "against": "SW17 switch",
    "overlap_mm3": 0,
-   "gap_mm": 1.404,
+   "gap_mm": 0.0,
    "ok": true
   },
   {
-   "part": "cover_left",
+   "part": "shell_left",
+   "against": "SW2 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_left",
+   "against": "SW3 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_left",
+   "against": "SW4 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_left",
+   "against": "SW5 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_left",
+   "against": "SW6 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_left",
+   "against": "SW7 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_left",
+   "against": "SW8 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_left",
+   "against": "SW9 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_left",
+   "against": "SW16 keycap",
+   "overlap_mm3": 0,
+   "gap_mm": 0.8,
+   "ok": true
+  },
+  {
+   "part": "shell_left",
    "against": "SW17 keycap",
    "overlap_mm3": 0,
-   "gap_mm": 0.625,
+   "gap_mm": 0.36,
    "ok": true
   },
   {
-   "part": "cover_left",
+   "part": "shell_left",
    "against": "case_left",
    "overlap_mm3": 0,
    "gap_mm": 0.2,
    "ok": true
   },
   {
-   "part": "H5 washer and screw head",
-   "against": "pcb",
+   "part": "shell_left, moved by its play",
+   "against": "SW10 keycap",
    "overlap_mm3": 0,
-   "gap_mm": 0.005,
+   "gap_mm": 0.26,
    "ok": true
   },
   {
-   "part": "H5 washer and screw head",
+   "part": "shell_left, moved by its play",
+   "against": "SW15 keycap",
+   "overlap_mm3": 0,
+   "gap_mm": 0.26,
+   "ok": true
+  },
+  {
+   "part": "shell_left, moved by its play",
+   "against": "SW16 keycap",
+   "overlap_mm3": 0,
+   "gap_mm": 0.679,
+   "ok": true
+  },
+  {
+   "part": "shell_left, moved by its play",
    "against": "SW17 keycap",
    "overlap_mm3": 0,
-   "gap_mm": 1.238,
+   "gap_mm": 0.26,
    "ok": true
   },
   {
-   "part": "H5 washer and screw head",
-   "against": "case_left",
-   "overlap_mm3": 0,
-   "gap_mm": 1.6,
-   "ok": true
-  },
-  {
-   "part": "H5 washer and screw head",
-   "against": "cover_left",
-   "overlap_mm3": 0,
-   "gap_mm": 4.101,
-   "ok": true
-  },
-  {
-   "part": "H6 nylon nut and screw tip",
-   "against": "cover_left",
-   "overlap_mm3": 0,
-   "gap_mm": 0.0,
-   "ok": true
-  },
-  {
-   "part": "H7 nylon nut and screw tip",
-   "against": "SW17 keycap",
-   "overlap_mm3": 0,
-   "gap_mm": 0.467,
-   "ok": true
-  },
-  {
-   "part": "H7 nylon nut and screw tip",
-   "against": "cover_left",
-   "overlap_mm3": 0,
-   "gap_mm": 0.0,
-   "ok": true
-  },
-  {
-   "part": "H8 nylon nut and screw tip",
-   "against": "cover_left",
-   "overlap_mm3": 0,
-   "gap_mm": 0.0,
-   "ok": true
-  },
-  {
-   "part": "H6 cover post, moved by its play",
-   "against": "pcb",
-   "overlap_mm3": 0,
-   "gap_mm": 0.005,
-   "ok": true
-  },
-  {
-   "part": "H6 cover post, moved by its play",
+   "part": "shell_left, moved by its play",
    "against": "SW5 keycap",
    "overlap_mm3": 0,
-   "gap_mm": 0.261,
+   "gap_mm": 0.26,
    "ok": true
   },
   {
-   "part": "H7 cover post, moved by its play",
+   "part": "H5 M2 x 8 screw",
    "against": "pcb",
    "overlap_mm3": 0,
-   "gap_mm": 0.005,
+   "gap_mm": 1.1,
    "ok": true
   },
   {
-   "part": "H7 cover post, moved by its play",
-   "against": "SW17 switch",
+   "part": "H5 M2 x 8 screw",
+   "against": "case_left",
    "overlap_mm3": 0,
-   "gap_mm": 1.013,
+   "gap_mm": 0.0,
    "ok": true
   },
   {
-   "part": "H7 cover post, moved by its play",
+   "part": "H5 M2 x 8 screw",
+   "against": "shell_left",
+   "overlap_mm3": 0,
+   "gap_mm": 0.05,
+   "ok": true
+  },
+  {
+   "part": "H7 M2 x 8 screw",
+   "against": "pcb",
+   "overlap_mm3": 0,
+   "gap_mm": 0.3,
+   "ok": true
+  },
+  {
+   "part": "H7 M2 x 8 screw",
    "against": "SW17 keycap",
    "overlap_mm3": 0,
-   "gap_mm": 0.261,
+   "gap_mm": 1.825,
    "ok": true
   },
   {
-   "part": "H8 cover post, moved by its play",
+   "part": "H7 M2 x 8 screw",
+   "against": "case_left",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "H7 M2 x 8 screw",
+   "against": "shell_left",
+   "overlap_mm3": 0,
+   "gap_mm": 0.05,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 1",
    "against": "pcb",
    "overlap_mm3": 0,
    "gap_mm": 0.005,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 1",
+   "against": "SW3 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.566,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 1",
+   "against": "SW4 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.133,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 1",
+   "against": "case_left",
+   "overlap_mm3": 0,
+   "gap_mm": 5.221,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 1",
+   "against": "shell_left",
+   "overlap_mm3": 0,
+   "gap_mm": 0.3,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 2",
+   "against": "pcb",
+   "overlap_mm3": 0,
+   "gap_mm": 0.005,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 2",
+   "against": "case_left",
+   "overlap_mm3": 0,
+   "gap_mm": 5.221,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 2",
+   "against": "shell_left",
+   "overlap_mm3": 0,
+   "gap_mm": 0.3,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 3",
+   "against": "pcb",
+   "overlap_mm3": 0,
+   "gap_mm": 0.005,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 3",
+   "against": "SW10 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.107,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 3",
+   "against": "SW9 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.594,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 3",
+   "against": "case_left",
+   "overlap_mm3": 0,
+   "gap_mm": 5.221,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 3",
+   "against": "shell_left",
+   "overlap_mm3": 0,
+   "gap_mm": 0.3,
    "ok": true
   },
   {
@@ -187,140 +390,343 @@
    "part": "case_right",
    "against": "SW33 switch",
    "overlap_mm3": 0,
-   "gap_mm": 1.775,
+   "gap_mm": 2.034,
    "ok": true
   },
   {
    "part": "case_right",
    "against": "SW34 switch",
    "overlap_mm3": 0,
-   "gap_mm": 1.777,
+   "gap_mm": 2.037,
    "ok": true
   },
   {
-   "part": "cover_right",
+   "part": "shell_right",
    "against": "pcb",
    "overlap_mm3": 0,
    "gap_mm": 0.005,
    "ok": true
   },
   {
-   "part": "cover_right",
+   "part": "shell_right",
+   "against": "battery",
+   "overlap_mm3": 0,
+   "gap_mm": 0.28,
+   "ok": true
+  },
+  {
+   "part": "shell_right",
+   "against": "SW18 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_right",
+   "against": "SW19 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_right",
+   "against": "SW20 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_right",
+   "against": "SW21 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_right",
+   "against": "SW22 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_right",
+   "against": "SW23 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_right",
+   "against": "SW24 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_right",
+   "against": "SW25 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_right",
+   "against": "SW26 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_right",
+   "against": "SW27 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_right",
+   "against": "SW28 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_right",
+   "against": "SW29 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_right",
+   "against": "SW30 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_right",
+   "against": "SW31 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_right",
+   "against": "SW32 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_right",
    "against": "SW33 switch",
    "overlap_mm3": 0,
-   "gap_mm": 1.404,
+   "gap_mm": 0.0,
    "ok": true
   },
   {
-   "part": "cover_right",
+   "part": "shell_right",
+   "against": "SW34 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "shell_right",
    "against": "SW33 keycap",
    "overlap_mm3": 0,
-   "gap_mm": 0.625,
+   "gap_mm": 0.36,
    "ok": true
   },
   {
-   "part": "cover_right",
+   "part": "shell_right",
+   "against": "SW34 keycap",
+   "overlap_mm3": 0,
+   "gap_mm": 0.8,
+   "ok": true
+  },
+  {
+   "part": "shell_right",
    "against": "case_right",
    "overlap_mm3": 0,
    "gap_mm": 0.2,
    "ok": true
   },
   {
-   "part": "H5 washer and screw head",
-   "against": "pcb",
-   "overlap_mm3": 0,
-   "gap_mm": 0.005,
-   "ok": true
-  },
-  {
-   "part": "H5 washer and screw head",
-   "against": "SW33 keycap",
-   "overlap_mm3": 0,
-   "gap_mm": 1.238,
-   "ok": true
-  },
-  {
-   "part": "H5 washer and screw head",
-   "against": "case_right",
-   "overlap_mm3": 0,
-   "gap_mm": 1.6,
-   "ok": true
-  },
-  {
-   "part": "H5 washer and screw head",
-   "against": "cover_right",
-   "overlap_mm3": 0,
-   "gap_mm": 4.101,
-   "ok": true
-  },
-  {
-   "part": "H2 nylon nut and screw tip",
-   "against": "cover_right",
-   "overlap_mm3": 0,
-   "gap_mm": 0.0,
-   "ok": true
-  },
-  {
-   "part": "H3 nylon nut and screw tip",
-   "against": "SW33 keycap",
-   "overlap_mm3": 0,
-   "gap_mm": 0.467,
-   "ok": true
-  },
-  {
-   "part": "H3 nylon nut and screw tip",
-   "against": "cover_right",
-   "overlap_mm3": 0,
-   "gap_mm": 0.0,
-   "ok": true
-  },
-  {
-   "part": "H4 nylon nut and screw tip",
-   "against": "cover_right",
-   "overlap_mm3": 0,
-   "gap_mm": 0.0,
-   "ok": true
-  },
-  {
-   "part": "H2 cover post, moved by its play",
-   "against": "pcb",
-   "overlap_mm3": 0,
-   "gap_mm": 0.005,
-   "ok": true
-  },
-  {
-   "part": "H3 cover post, moved by its play",
-   "against": "pcb",
-   "overlap_mm3": 0,
-   "gap_mm": 0.005,
-   "ok": true
-  },
-  {
-   "part": "H3 cover post, moved by its play",
-   "against": "SW33 switch",
-   "overlap_mm3": 0,
-   "gap_mm": 1.013,
-   "ok": true
-  },
-  {
-   "part": "H3 cover post, moved by its play",
-   "against": "SW33 keycap",
-   "overlap_mm3": 0,
-   "gap_mm": 0.261,
-   "ok": true
-  },
-  {
-   "part": "H4 cover post, moved by its play",
-   "against": "pcb",
-   "overlap_mm3": 0,
-   "gap_mm": 0.005,
-   "ok": true
-  },
-  {
-   "part": "H4 cover post, moved by its play",
+   "part": "shell_right, moved by its play",
    "against": "SW18 keycap",
    "overlap_mm3": 0,
-   "gap_mm": 0.261,
+   "gap_mm": 0.26,
+   "ok": true
+  },
+  {
+   "part": "shell_right, moved by its play",
+   "against": "SW23 keycap",
+   "overlap_mm3": 0,
+   "gap_mm": 0.26,
+   "ok": true
+  },
+  {
+   "part": "shell_right, moved by its play",
+   "against": "SW28 keycap",
+   "overlap_mm3": 0,
+   "gap_mm": 0.26,
+   "ok": true
+  },
+  {
+   "part": "shell_right, moved by its play",
+   "against": "SW33 keycap",
+   "overlap_mm3": 0,
+   "gap_mm": 0.26,
+   "ok": true
+  },
+  {
+   "part": "shell_right, moved by its play",
+   "against": "SW34 keycap",
+   "overlap_mm3": 0,
+   "gap_mm": 0.679,
+   "ok": true
+  },
+  {
+   "part": "H3 M2 x 8 screw",
+   "against": "pcb",
+   "overlap_mm3": 0,
+   "gap_mm": 0.3,
+   "ok": true
+  },
+  {
+   "part": "H3 M2 x 8 screw",
+   "against": "SW33 keycap",
+   "overlap_mm3": 0,
+   "gap_mm": 1.825,
+   "ok": true
+  },
+  {
+   "part": "H3 M2 x 8 screw",
+   "against": "case_right",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "H3 M2 x 8 screw",
+   "against": "shell_right",
+   "overlap_mm3": 0,
+   "gap_mm": 0.05,
+   "ok": true
+  },
+  {
+   "part": "H5 M2 x 8 screw",
+   "against": "pcb",
+   "overlap_mm3": 0,
+   "gap_mm": 1.1,
+   "ok": true
+  },
+  {
+   "part": "H5 M2 x 8 screw",
+   "against": "case_right",
+   "overlap_mm3": 0,
+   "gap_mm": 0.0,
+   "ok": true
+  },
+  {
+   "part": "H5 M2 x 8 screw",
+   "against": "shell_right",
+   "overlap_mm3": 0,
+   "gap_mm": 0.05,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 1",
+   "against": "pcb",
+   "overlap_mm3": 0,
+   "gap_mm": 0.005,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 1",
+   "against": "case_right",
+   "overlap_mm3": 0,
+   "gap_mm": 5.221,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 1",
+   "against": "shell_right",
+   "overlap_mm3": 0,
+   "gap_mm": 0.3,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 2",
+   "against": "pcb",
+   "overlap_mm3": 0,
+   "gap_mm": 0.005,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 2",
+   "against": "SW19 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.383,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 2",
+   "against": "SW20 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.316,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 2",
+   "against": "case_right",
+   "overlap_mm3": 0,
+   "gap_mm": 5.221,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 2",
+   "against": "shell_right",
+   "overlap_mm3": 0,
+   "gap_mm": 0.3,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 3",
+   "against": "pcb",
+   "overlap_mm3": 0,
+   "gap_mm": 0.005,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 3",
+   "against": "SW23 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.357,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 3",
+   "against": "SW24 switch",
+   "overlap_mm3": 0,
+   "gap_mm": 0.344,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 3",
+   "against": "case_right",
+   "overlap_mm3": 0,
+   "gap_mm": 5.221,
+   "ok": true
+  },
+  {
+   "part": "tenting puck screw head 3",
+   "against": "shell_right",
+   "overlap_mm3": 0,
+   "gap_mm": 0.3,
    "ok": true
   },
   {
@@ -332,16 +738,16 @@
   },
   {
    "part": "tray_left",
-   "against": "left switches",
+   "against": "shell_left",
    "overlap_mm3": 0,
-   "gap_mm": 4.175,
+   "gap_mm": 0.537,
    "ok": true
   },
   {
    "part": "tray_left",
-   "against": "cover_left",
+   "against": "left switches",
    "overlap_mm3": 0,
-   "gap_mm": 0.4,
+   "gap_mm": 4.425,
    "ok": true
   },
   {
@@ -359,6 +765,13 @@
    "ok": true
   },
   {
+   "part": "tray_left walls",
+   "against": "shell_left",
+   "overlap_mm3": 0,
+   "gap_mm": 0.537,
+   "ok": true
+  },
+  {
    "part": "tray_right",
    "against": "case_right",
    "overlap_mm3": 0,
@@ -367,16 +780,16 @@
   },
   {
    "part": "tray_right",
-   "against": "right switches",
+   "against": "shell_right",
    "overlap_mm3": 0,
-   "gap_mm": 4.175,
+   "gap_mm": 0.537,
    "ok": true
   },
   {
    "part": "tray_right",
-   "against": "cover_right",
+   "against": "right switches",
    "overlap_mm3": 0,
-   "gap_mm": 0.4,
+   "gap_mm": 4.425,
    "ok": true
   },
   {
@@ -391,6 +804,13 @@
    "against": "case_right",
    "overlap_mm3": 0,
    "gap_mm": 0.4,
+   "ok": true
+  },
+  {
+   "part": "tray_right walls",
+   "against": "shell_right",
+   "overlap_mm3": 0,
+   "gap_mm": 0.537,
    "ok": true
   },
   {
@@ -585,11 +1005,11 @@
    "ok": true
   },
   {
-   "part": "cover_left",
+   "part": "shell_left",
    "size_mm": [
-    23.18,
-    59.9,
-    7.6
+    114.33,
+    94.42,
+    7.2
    ],
    "bed_mm": [
     180.0,
@@ -613,11 +1033,11 @@
    "ok": true
   },
   {
-   "part": "cover_right",
+   "part": "shell_right",
    "size_mm": [
-    23.18,
-    59.9,
-    7.6
+    114.33,
+    94.42,
+    7.2
    ],
    "bed_mm": [
     180.0,
@@ -657,24 +1077,61 @@
  ],
  "hardware": [
   {
-   "stack": "M2 x 5 into the heat-set insert (H5)",
-   "thread_mm": 3.0,
-   "tip_to_hole_bottom_mm": 0.9,
-   "ok": true,
-   "side": "left"
-  },
-  {
-   "stack": "nylon M2 x 16 from below, through the PCB and the cover's post, into a nylon nut on the roof",
-   "nut_thread_mm": 1.6,
-   "tip_above_nut_mm": 1.8,
-   "tip_above_nut_thick_board_mm": 1.64,
+   "stack": "M2 x 8 from below, through the PCB into the shell (H5, H7)",
+   "thread_thick_board_mm": 2.84,
+   "tip_to_hole_bottom_thin_board_mm": 0.44,
    "head_above_underside_mm": 0.2,
    "ok": true,
    "side": "left"
   },
   {
-   "metal": "H5 screw, washer and insert",
-   "gap_to_antenna_keepout_mm": 34.43,
+   "stack": "H5: the shell's plastic round the pilot hole",
+   "wall_mm": 1.17,
+   "min_mm": 1.0,
+   "ok": true,
+   "side": "left"
+  },
+  {
+   "stack": "H7: the shell's plastic round the pilot hole",
+   "wall_mm": 1.15,
+   "min_mm": 1.0,
+   "ok": true,
+   "side": "left"
+  },
+  {
+   "stack": "printed pins up through the PCB into the shell (H6, H8)",
+   "into_shell_thick_board_mm": 0.84,
+   "tip_room_thin_board_mm": 0.24,
+   "ok": true,
+   "side": "left"
+  },
+  {
+   "metal": "H5 shell screw",
+   "gap_to_antenna_keepout_mm": 34.93,
+   "ok": true,
+   "side": "left"
+  },
+  {
+   "metal": "H7 shell screw",
+   "gap_to_antenna_keepout_mm": 42.74,
+   "ok": true,
+   "side": "left"
+  },
+  {
+   "metal": "tenting puck screw 1",
+   "gap_to_antenna_keepout_mm": 34.48,
+   "ok": true,
+   "side": "left"
+  },
+  {
+   "metal": "tenting puck screw 2",
+   "gap_to_antenna_keepout_mm": 45.18,
+   "ok": true,
+   "side": "left"
+  },
+  {
+   "metal": "tenting puck screw 3",
+   "gap_to_antenna_keepout_mm": 18.63,
    "ok": true,
    "side": "left"
   },
@@ -703,6 +1160,13 @@
    "side": "left"
   },
   {
+   "stack": "the lid's wall round the battery's cavity",
+   "min_mm": 0.5,
+   "thinner_mm2": 0.0,
+   "ok": true,
+   "side": "left"
+  },
+  {
    "stack": "lips over the board's outer edge",
    "underside_mm": 7.0,
    "on_layer_boundary": true,
@@ -717,42 +1181,86 @@
   {
    "stack": "lip 1 holds the board's edge",
    "over_mm": 0.8,
-   "board_play_inward_mm": 0.4,
+   "board_play_inward_mm": 0.37,
    "outline_tol_mm": 0.2,
-   "holds_rss_mm": 0.35,
-   "holds_worst_case_mm": 0.2,
+   "holds_rss_mm": 0.38,
+   "holds_worst_case_mm": 0.23,
    "ok": true,
    "side": "left"
   },
   {
    "stack": "lip 2 holds the board's edge",
    "over_mm": 0.8,
-   "board_play_inward_mm": 0.4,
+   "board_play_inward_mm": 0.29,
    "outline_tol_mm": 0.2,
-   "holds_rss_mm": 0.35,
-   "holds_worst_case_mm": 0.2,
+   "holds_rss_mm": 0.44,
+   "holds_worst_case_mm": 0.31,
    "ok": true,
    "side": "left"
   },
   {
-   "stack": "M2 x 5 into the heat-set insert (H5)",
-   "thread_mm": 3.0,
-   "tip_to_hole_bottom_mm": 0.9,
+   "stack": "USB-C receptacle's axis",
+   "model_mm": 4.0,
+   "assumed_mm": 4.0,
    "ok": true,
-   "side": "right"
+   "side": "left"
   },
   {
-   "stack": "nylon M2 x 16 from below, through the PCB and the cover's post, into a nylon nut on the roof",
-   "nut_thread_mm": 1.6,
-   "tip_above_nut_mm": 1.8,
-   "tip_above_nut_thick_board_mm": 1.64,
+   "stack": "M2 x 8 from below, through the PCB into the shell (H3, H5)",
+   "thread_thick_board_mm": 2.84,
+   "tip_to_hole_bottom_thin_board_mm": 0.44,
    "head_above_underside_mm": 0.2,
    "ok": true,
    "side": "right"
   },
   {
-   "metal": "H5 screw, washer and insert",
-   "gap_to_antenna_keepout_mm": 34.4,
+   "stack": "H3: the shell's plastic round the pilot hole",
+   "wall_mm": 1.15,
+   "min_mm": 1.0,
+   "ok": true,
+   "side": "right"
+  },
+  {
+   "stack": "H5: the shell's plastic round the pilot hole",
+   "wall_mm": 1.17,
+   "min_mm": 1.0,
+   "ok": true,
+   "side": "right"
+  },
+  {
+   "stack": "printed pins up through the PCB into the shell (H2, H4)",
+   "into_shell_thick_board_mm": 0.84,
+   "tip_room_thin_board_mm": 0.24,
+   "ok": true,
+   "side": "right"
+  },
+  {
+   "metal": "H3 shell screw",
+   "gap_to_antenna_keepout_mm": 42.71,
+   "ok": true,
+   "side": "right"
+  },
+  {
+   "metal": "H5 shell screw",
+   "gap_to_antenna_keepout_mm": 34.9,
+   "ok": true,
+   "side": "right"
+  },
+  {
+   "metal": "tenting puck screw 1",
+   "gap_to_antenna_keepout_mm": 45.39,
+   "ok": true,
+   "side": "right"
+  },
+  {
+   "metal": "tenting puck screw 2",
+   "gap_to_antenna_keepout_mm": 34.73,
+   "ok": true,
+   "side": "right"
+  },
+  {
+   "metal": "tenting puck screw 3",
+   "gap_to_antenna_keepout_mm": 18.85,
    "ok": true,
    "side": "right"
   },
@@ -781,6 +1289,13 @@
    "side": "right"
   },
   {
+   "stack": "the lid's wall round the battery's cavity",
+   "min_mm": 0.5,
+   "thinner_mm2": 0.0,
+   "ok": true,
+   "side": "right"
+  },
+  {
    "stack": "lips over the board's outer edge",
    "underside_mm": 7.0,
    "on_layer_boundary": true,
@@ -795,20 +1310,27 @@
   {
    "stack": "lip 1 holds the board's edge",
    "over_mm": 0.8,
-   "board_play_inward_mm": 0.4,
+   "board_play_inward_mm": 0.29,
    "outline_tol_mm": 0.2,
-   "holds_rss_mm": 0.35,
-   "holds_worst_case_mm": 0.2,
+   "holds_rss_mm": 0.44,
+   "holds_worst_case_mm": 0.31,
    "ok": true,
    "side": "right"
   },
   {
    "stack": "lip 2 holds the board's edge",
    "over_mm": 0.8,
-   "board_play_inward_mm": 0.4,
+   "board_play_inward_mm": 0.37,
    "outline_tol_mm": 0.2,
-   "holds_rss_mm": 0.35,
-   "holds_worst_case_mm": 0.2,
+   "holds_rss_mm": 0.38,
+   "holds_worst_case_mm": 0.23,
+   "ok": true,
+   "side": "right"
+  },
+  {
+   "stack": "USB-C receptacle's axis",
+   "model_mm": 4.0,
+   "assumed_mm": 4.0,
    "ok": true,
    "side": "right"
   },
@@ -992,8 +1514,8 @@
      0.61
     ],
     "board in its case (moves and turns)": [
-     0.4,
-     0.51
+     0.39,
+     0.49
     ],
     "dock PCB on the magnet bosses (its milled holes +-0.2 mm)": [
      0.25,
@@ -1014,11 +1536,11 @@
    },
    "landing_rss_mm": [
     0.86,
-    0.86
+    0.85
    ],
    "landing_worst_case_mm": [
-    1.69,
-    1.72
+    1.68,
+    1.71
    ],
    "tip_room_on_pad_mm": [
     1.1,
@@ -1050,8 +1572,8 @@
      0.6
     ],
     "board in its case (moves and turns)": [
-     0.4,
-     0.49
+     0.39,
+     0.47
     ],
     "dock PCB on the magnet bosses (its milled holes +-0.2 mm)": [
      0.25,
@@ -1072,11 +1594,11 @@
    },
    "landing_rss_mm": [
     0.86,
-    0.84
+    0.83
    ],
    "landing_worst_case_mm": [
-    1.69,
-    1.69
+    1.68,
+    1.67
    ],
    "tip_room_on_pad_mm": [
     1.1,
@@ -1108,8 +1630,8 @@
      0.6
     ],
     "board in its case (moves and turns)": [
-     0.4,
-     0.49
+     0.39,
+     0.45
     ],
     "dock PCB on the magnet bosses (its milled holes +-0.2 mm)": [
      0.25,
@@ -1130,11 +1652,11 @@
    },
    "landing_rss_mm": [
     0.86,
-    0.84
+    0.81
    ],
    "landing_worst_case_mm": [
-    1.69,
-    1.69
+    1.68,
+    1.65
    ],
    "tip_room_on_pad_mm": [
     1.1,
@@ -1166,8 +1688,8 @@
      0.6
     ],
     "board in its case (moves and turns)": [
-     0.4,
-     0.49
+     0.39,
+     0.45
     ],
     "dock PCB on the magnet bosses (its milled holes +-0.2 mm)": [
      0.25,
@@ -1188,11 +1710,11 @@
    },
    "landing_rss_mm": [
     0.86,
-    0.84
+    0.81
    ],
    "landing_worst_case_mm": [
-    1.69,
-    1.69
+    1.68,
+    1.65
    ],
    "tip_room_on_pad_mm": [
     1.1,
@@ -1224,8 +1746,8 @@
      0.6
     ],
     "board in its case (moves and turns)": [
-     0.4,
-     0.49
+     0.39,
+     0.47
     ],
     "dock PCB on the magnet bosses (its milled holes +-0.2 mm)": [
      0.25,
@@ -1246,11 +1768,11 @@
    },
    "landing_rss_mm": [
     0.86,
-    0.84
+    0.83
    ],
    "landing_worst_case_mm": [
-    1.69,
-    1.69
+    1.68,
+    1.67
    ],
    "tip_room_on_pad_mm": [
     1.1,
@@ -1282,8 +1804,8 @@
      0.61
     ],
     "board in its case (moves and turns)": [
-     0.4,
-     0.51
+     0.39,
+     0.49
     ],
     "dock PCB on the magnet bosses (its milled holes +-0.2 mm)": [
      0.25,
@@ -1304,11 +1826,11 @@
    },
    "landing_rss_mm": [
     0.86,
-    0.86
+    0.85
    ],
    "landing_worst_case_mm": [
-    1.69,
-    1.72
+    1.68,
+    1.71
    ],
    "tip_room_on_pad_mm": [
     1.1,

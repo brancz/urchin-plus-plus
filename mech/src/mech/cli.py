@@ -17,22 +17,20 @@ import json
 import sys
 from pathlib import Path
 
-from build123d import Axis, Pos, Rot, export_step, export_stl
+from build123d import Pos, export_step, export_stl
 
 from . import checks, dock_checks
 from . import params as P
 from .board import Board
-from .case import box, case, cover
+from .case import box, case, shell
 from .tray import Dock
 
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def on_bed(part, flip=False):
-    """The part moved to its print orientation: flipped upside down if asked, resting on z = 0,
-    centred on the origin."""
-    if flip:
-        part = Rot(180, 0, 0) * part
+def on_bed(part):
+    """The part moved to its print orientation (as it sits: every part prints that way), resting
+    on z = 0, centred on the origin."""
     bb = part.bounding_box()
     return Pos(-(bb.min.X + bb.max.X) / 2, -(bb.min.Y + bb.max.Y) / 2, -bb.min.Z) * part
 
@@ -46,29 +44,36 @@ def build(args):
               "fit": [], "bed": [], "hardware": [], "insertion": [], "dock_pins": []}
     for side in ("left", "right"):
         board = Board.load(side)
-        parts = {f"case_{side}": (case(board), False), f"cover_{side}": (cover(board), True)}
-        for name, (part, flip) in parts.items():
+        parts = {f"case_{side}": case(board), f"shell_{side}": shell(board)}
+        for name, part in parts.items():
             export_step(part, out / "step" / f"{name}.step")
-            printable = on_bed(part, flip)
+            printable = on_bed(part)  # the case floor down, the shell upright
             export_stl(printable, out / "stl" / f"{name}.stl", tolerance=0.01, angular_tolerance=0.1)
             report["bed"].append(checks.bed_fit(name, printable))
 
         board_parts = checks.board_parts(board, Path(args.boards) / f"{side}.step")
-        above = checks.switches(board) + checks.keycaps(board)
-        c, v = parts[f"case_{side}"][0], parts[f"cover_{side}"][0]
+        sw = checks.switches(board)
+        above = sw + checks.keycaps(board)
+        c, v = parts[f"case_{side}"], parts[f"shell_{side}"]
         report["fit"] += checks.fit(f"case_{side}", c, board_parts + above, touching=("pcb",))
-        report["fit"] += checks.fit(f"cover_{side}", v, board_parts + above, touching=("pcb",))
-        report["fit"] += checks.fit(f"cover_{side}", v, [(f"case_{side}", c)], touching=(f"case_{side}",))
+        # The shell sits on the PCB and holds the switches in its plate.
+        report["fit"] += checks.fit(f"shell_{side}", v, board_parts + above,
+                                    touching=("pcb",) + tuple(n for n, _ in sw))
+        report["fit"] += checks.fit(f"shell_{side}", v, [(f"case_{side}", c)], touching=(f"case_{side}",))
+        # The shell moved by its play on the switches, against the keycaps.
+        report["fit"] += [dict(r, part=f"shell_{side}, moved by its play")
+                          for r in checks.fit(f"shell_{side}", v, checks.keycaps(board, P.SHELL_PLAY))]
         # Hardware against the board's parts and the printed parts. The PCB and the printed
-        # parts are what it screws to and passes through.
-        printed = [(f"case_{side}", c), (f"cover_{side}", v)]
+        # parts are what it screws into and passes through.
+        printed = [(f"case_{side}", c), (f"shell_{side}", v)]
+        # The puck's screw heads sit between the switches, which may come close but not overlap.
         for name, shape in checks.hardware(board):
             report["fit"] += checks.fit(name, shape, board_parts + above + printed,
-                                        touching=("pcb", f"case_{side}", f"cover_{side}"))
-        for name, shape in checks.moved_posts(board):
-            report["fit"] += checks.fit(name, shape, board_parts + above, touching=("pcb",))
-        report["hardware"] += [dict(r, side=side) for r in checks.screw_stacks(board) + checks.antenna_metal(board)
-                               + checks.cell_rows(board) + checks.lip_rows(board)]
+                                        touching=("pcb", f"case_{side}", f"shell_{side}")
+                                        + (tuple(n for n, _ in sw) if name.startswith("tenting puck") else ()))
+        report["hardware"] += [dict(r, side=side) for r in checks.screw_stacks(board, v) + checks.antenna_metal(board)
+                               + checks.cell_rows(board) + checks.lid_rows(board) + checks.lip_rows(board)
+                               + checks.usb_rows(board, board_parts)]
         report["insertion"] += [dict(r, side=side) for r in checks.insertion(board, board_parts)]
 
         if args.no_render:
@@ -76,13 +81,16 @@ def build(args):
         from .render import render  # VTK: only when rendering
         pcb_and_parts = [(s, "parts" if n != "pcb" else "board", 1.0) for n, s in board_parts
                          if n == "pcb" or n.endswith("3D model")]
-        render([(c, "case", 1.0), (v, "cover", 1.0)] + pcb_and_parts, out / "render" / f"{side}-assembly-iso.png", "iso")
-        render([(c, "case", 1.0), (v, "cover", 1.0)] + pcb_and_parts, out / "render" / f"{side}-assembly-top.png", "top")
-        render([(c, "case", 1.0)], out / "render" / f"case_{side}-iso.png", "iso")
+        switch_parts = [(s, "switch", 1.0) for _, s in sw]
+        assembled = [(c, "case", 1.0), (v, "shell", 1.0)] + switch_parts + pcb_and_parts
+        render(assembled, out / "render" / f"{side}-assembly-iso.png", "iso")
+        render(assembled, out / "render" / f"{side}-assembly-top.png", "top")
+        render([(c, "case", 1.0)] + pcb_and_parts, out / "render" / f"case_{side}-iso.png", "iso")
         render([(c, "case", 1.0)], out / "render" / f"case_{side}-under.png", "under")
-        render([(c, "case", 1.0), (v, "cover", 1.0)] + pcb_and_parts, out / "render" / f"{side}-inner-edge.png", "inner" if board.inner_dir > 0 else "outer")
-        render([(c, "case", 1.0), (v, "cover", 1.0)] + pcb_and_parts, out / "render" / f"{side}-outer-edge.png", "outer" if board.inner_dir > 0 else "inner")
-        render([(v, "cover", 1.0)], out / "render" / f"cover_{side}-iso.png", "iso")
+        render(assembled, out / "render" / f"{side}-inner-edge.png", "inner" if board.inner_dir > 0 else "outer")
+        render(assembled, out / "render" / f"{side}-outer-edge.png", "outer" if board.inner_dir > 0 else "inner")
+        render([(v, "shell", 1.0)], out / "render" / f"shell_{side}-iso.png", "iso")
+        render([(v, "shell", 1.0)], out / "render" / f"shell_{side}-under.png", "under")
 
     # The dock: the tray in two pieces, checked with the dock PCB and both cased halves seated.
     dock = Dock.load()
@@ -117,13 +125,13 @@ def dock_render(out, dock, pieces, shapes):
     trays = [(p, "tray", 1.0) for p in pieces]
     dock_pcb = [(s, "dock" if n == "dock pcb" else "pins" if " pin" in n else "parts", 1.0) for n, s in shapes["dock"]]
     cases = [(s, "case", 1.0) for _, s in shapes["cases"]]
-    covers = [(Pos(dx, 0, P.Z_DOCK) * cover(b), "cover", 1.0) for b, dx in dock.halves()]
+    shells = [(s, "shell", 1.0) for _, s in shapes["shells"]]
     boards = [(s, "board" if n.endswith(" pcb") else "parts", 1.0) for n, s in shapes["halves"]
               if n.endswith(" pcb") or n.endswith("3D model")]
     render(trays + dock_pcb, out / "tray-iso.png", "iso")
     render(trays + dock_pcb, out / "tray-top.png", "top")
     render(trays, out / "tray-under.png", "under")
-    render(trays + dock_pcb + cases + covers + boards, out / "dock-iso.png", "iso")
+    render(trays + dock_pcb + cases + shells + boards, out / "dock-iso.png", "iso")
     # A section through the left half's pin row, seen from the front: tray, dock PCB, the
     # compressed pins, the case's floor and window, and the half's PCB with its pads.
     x, y = dock.pins[1][0], dock.pins[1][1]

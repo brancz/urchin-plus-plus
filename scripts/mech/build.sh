@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# The printed parts (phase 7): a case and a battery cover per half, and the dock's tray in two
+# The printed parts (phase 7): a case and a top shell per half, and the dock's tray in two
 # pieces, built from the routed boards and checked against their 3D models.
 #
 #   scripts/mech/build.sh [OUT_DIR]      default mech/build

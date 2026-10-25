@@ -1,5 +1,5 @@
-"""A 3D preview of the finished keyboard as one HTML page: both halves in their cases with
-switches, keycaps, battery and hardware, and the dock. The printed parts, the boards' STEP
+"""A 3D preview of the finished keyboard as one HTML page: both halves in their cases and
+shells with switches, keycaps, battery and hardware, and the dock. The printed parts, the boards' STEP
 exports and the hardware positions are the ones the build checks; the switches and keycaps
 are simplified (no 3D models for them are installed). The page (`preview.html` next to this
 file, three.js from a CDN) gets the meshes inlined: quantized to 16 bits per coordinate in
@@ -15,20 +15,19 @@ import math
 from pathlib import Path
 
 import numpy as np
-from build123d import (Align, Axis, Box, Plane, Pos, Rectangle, RectangleRounded, RegularPolygon, Sphere, fillet,
-                       loft)
+from build123d import Align, Axis, Box, Plane, Pos, Rectangle, RectangleRounded, Sphere, fillet, loft
 
 from . import checks, dock_checks
 from . import params as P
 from .board import Board, rect_face, xy
-from .case import case, cover, cover_holes, cyl, prism
+from .case import case, cell_box, cyl, prism, screw_holes, shell
 from .tray import Dock
 
 TEMPLATE = Path(__file__).with_name("preview.html")
 LOW = (Align.CENTER, Align.CENTER, Align.MIN)
 
-KEYCAP_Z = 5.0      # a Choc keycap's underside above the PCB at rest; its top is at 8 (checks.keycaps)
-KEYCAP_H = 3.0
+KEYCAP_Z = P.KEYCAP_REST  # a Choc keycap's lowest point above the PCB at rest (params)
+KEYCAP_H = P.KEYCAP_TOP - P.KEYCAP_REST
 CELL_T = 4.3        # the EEMB 401730 (mech/README.md), on its foam
 
 # Board parts by reference prefix: (kind, label, what it is).
@@ -60,7 +59,7 @@ def switch():
     s = Box(13.8, 13.8, 2.2, align=LOW)
     s += Pos(0, 0, 2.2) * Box(15.0, 15.0, 0.8, align=LOW)
     s += loft([Plane.XY.offset(3.0) * Rectangle(13.8, 13.8), Plane.XY.offset(4.4) * Rectangle(11.5, 10.5)])
-    s += Pos(0, 0, 4.4) * Box(5.4, 3.0, 0.6, align=LOW)
+    s += Pos(0, 0, 4.4) * Box(5.4, 3.0, KEYCAP_Z + 0.5 - 4.4, align=LOW)  # the stem, up into the keycap
     return s
 
 
@@ -110,7 +109,8 @@ class Meshes:
 def half(m: Meshes, board: Board, step_path):
     g = board.side
     m.add(case(board), "Case", "print", g, "case", "printed in PLA, floor down, no supports")
-    m.add(cover(board), "Battery cover", "print", g, "cover", "printed roof down; holds the PCB with its three posts")
+    m.add(shell(board), "Top shell", "print", g, "shell",
+          "printed upright; the switches clip into its plate, two screws from below hold it")
 
     for name, shape in checks.board_parts(board, step_path):
         if name == "pcb":
@@ -130,26 +130,17 @@ def half(m: Meshes, board: Board, step_path):
     x0, y0, x1, y1 = board["battery"]["outline"]
     m.add(prism(rect_face((x0, y0, x1, y1)), P.Z_PCB_TOP, P.Z_PCB_TOP + P.FOAM_T), "Foam tape", "foam", g, "cell",
           "1 mm, cut to the outline")
-    cx0, cy0, cx1, cy1 = checks.cell_box(board)
+    cx0, cy0, cx1, cy1 = cell_box(board)
     cx, cy = xy(((cx0 + cx1) / 2, (cy0 + cy1) / 2))
     cell = fillet(Box(cx1 - cx0, cy1 - cy0, CELL_T, align=LOW).edges().filter_by(Axis.Z), 1.0)
     m.add(Pos(cx, cy, P.Z_PCB_TOP + P.FOAM_T) * cell, "401730 LiPo cell", "cell", g, "cell",
           "150 mAh, wires soldered to the pads")
 
-    roof = P.Z_ROOF_BOTTOM + P.ROOF_T
-    for h in cover_holes(board):
+    hd, hh = P.SHELL_SCREW_HEAD
+    for h in screw_holes(board):
         x, y = xy((h["x"], h["y"]))
-        nut = RegularPolygon(P.NUT[0] / 2 - 0.05, 6, rotation=checks.toward_keycap(board, x, y) + 30)
-        m.add(Pos(x, y) * prism(nut.faces()[0], roof, roof + P.NUT[1]), "M2 nylon nut", "nylon", g, "nut",
-              "DIN 934, the screw trimmed flush")
-        m.add(cyl(x, y, 4.0, P.HEAD_DEPTH - P.NYLON_HEAD_H, P.HEAD_DEPTH), "M2 x 16 nylon screw", "nylon", g, "under",
-              "from the underside, through the PCB and the cover's post")
-    for ref, x, y in checks.pcb_screws(board):
-        wd, wt = P.WASHER
-        hd, hh = P.PCB_SCREW_HEAD
-        z = P.Z_PCB_TOP
-        m.add(cyl(x, y, wd, z, z + wt) + cyl(x, y, hd, z + wt, z + wt + hh), "M2 x 5 screw and washer", "steel", g,
-              "pcb", "into a heat-set insert in the case")
+        m.add(cyl(x, y, hd, P.HEAD_DEPTH - hh, P.HEAD_DEPTH), f"M2 x {P.SHELL_SCREW_L:g} screw", "steel", g, "under",
+              "from the underside, through the PCB into the shell")
     for d in board["steel_discs"]:
         x, y = xy((d["x"], d["y"]))
         m.add(cyl(x, y, 10.0, P.DISC_T - 1.0, P.DISC_T) - cyl(x, y, 5.3, P.DISC_T - 1.1, P.DISC_T + 0.1),
@@ -162,8 +153,8 @@ def half(m: Meshes, board: Board, step_path):
         kind = "glow-charge" if led["ref"] == "LED2" else "glow-status"
         for h in led["holes"]:
             x, y = xy((h["x"], h["y"]))
-            m.add(cyl(x, y, P.LED_WINDOW_D - 0.3, roof - 0.6, roof - 0.5), PART_KINDS[led["ref"]][1], kind, g,
-                  "cover", PART_KINDS[led["ref"]][2])
+            m.add(cyl(x, y, P.LED_WINDOW_D - 0.3, P.Z_LID_TOP - 0.6, P.Z_LID_TOP - 0.5), PART_KINDS[led["ref"]][1],
+                  kind, g, "shell", PART_KINDS[led["ref"]][2])
 
 
 def dock(m: Meshes, d: Dock, step_path):

@@ -30,7 +30,7 @@ dock-pcb/        atopile project for the dock board
 scripts/         geometry extraction, placement, routing, checks/ (all Python/shell, run headless)
 reports/         per-phase evidence: DRC/ERC output, renders, diffs, reviewer findings
 fab/             generated JLC outputs (gitignored; release builds attached to git tags)
-mech/            build123d CAD (uv project): printed cases, battery covers, dock tray → STL
+mech/            build123d CAD (uv project): printed cases, top shells, dock tray → STL
 firmware/        ZMK module: board definition, keymap, bootloader build config
 .github/workflows/  CI
 reference/       original Urchin (gitignored, read-only)

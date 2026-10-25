@@ -13,7 +13,7 @@ from build123d import Compound, Kind, Pos, Vector, import_step, offset
 
 from . import params as P
 from .board import Board, xy
-from .case import box, case, cover, cover_holes, cyl, dock_window
+from .case import board_pins, box, case, cyl, dock_window, shell
 from .checks import MIN_GAP, STEP_UNDERSIDE, board_parts, fit, keycaps, switches
 from .play import AXES, Play
 from .tray import PLACEMENT, Dock
@@ -84,7 +84,7 @@ def feet(dock: Dock):
 def plug(dock: Dock):
     """A USB-C plug's overmold in the receptacle, out through the tray's front wall."""
     ux, _ = dock.usb
-    zc = P.Z_DOCK + P.USB_AXIS
+    zc = P.Z_DOCK + P.DOCK_USB_AXIS
     w, h = P.USB_PLUG
     return ("USB-C plug", box(ux - w / 2, ux + w / 2, dock.y_front - PLUG_LEN, dock.y_front, zc - h / 2, zc + h / 2))
 
@@ -98,25 +98,25 @@ def checks(dock: Dock, tray, pieces, boards_dir):
     rows = {"fit": [], "pins": [], "hardware": []}
     dparts, free = dock_parts(dock, Path(boards_dir) / "dock.step")
     dpcb = dparts[0][1]
-    cases, halves, above = [], [], []
+    cases, shells, halves, above = [], [], [], []
     for b, dx in dock.halves():
         c = seated(case(b), dx)
         cases.append((f"case_{b.side}", c))
+        shells.append((f"shell_{b.side}", seated(shell(b), dx)))
         halves += [(f"{b.side} {n}", seated(s, dx)) for n, s in board_parts(b, Path(boards_dir) / f"{b.side}.step")]
         above += [(f"{b.side} switches", seated(Compound([s for _, s in switches(b)]), dx)),
-                  (f"{b.side} keycaps", seated(Compound([s for _, s in keycaps(b)]), dx)),
-                  (f"cover_{b.side}", seated(cover(b), dx))]
+                  (f"{b.side} keycaps", seated(Compound([s for _, s in keycaps(b)]), dx))]
     case_names = tuple(n for n, _ in cases)
 
     # The tray: the cases rest on its floor and the dock PCB in its recess; everything else,
-    # the switches, keycaps and battery covers over its walls included, keeps MIN_GAP. Its walls
-    # above the floor keep POCKET_CLEAR from the cases.
+    # the shells, switches and keycaps over its walls included, keeps MIN_GAP. Its walls above
+    # the floor keep MIN_GAP from the cases and shells.
     for name, piece in zip(("tray_left", "tray_right"), pieces):
-        rows["fit"] += fit(name, piece, cases + above + [("dock pcb", dpcb)] + dparts[1:] + feet(dock) + [plug(dock)],
-                           touching=case_names + ("dock pcb",))
+        rows["fit"] += fit(name, piece, cases + shells + above + [("dock pcb", dpcb)] + dparts[1:] + feet(dock)
+                           + [plug(dock)], touching=case_names + ("dock pcb",))
         bb = piece.bounding_box()
         walls = piece & box(bb.min.X - 1, bb.max.X + 1, bb.min.Y - 1, bb.max.Y + 1, P.Z_DOCK + 0.05, bb.max.Z + 1)
-        rows["fit"] += fit(f"{name} walls", walls, cases)
+        rows["fit"] += fit(f"{name} walls", walls, cases + shells)
     rows["fit"] += fit("tray_left", pieces[0], [("tray_right", pieces[1])], touching=("tray_right",))
 
     # The dock's parts, its screw heads and the plug against the seated cases; the pins against
@@ -131,7 +131,7 @@ def checks(dock: Dock, tray, pieces, boards_dir):
 
     rows["pins"] = pin_rows(dock, free)
     rows["hardware"] = hardware_rows(dock, tray)
-    return rows, {"cases": cases, "halves": halves, "dock": dparts}
+    return rows, {"cases": cases, "shells": shells, "halves": halves, "dock": dparts}
 
 
 def stack(terms):
@@ -171,8 +171,7 @@ def pin_rows(dock: Dock, free):
     dock_lin, _ = stack(P.DOCK_TOL)
     for b, dx in dock.halves():
         in_pocket = Play(case_face(b), P.POCKET_PLAY)
-        in_case = Play(b.outline(), P.BOARD_WALL_PLAY,
-                       pins=[(xy((h["x"], h["y"])), P.BOARD_SCREW_PLAY) for h in cover_holes(b)])
+        in_case = Play(b.outline(), P.BOARD_WALL_PLAY, pins=board_pins(b))
         win = dock_window(b).bounding_box()
         r = max(P.PIN_FLANGE[0], P.PIN_BARREL[0]) / 2
         for p in b["dock_pads"]["pads"]:

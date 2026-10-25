@@ -15,8 +15,6 @@ PCB_T = 1.6                  # also in mech/data/*.json ("thickness"); checked a
 PCB_T_TOL = 0.16             # JLC: +-10 % on 1.6 mm
 BOTTOM_PARTS_H = 3.26        # tallest bottom part: the USB-C receptacle (the module is 3.0)
 SOCKET_H = 1.85              # Kailh Choc hotswap socket body, below the PCB
-SWITCH_BODY = 15.0           # Kailh Choc v1 housing, 15 x 15 mm at its widest
-SWITCH_BODY_H = 5.0          # housing height above the PCB; the stem and keycap are above it
 
 # --- Case ---------------------------------------------------------------------------------
 WALL = 2.0                   # side wall
@@ -26,62 +24,67 @@ FLOOR = 1.6                  # 8 layers
 GAP = 3.6                    # floor to PCB underside: BOTTOM_PARTS_H plus 0.34 mm
 Z_PCB_BOTTOM = FLOOR + GAP   # 5.2: the dock's pins reach this high
 Z_PCB_TOP = Z_PCB_BOTTOM + PCB_T
-Z_WALL_TOP = Z_PCB_TOP       # low tray: walls end flush with the top of the PCB
+SEAM_GAP = 0.2               # the walls end this far below the PCB's top: the shell sits on the
+                             # PCB, never on them, even when the board is PCB_T_TOL thin
+Z_WALL_TOP = Z_PCB_TOP - SEAM_GAP
 
 BOSS_D = 6.0                 # standoff under each case hole (cut back around nearby parts)
 PART_CLEAR = 0.3             # standoff to a bottom part's courtyard
 
-# The 3.8 mm holes are the original's pass-through holes for its plate cases' posts, and most
-# sit 2.1 mm from a switch body, under a keycap's edge: no screw head fits there. Only a hole
-# whose washer clears every keycap gets a screw: an M2 x 5 with an M2 washer from the top
-# into an M2 x 3 heat-set insert (3.2 mm hole) in the standoff. The others get plain standoffs,
-# and LIPs on the outer wall hold that edge down.
+# Heat-set inserts: the dock's tray holds its PCB with two (M2 x 3, CNC Kitchen's, 3.2 mm hole).
 INSERT_D = 3.2
 INSERT_DEPTH = 4.0           # the insert sits in the top 3 mm; 1 mm below it for displaced plastic
 INSERT_L = 3.0
-PCB_SCREW_L = 5.0            # M2 x 5 pan head (DIN 7985: head 4.0 mm across, 1.6 mm tall)
-PCB_SCREW_HEAD = (4.0, 1.6)
-WASHER = (5.0, 0.3)          # M2 washer, DIN 125: 5 mm across, 0.3 mm thick
 
 # Lips over the PCB's outer edge, opposite the controller. The board tilts in under them,
-# outer edge first, and the controller side screws down.
+# outer edge first, and the controller side is screwed down. Each lip stands on the wall's
+# inner part (LIP_ANCHOR wide), so the shell's wall can wrap round it.
 LIP_COUNT = 2
 LIP_LEN = 10.0
 LIP_OVER = 0.8               # how far a lip reaches over the PCB
 LIP_T = 0.8                  # 4 layers
+LIP_ANCHOR = 0.8             # the lip's foot on the wall, from the wall's inner face
 LIP_PLAY = 0.2               # between the PCB's top and the lip: one layer, so the lip's underside
                              # is on a layer boundary, and a board 0.16 mm thick still fits
 MIN_LIP_HOLD = 0.3           # the lip stays this far over the board's edge (RSS of its play)
 MIN_LIP_TILT = 5.0           # degrees a nominal board can tilt in under the lips
 LIP_MIN_EDGE = 30.0          # the straight outer edge the lips sit on is at least this long
+LIP_CLEAR = 0.3              # the shell's pocket round each lip
 
-# The three 2.2 mm holes around the controller (H6/H7/H8 on the left half, H2/H3/H4 on the
-# right) hold the PCB and the battery cover: an M2 x 16 nylon screw from the case's underside,
-# through the standoff, the PCB and a post printed on the cover, into an M2 nylon nut on the
-# cover's roof. Two of these holes are inside the antenna keep-out, so all hardware there is
-# nylon (CLAUDE.md rule 6: nothing conductive near the antenna). The posts replace bought
-# nylon standoffs: two of the holes are 2.6 mm from a keycap's edge, so a standoff could be at
-# most 4 mm across flats, and no shop in Germany sold one (2026-10-24; the narrowest were 5 mm).
-# The checks move each post by the cover's play on the screws, and each nut by its screw's play
-# in the PCB's hole, toward the keycap beside it.
+# The shell is screwed on from below: an M2 x 8 steel pan-head screw at each hole outside the
+# antenna keep-out with room round it (the hole beside the thumb keys, and the controller hole
+# at the battery's far end), up through the case's standoff and the PCB into a pilot hole in the
+# shell, where it forms its own thread. The other 3.8 mm holes sit 1.5 mm from a switch, with no
+# room for a screw. At the two holes inside the antenna keep-out, where nothing conductive may
+# go (CLAUDE.md rule 6), a pin printed on the standoff passes up through the PCB into the
+# shell: the pins line up the case, the PCB and the shell. Under the shell, every screw is
+# hidden.
 SCREW_CLEAR_D = 2.4
-HEAD_D = 4.4                 # M2 pan head (nylon: 4.0 mm) plus clearance
+HEAD_D = 4.4                 # M2 pan head (4.0 mm) plus clearance
 HEAD_DEPTH = 1.8             # the head stays inside the underside, clear of the dock
-NYLON_HEAD_H = 1.6           # M2 nylon pan head: 1.3 to 1.6 mm tall
+SHELL_SCREW_L = 8.0          # M2 x 8 pan head, DIN 7985 / ISO 7045, steel
+SHELL_SCREW_HEAD = (4.0, 1.6)
+PILOT_D = 1.7                # an M2 machine screw cuts its thread in a 1.7 mm printed hole
+SCREW_TIP_ROOM = 0.6         # the pilot hole reaches this far past the screw's tip
+SHELL_SCREW_MIN_KEYCAP = 2.5 # a hole outside the keep-out takes a screw if it's this far from every keycap
+MIN_BOSS_WALL = 1.0          # printed wall round a pilot hole
 M2_MIN_D = 1.886             # an M2 thread's smallest major diameter (6g)
-COVER_POST_LEN = 6.0         # the cover's post, from the PCB's top to the roof
-COVER_POST_D = 4.0           # 0.85 mm of wall (two lines) round the bore; 0.62 mm from the keycap
-COVER_BORE_D = 2.3           # the post's bore: prints about 2.2, a sliding fit that locates the
-                             # cover on the screws
-COVER_BORE_CHAMFER = 0.3     # lead-in at the bore's bottom, for the screw pushed up from below
-COVER_SCREW_L = 16.0         # nylon M2 x 16 pan head, DIN 7985 (no M2 x 14 in nylon)
-NUT = (4.62, 1.6)            # M2 nut, DIN 934: 4 mm across flats (4.62 across corners), 1.6 mm
-                             # tall; assembled with a flat toward the keycap beside it
 MIN_THREAD = 2.0             # least thread engagement of a screw in a printed part or an insert
-                             # (5 turns of M2); a full DIN 934 nut (0.8 d) is the standard instead
+                             # (5 turns of M2)
 MIN_TIP_GAP = 0.3            # between a screw's tip and a hole's bottom
+PIN_D = 1.9                  # printed pin in the PCB's 2.2 mm hole
+PIN_INTO_SHELL = 1.0         # how far the pin reaches above the PCB, into the shell's post
+PIN_CHAMFER = 0.3
+PIN_BORE_D = 2.3             # the post's bore round the pin
+PIN_BORE_ROOM = 0.4          # the bore reaches this far past the pin's tip
+MIN_PIN_ENGAGE = 0.6         # the pin reaches at least this far into the bore, with a board
+                             # PCB_T_TOL thick
+POST_D = 4.0                 # the shell's posts round the controller holes, from the PCB to the roof
 
 USB_OPENING_W = 13.0         # USB-C plug overmolds are up to about 12.4 mm wide
+USB_PLUG = (12.4, 6.5)       # a USB-C plug's overmold, width and height
+USB_AXIS = Z_PCB_BOTTOM - 1.2  # the half's receptacle (its 3D model, checked against it)
+USB_WINDOW_TOP = USB_AXIS + USB_PLUG[1] / 2 + 0.35  # the shell's wall ends above the plug here
 RESET_HOLE_D = 2.5           # poke hole under the reset button (a pin or paper clip)
 DOCK_WINDOW_MARGIN = 1.5     # around the charging pads, for the dock's pins (the dock checks size it)
 PUCK_CLEAR = 0.75            # around the tenting puck's outline
@@ -97,9 +100,40 @@ SWITCH_SLOT_MARGIN = 1.5     # power switch slot, beyond the switch body at each
 SWITCH_SCOOP_R = 8.0         # finger scoop on the outside of the wall at the power switch
 SWITCH_SCOOP_DEPTH = 1.2     # leaves 0.8 mm (two lines) of wall beside the slot
 
-# --- Battery cover --------------------------------------------------------------------------
-# The cells sold as 401730 are longer than the board's 17 x 30 mm outline (BT2): 32 x 17.5 x
-# 4.3 mm with their protection board (EEMB), or 32 x 17 x 4 +-0.5 mm. The checks model the
+# --- Shell ------------------------------------------------------------------------------
+# The shell covers the PCB: a deck on the PCB's top whose upper 1.2 mm is the switch plate,
+# a well round each key, the rim just below the keycaps, and a raised lid over the battery.
+# It prints upright, its underside on the bed.
+# Kailh Choc v1 (docs/datasheets/Kailh_CPG135001D02_Choc-v1.pdf): the housing is 13.8 mm across below its 15 mm flange, the
+# flange's underside 2.2 mm above the PCB; it clips into a 1.2 mm plate.
+PLATE_T = 1.2
+Z_PLATE_TOP = Z_PCB_TOP + 2.2
+Z_PLATE_BOTTOM = Z_PLATE_TOP - PLATE_T
+PLATE_CUTOUT = 14.0          # round the 13.8 mm housing; a printed hole comes out about 0.1 small
+CLIP_RELIEF = 15.1           # below the plate, room for the clips (14.5 mm across) to spring out
+SWITCH_HOUSING = 13.8
+SWITCH_FLANGE = (15.0, 0.8)  # across, thick; its underside on the plate's top
+SWITCH_CLIPS = (14.5, 1.0)   # across the hooks, and how high they reach above the PCB (they
+                             # catch under the plate)
+SWITCH_BODY_H = 5.0          # the housing's top above the PCB; the stem is above it
+# Kailh Choc keycaps (MBK, 17.5 x 16.5 mm, 4 mm tall) sit on the stem, whose top is 8 mm above
+# the PCB at rest and travels 3 mm. Pressed, a keycap's skirt can't reach lower than 2.2 mm
+# above the PCB, or it would hit the 1.2 mm plates Choc boards use; the checks take 2.5 mm.
+KEYCAP = (17.5, 16.5)
+KEYCAP_LOW = 2.5             # its lowest point above the PCB, pressed
+KEYCAP_REST = KEYCAP_LOW + 3.0
+KEYCAP_TOP = KEYCAP_REST + 4.0
+Z_RIM = Z_PCB_TOP + 4.6      # the rim and the deck round the keys: about 1 mm below a keycap at rest
+KEYCAP_MARGIN = 0.8          # each key's well, beyond its keycap
+RIM_MIN = 2.0                # narrower strips of rim between the wells drop to the plate
+SHELL_PLAY = 0.1             # the shell on the switches (14.0 mm cutouts round 13.8 mm housings)
+SHELL_EDGE = 0.6             # chamfer on the shell's top edges, and on its outer bottom edge: with
+                             # the case's EDGE_TOP a V-groove hides the seam
+PUCK_HEAD = (3.5, 1.3)       # the tenting puck's screws, M2 button heads (ISO 7380) on the PCB's
+                             # top (a 4 mm pan head hits two switches); the deck has a pocket over
+PUCK_HEAD_CLEAR = 0.3        # each, so the puck goes on before the shell
+# The battery: cells sold as 401730 are longer than the board's 17 x 30 mm outline (BT2): 32 x
+# 17.5 x 4.3 mm with their protection board (EEMB), or 32 x 17 x 4 +-0.5 mm. The checks model the
 # largest of both, centred on the outline with its antenna-side end on the outline's end (3.75
 # mm from the keep-out) and its extra length toward the wire pads (BT1): up to 0.4 mm over the
 # pads' ends, where it lies on its foam above their solder joints.
@@ -107,14 +141,16 @@ CELL = (17.5, 32.5, 4.5)     # width, length, thickness
 FOAM_T = 1.0                 # the cell sits on 1 mm foam tape (docs/ARCHITECTURE.md)
 JOINT_H = 0.8                # a 28 AWG wire soldered flat on a pad, its insulation 0.8 mm across
 CELL_KEEPOUT_GAP = 3.0       # cell to the antenna keep-out, as scripts/checks/clearance.py
-ROOF_T = 1.6
-Z_ROOF_BOTTOM = Z_PCB_TOP + COVER_POST_LEN  # 0.5 mm above the largest cell
-SKIRT_LIFT = LAYER_H         # the skirt ends this far above the wall's top, so the posts clamp
-                             # the PCB even when the board is PCB_T_TOL thin
-KEYCAP = (17.5, 16.5)        # Kailh Choc keycap (MBK) footprint
-KEYCAP_MARGIN = 0.8          # the roof and skirt stay this far from every keycap (the posts and
-                             # nuts reach closer: see COVER_POST_D)
-COVER_BEYOND_HOLES = 5.0     # the cover ends this far beyond its outermost holes (along y)
+CELL_CLEAR = 0.28            # the lid's cavity round the cell (MIN_GAP plus a little)
+Z_ROOF_BOTTOM = Z_PCB_TOP + FOAM_T + CELL[2] + 0.5
+LID_T = 1.2
+Z_LID_TOP = Z_ROOF_BOTTOM + LID_T
+# The lid comes closer to the keycaps than the wells do: the cell lies 1.16 mm from the nearest
+# keycap's edge, and the lid needs a wall between them.
+LID_MARGIN = 0.36            # MIN_GAP plus SHELL_PLAY, and a hair
+LID_WALL = 1.2               # the lid's wall round its cavity...
+LID_WALL_MIN = 0.5           # ...thinner beside the cell
+LID_BEYOND_HOLES = 5.0       # the lid ends this far beyond its outermost holes (along y)
 LED_WINDOW_D = 3.0           # over the status and charge LEDs, which shine up through the PCB
 
 # --- Dock tray (docs/ARCHITECTURE.md, Dock) --------------------------------------------------
@@ -180,6 +216,7 @@ POCKET_PLAY = POCKET_CLEAR + 0.2  # plus the pocket's and the case's outlines as
 BOARD_WALL_PLAY = FIT + 0.1       # PCB to the case's wall, plus the print
 BOARD_SCREW_PLAY = 0.4            # M2 in the PCB's 2.2 mm and the case's 2.4 mm holes (0.1 + 0.2),
                                   # plus 0.1 for where the printer puts the hole
+BOARD_PIN_PLAY = 0.25             # a printed pin in the PCB's 2.2 mm hole (0.15), plus 0.1 for the print
 DOCK_TOL = {
     "dock PCB on the magnet bosses (its milled holes +-0.2 mm)": BOSS_CLEAR + 0.1,
     "pocket to boss (one print)": 0.1,
@@ -201,5 +238,4 @@ FOOT_POCKET = 4.0            # the tray's hole under a foot, diameter over the f
                              # through, so a taller foot fits too
 
 USB_BODY = (8.94, 6.8, 3.2)  # dock USB-C receptacle (C2927029): width, depth, height
-USB_AXIS = 1.68              # plug axis above the PCB (datasheet)
-USB_PLUG = (12.4, 6.5)       # a USB-C plug's overmold, width and height
+DOCK_USB_AXIS = 1.68         # plug axis above the PCB (datasheet)

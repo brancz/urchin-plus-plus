@@ -144,7 +144,7 @@ const META = __MESH_META__;
 const DATA = "__MESH_DATA__";
 
 const SWATCHES = [["Black", "#161616"], ["Graphite", "#4a4d52"], ["Bone", "#e4dfd3"]];
-const EXPLODE = { under: -18, case: 0, pcb: 26, cell: 40, switch: 40, cover: 64, nut: 74, keycap: 90 };
+const EXPLODE = { under: -18, case: 0, pcb: 26, cell: 40, shell: 56, switch: 74, keycap: 96 };
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 function store(key, value) {
@@ -171,7 +171,6 @@ function material(kind) {
     case "cap": return std(0xa8865c, 0.5);
     case "led": return std(0xf2f1ec, 0.2);
     case "socket": return std(0x2b2b2b, 0.6);
-    case "nylon": return std(0xe9e4d7, 0.55);
     case "steel": return std(0xb5b9bf, 0.3, 1);
     case "zinc": return std(0xc5c9ce, 0.35, 0.9);
     case "rubber": return std(0x0f0f0f, 0.95);

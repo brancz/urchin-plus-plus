@@ -227,7 +227,7 @@ class Dock:
         part -= box(x0, x1, y0, y1, P.Z_DOCK - P.DOCK_PCB_T - P.RELIEF_DEPTH, P.Z_DOCK)
         ux, uy = self.usb
         # The plug's way in through the front wall.
-        plug_z0 = P.Z_DOCK + P.USB_AXIS - P.USB_PLUG[1] / 2 - 0.5
+        plug_z0 = P.Z_DOCK + P.DOCK_USB_AXIS - P.USB_PLUG[1] / 2 - 0.5
         part -= box(ux - P.USB_PLUG[0] / 2 - 0.3, ux + P.USB_PLUG[0] / 2 + 0.3, self.y_front - P.TRAY_WALL - 2,
                     self.y_front + 0.5, plug_z0, top + 1)
 

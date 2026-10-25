@@ -54,12 +54,12 @@ dock pads 5V ─TVS─Schottky┘           └── BAT ── protected LiPo
 
 ## Case
 
-- **Printed tray case per half** for prototyping, on the owner's A1 mini.
-  - Floor plus walls up to the top of the PCB, keys exposed.
-  - A cover over the battery and electronics area.
-  - An opening over the tenting-puck mount, so the puck screws on through the case.
+- **Printed case and top shell per half**, on the owner's A1 mini, all in black.
+  - The case: floor plus walls up to 0.2 mm below the top of the PCB.
+  - The top shell (2026-10-25, for a finished look) sits on the PCB. Its upper 1.2 mm is the switch plate, and the switches clip into it. Each key has a well, the rim stops about 1 mm below the keycaps, and a flat lid covers the battery and electronics. No hardware shows from the top.
+  - An opening over the tenting-puck mount, so the puck screws on through the case (before the shell, which covers its screw heads).
   - Openings for USB-C, the power switch and the charging pads.
-  - The PCB is held at the controller by nylon screws through the battery cover's posts into nylon nuts on its roof (first nylon standoffs), one screw into a heat-set insert beside the thumb keys, and two lips over its outer edge.
+  - Two lips over the PCB's outer edge hold it down. Two steel M2 × 8 screws per half come in from below, through the PCB into the shell, at the holes outside the antenna keep-out with room round them. At the two holes inside the keep-out, printed pins line up the case, the PCB and the shell.
 - **Generated from the routed boards.** `scripts/mech/board_data.py` extracts every feature the CAD needs (outline, holes, pads, part courtyards, puck, the steel washers' markers, feet) into `mech/data/{left,right}.json`, and `mech/` (build123d) builds each half's parts from its own data, never by mirroring. CI checks that the data is current.
 - **A machined aluminium case may follow.** Metal around the module would block Bluetooth, so that case must leave the antenna end open or use a non-metal window there. The printed case keeps the same openings, so it can serve as that case's model.
 
@@ -283,3 +283,20 @@ Append entries as `YYYY-MM-DD: decision — reason`.
     - **The magnets' hold:** the 1.2 mm recess leaves 0.1 to 0.3 mm between the washer and the case's underside, so the magnet's gap grows from 0.6 to about 0.7 to 0.95 mm. The review's estimate: about 5 to 6 N per N52 10 × 3 magnet on a washer (7 to 8 N for N45 10 × 5), so 10 to 12 N per half against at most about 3.5 N from the pins less the half's weight of about 1 N: about three times, ±50 %. Dock assembly step 6 now checks the hold directly, since a half held only by its weight still charges.
 - 2026-10-25: JLC held the gate 3 order for a $14.60 supplement (with VAT): the order said one design, and the panel holds two, the left and the right half. The checklist asked for "Different Design: 2" inside the delivery-format line, where it was missed. It is now a checklist line of its own, and the panel's Gerber zip is named `urchin-panel-2designs-gerbers.zip`, so the reminder is in front of the uploader. The dock's checklist names its value too (1). No design change.
 - 2026-10-25: 3D preview of the finished product (`mech preview`, run by `scripts/mech/build.sh`, CI artifact `printed-parts`): one HTML page with three.js r128 from a CDN and the meshes inlined (16-bit quantized, gzipped, about 2.5 MB). It shows the cases, covers, tray and boards as built, the hardware where the checks put it, and simplified Choc switches and keycaps (no 3D models for them are installed). Owner's finish: everything printed in black, black keycaps; the page offers other colours to compare.
+- 2026-10-25: Top shell over each half (owner's request: the tray and battery cover looked too DIY). Owner's choices: a top shell over the existing case, the bottom tray kept as it is, with the keys standing proud of the rim.
+  - **The shell's deck is the switch plate.** Kailh's Choc v1 drawing (CPG135001D02, `docs/datasheets/Kailh_CPG135001D02_Choc-v1.pdf`, from keyboardio's keyswitch_documentation; the switches aren't an LCSC part) puts the flange's underside 2.2 mm above the PCB, and Choc boards use a 1.2 mm plate. So the deck's upper 1.2 mm is a plate with 14.0 mm cutouts (13.8 mm housing; printed holes come out about 0.1 mm small), and below it each cutout widens to 15.1 mm for the clips (14.5 mm across). Hot-swapping still works from the top with a switch puller.
+  - **Heights:** the rim is 4.6 mm above the PCB, about 1 mm below a keycap at rest. The lid's roof is 6 mm above the PCB, 1.2 mm thick, over the largest 401730 cell on its foam.
+  - **Wells:** each keycap plus 0.8 mm, with rounded corners. Strips of rim narrower than 2 mm between them drop to the plate, except round the screws.
+  - **The lid comes 0.36 mm from the keycaps:** the board puts the cell 1.16 mm from the nearest keycap's edge, and the lid needs a wall there. That wall is 0.5 mm thick.
+  - **The keycap model changes from 2–8 mm above the PCB to 2.5–9.5 mm.** The plate's top is at 2.2 mm, so the old model's 2.0 mm would overlap it. A keycap that reached below 2.2 mm would hit every Choc plate, and MBKs are used on them; 2.5 mm keeps a margin. The top comes from the stem's height (8 mm at rest) and MBK's 4 mm.
+  - **Fastening:**
+    - Two steel M2 × 8 pan-head screws per half go in from the case's underside. They pass through a standoff and the PCB and cut their own thread in a 1.7 mm pilot hole in the shell: at least 2.8 mm of thread with a thick board, and at least 1.15 mm of plastic round each hole.
+    - The screws go where a hole is outside the antenna keep-out and at least 2.5 mm from every keycap: the 3.8 mm hole beside the thumb keys and the 2.2 mm hole at the battery's far end.
+    - At the two 2.2 mm holes inside the keep-out, 1.9 mm pins printed on the case's standoffs pass through the PCB 1.0 mm into the shell. They are plastic only (rule 6).
+    - The lips stay. They now stand on the inner 0.8 mm of the wall, so the shell can wrap round them.
+    - This supersedes the battery cover, its nylon M2 × 16 screws and nuts, and the case's heat-set insert with its M2 × 5 and washer.
+  - **Seam:** the case's walls end 0.2 mm below the PCB's top, so the shell always rests on the PCB, even on a board 0.16 mm thin. The shell's outer bottom edge and the case's top edge are both chamfered 0.6 mm, which makes a V-groove that hides the seam.
+  - **Tenting puck:** its screws' heads sit on the PCB under the shell's deck, in pockets, so the puck goes on before the shell. The new switch model (housing 13.8 mm below the flange, not a 15 mm box) shows that M2 pan heads (4 mm) hit SW4 and SW10. Button heads (ISO 7380, 3.5 mm) fit, 0.1 mm from the switches. This was also true before the shell.
+  - **Print:** the shell prints upright with no supports, and its slice irons the top surfaces.
+  - **Dock:** the shell's walls follow the case's outline, so the pockets and `dock-pcb/geometry.json` are unchanged. The tray checks now include the seated shells.
+  - **No keyboard PCB change.**
