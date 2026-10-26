@@ -58,6 +58,8 @@ Renders (`render/`):
 - `{left,right}-{inner,outer}-edge.png`: the USB-C and power-switch openings, and the seam.
 - `case_*-{iso,under}.png` and `shell_*-{iso,under}.png`: the parts alone.
 
+`preview.html` is the 3D preview from the same build (`mech preview`): both halves and the dock, on the desk, docked, exploded or X-ray. Download it and open it in a browser; it loads three.js from a CDN, so it needs a network connection. It's a copy of the build output, updated with the renders, so CI doesn't compare it; each CI run's own build is in its `printed-parts` artifact.
+
 ## Dock
 
 Redesigned on 2026-10-25, before it was ordered (ARCHITECTURE.md, decision log): the owner found a half hard to pick out of the deep pockets, and wants the cable to leave at the back, so the dock can sit at the far edge of a desk. The pogo pins moved onto the halves (soldered on their charging pads with a printed jig), the dock became a flat slab with shallow pockets and gold contacts, and the USB-C moved to the middle of the back edge, under a printed cover. Then, so the empty dock shows no circuit board, a 0.4 mm printed plate went over each pocket's floor, with a slot over the gold contacts (ARCHITECTURE.md, "Floor plates hide the dock PCB"); the tray is now 6.8 mm. The rows below are from that rebuild; the first design's are in git history (commit 64fd027).

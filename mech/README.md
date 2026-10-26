@@ -17,7 +17,7 @@ Build everything (STEP export of the boards, parts, fit checks, renders, slicing
 scripts/mech/build.sh OUT        # RENDER=0 skips the PNGs, SLICE=0 Bambu Studio, PREVIEW=0 the 3D preview
 ```
 
-`OUT/preview.html` is a 3D preview of the finished keyboard and dock (both halves with switches, keycaps and battery; on the desk, in the dock, exploded, or X-ray): open it in a browser. The switches and keycaps in it are simplified; everything else is the parts and boards as built. `OUT/stl/` has the printable STLs, `OUT/slice/*.3mf` the same parts sliced for a Bambu Lab A1 mini (0.4 mm nozzle, 0.20 mm Standard, Bambu PLA Basic); open a 3MF in Bambu Studio and print. `OUT/checks.json` lists every fit check. `mech/data/*.json` is extracted from the boards by `scripts/mech/board_data.py`; rerun it after any board change (CI fails if it's stale).
+`OUT/preview.html` is a 3D preview of the finished keyboard and dock (both halves with switches, keycaps and battery; on the desk, in the dock, exploded, or X-ray): open it in a browser. The latest one is committed as `reports/phase7/preview.html`. The switches and keycaps in it are simplified; everything else is the parts and boards as built. `OUT/stl/` has the printable STLs, `OUT/slice/*.3mf` the same parts sliced for a Bambu Lab A1 mini (0.4 mm nozzle, 0.20 mm Standard, Bambu PLA Basic); open a 3MF in Bambu Studio and print. `OUT/checks.json` lists every fit check. `mech/data/*.json` is extracted from the boards by `scripts/mech/board_data.py`; rerun it after any board change (CI fails if it's stale).
 
 ## Hardware per half
 
