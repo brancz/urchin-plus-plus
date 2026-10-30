@@ -68,7 +68,7 @@ Each phase ends with its outputs committed under `reports/<phase>/` and a `revie
 Phases 7 and 8 can run in parallel with waiting for JLC delivery.
 
 ### Phase 9 — Bring-up (human, with agent guidance)
-1. Visual check of the delivered boards.
+1. Visual check of the delivered boards, with a loupe on LED1 and LED2's joints (JLC soldered them without a guarantee; `reports/phase6/README.md`).
 2. Without a battery: power from USB and use a multimeter. Check the polarity at the battery pads; without a cell the charger's battery detection makes BAT switch on and off, so the reading wanders. Then, with the power switch on, check VDDH (about 4.4 V, the charger's system output) and VDD (1.8 V on a blank module; 3.0–3.3 V once the bootloader sets REGOUT0).
 3. Flash the bootloader over SWD with a probe that follows the target voltage (e.g. J-Link; the module's I/O is at 1.8 V until the bootloader sets REGOUT0); unlock APPROTECT if needed.
 4. Flash ZMK over USB; test every key.
