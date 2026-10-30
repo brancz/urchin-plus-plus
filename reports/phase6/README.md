@@ -68,10 +68,10 @@ Designators carry a side suffix (`U1_L`, `U1_R`), and nets an `L-`/`R-` prefix. 
 
 **Assembly:**
 
-- [ ] PCB Assembly on, **assembly side: Bottom**. Tooling holes: added by customer.
-- [ ] Upload `bom.csv` and `positions.csv`. All 18 BOM lines must match the LCSC numbers above, with nothing "not matched".
-- [ ] Choose **"Confirm parts placement"**, so JLC sends its placement for approval before production.
-- [ ] In JLC's placement preview, check every part against its own pads and its pin-1 mark one by one. Do not apply a blanket rotation. If JLC's bottom-side convention differed from KiCad's, the error would show either on every part, or only on the parts at ±90° (J1, SW35, C1, C3–C5, R4, R5). Correct the parts that look wrong, then send the list back so the CPL script can be fixed. Pay particular attention to:
+- [x] PCB Assembly on, **assembly side: Bottom**. Tooling holes: added by customer.
+- [x] Upload `bom.csv` and `positions.csv`. All 18 BOM lines must match the LCSC numbers above, with nothing "not matched".
+- [x] Choose **"Confirm parts placement"**, so JLC sends its placement for approval before production.
+- [x] In JLC's placement preview, check every part against its own pads and its pin-1 mark one by one. Do not apply a blanket rotation. If JLC's bottom-side convention differed from KiCad's, the error would show either on every part, or only on the parts at ±90° (J1, SW35, C1, C3–C5, R4, R5). Correct the parts that look wrong, then send the list back so the CPL script can be fixed. Pay particular attention to:
   - **U1 (module):** the antenna end points to the board edge at the notch, with no copper under it.
   - **J1 (USB-C):** the opening faces out of the short edge; the four legs go into the plated slots.
   - **U2 (QFN-16):** the pin-1 dot matches the footprint's pin-1 corner.
@@ -79,7 +79,8 @@ Designators carry a side suffix (`U1_L`, `U1_R`), and nets an `L-`/`R-` prefix. 
   - **D1, D2, D4, D5 (1N5819WS) and D3 (SMF6.0A):** the cathode band is on the side of the footprint's cathode mark.
   - **LED1/LED2 (reverse-mount RGB):** the body sits over the 2.1 mm hole, lens up through the board. JLC's preview overlays its own footprint for C409782, with pads at ±1.45 mm and no hole. Our pads sit at ±1.70 mm, deliberately, to keep the larger hole clear, so the offset is expected. JLC's part page should name the MPN MHT151RGBCT, the reverse-mount type; EasyEDA's symbol calls it MHT150RGBCT. Pin 1 is the common anode, and it sets which colour is which. Left half: pin 1 is at the corner toward the short edge and toward the module, (+1.70, −0.55) mm from the LED's centre in KiCad's top view. Right half: toward the short edge and away from the module, (−1.70, +0.55) mm.
   - **SW35 (slide switch):** the lever points out of the short edge.
-- [ ] Confirm the stock of C356849 (E73) at order time.
+  - Checked on 2026-10-30, after the owner had confirmed: every part matches on both halves (`jlc-placement/`).
+- [x] Confirm the stock of C356849 (E73) at order time.
 
 **After delivery (by hand):**
 
