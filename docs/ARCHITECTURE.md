@@ -109,7 +109,7 @@ Resolved in phase 2 (2026-10-18): E73 stock, assemblability, VDDH wiring and cry
 - The pogo pins' free height: the dock's stack takes ±0.15 mm from the 4020-01R sibling's datasheet. Measure a few when they arrive, and each one after soldering (`mech/README.md`)
 - Bring-up: docked and charged with the power switch off, D4's (1N5819WS) reverse leakage, up to 0.5 mA, might faintly light the red charge LED (phase 8 review). Look for it in the dark.
 - LED1 and LED2's solder joints: JLC flagged their small overlap and soldered them without a guarantee (decision log, 2026-10-27). At bring-up, check that each lights in every colour; reflow any that doesn't (`reports/phase6/README.md`, after delivery).
-- JLC's live placement preview for the bottom side: the CPL convention (Y negated, rotation 180° − KiCad angle, as KiKit's `MirrorBottom`) was traced pin by pin by two reviews, but only JLC's preview at order time confirms it (checklist in `reports/phase6/README.md`)
+- JLC's live placement preview for the bottom side: the CPL convention (Y negated, rotation 180° − KiCad angle, as KiKit's `MirrorBottom`) was traced pin by pin by two reviews, but only JLC's preview at order time confirms it (checklist in `reports/phase6/README.md`). The owner confirmed JLC's placement of the keyboard order on 2026-10-30; the delivered boards' visual check (bring-up step 1) is the last word
 
 Resolved in phase 6 (2026-10-18): BOM and CPL without a schematic come from `scripts/fab/jlc_assembly.py`, which uses KiKit's position functions on the panel. The bottom-side rotation convention was checked by the phases 4–6 reviews against every polarised part's pin 1.
 
