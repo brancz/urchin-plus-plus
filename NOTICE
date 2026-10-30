@@ -1,0 +1,14 @@
+urchin++ is a derivative of the Urchin split keyboard by duckyb
+(https://github.com/duckyb/urchin), MIT License, Copyright (c) 2022 duckyb.
+Its board outline, key positions and tenting-puck mount are extracted by
+script from the original's KiCad board. Both copyright notices are in LICENSE.
+
+The MIT License in LICENSE covers this project's own work. These files keep
+their authors' terms and are not covered by it:
+
+- docs/datasheets/: manufacturers' datasheets, copyright their publishers,
+  kept for reference.
+- hardware/parts/ and dock-pcb/parts/: footprints, symbols and 3D models
+  converted from LCSC/EasyEDA's component library, under its terms.
+- .agents/skills/easyeda-api/: the EasyEDA API skill, MIT License, by its
+  authors (see its SKILL.md).
