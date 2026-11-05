@@ -58,7 +58,7 @@ Renders (`render/`):
 - `{left,right}-{inner,outer}-edge.png`: the USB-C and power-switch openings, and the seam.
 - `case_*-{iso,under}.png` and `shell_*-{iso,under}.png`: the parts alone.
 
-`preview.html` is the 3D preview from the same build (`mech preview`): both halves and the dock, on the desk, docked, exploded or X-ray. Download it and open it in a browser; it loads three.js from a CDN, so it needs a network connection. It's a copy of the build output, updated with the renders, so CI doesn't compare it; each CI run's own build is in its `printed-parts` artifact.
+`preview.html` is the 3D preview from the same build (`mech preview`): both halves and the dock, on the desk, docked, exploded or X-ray. It's online at https://brancz.github.io/urchin-plus-plus/, served by GitHub Pages from this file; or download it and open it in a browser (it loads three.js from a CDN, so it needs a network connection). It's a copy of the build output, updated with the renders, so CI doesn't compare it; each CI run's own build is in its `printed-parts` artifact.
 
 ## Dock
 

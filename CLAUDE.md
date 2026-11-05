@@ -17,7 +17,7 @@ Read these before doing anything:
 5. **KiCad guardrails.** Never save a project board with KiCad 10, and use no KiCad 10-only board features: no via protection (IPC-4761) settings, no design variants, no time-domain tuning. Run `ato build` only through `scripts/ato_build.sh`: it runs `scripts/checks/kicad_guardrails.py`, snapshots every board, repairs net numbers atopile leaves stale, and runs `scripts/checks/board_diff.py` against the snapshot, failing on any unexpected removal of tracks, zones, vias, footprints, or footprint fields, and on anything else atopile has no business changing. CI also compares every pushed commit's boards with their parent (`scripts/checks/board_history.sh`); declare intended removals with a `Board-Diff-Allow:` commit trailer. Every footprint on a board must be an atopile component, mechanical ones included (tenting-puck mount, holes, logos): atopile deletes all others on each build.
 6. **The antenna zone is sacred.** No copper on any layer, no traces, no parts, and no battery inside the module's antenna keep-out from its datasheet. A check script enforces it.
 7. **Nothing is "done" without evidence.** Each phase ends with the outputs listed in `docs/PLAN.md` (reports, renders, diffs) committed under `reports/<phase>/`, and a `reviewer` subagent pass.
-8. **Never order, never post anything externally.** The human uploads to JLC.
+8. **Never order, never post anything externally.** The human uploads to JLC. The repo is public, and GitHub Pages serves the 3D preview from it, so everything pushed is public: no JLC order numbers, no personal details, no credentials.
 
 ## Repo layout (target)
 
